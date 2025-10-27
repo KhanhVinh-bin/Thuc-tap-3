@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Du_An_Web_Ban_Khoa_Hoc.props" />
+</Project>

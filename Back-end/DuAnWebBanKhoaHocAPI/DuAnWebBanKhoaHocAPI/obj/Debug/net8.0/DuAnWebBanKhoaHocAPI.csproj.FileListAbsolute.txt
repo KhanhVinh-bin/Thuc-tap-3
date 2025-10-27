@@ -279,3 +279,4 @@ D:\thuc-tap-2\Back-end\DuAnWebBanKhoaHocAPI\DuAnWebBanKhoaHocAPI\obj\Debug\net8.
 D:\thuc-tap-2\Back-end\DuAnWebBanKhoaHocAPI\DuAnWebBanKhoaHocAPI\obj\Debug\net8.0\DuAnWebBanKhoaHocAPI.pdb
 D:\thuc-tap-2\Back-end\DuAnWebBanKhoaHocAPI\DuAnWebBanKhoaHocAPI\obj\Debug\net8.0\DuAnWebBanKhoaHocAPI.genruntimeconfig.cache
 D:\thuc-tap-2\Back-end\DuAnWebBanKhoaHocAPI\DuAnWebBanKhoaHocAPI\obj\Debug\net8.0\ref\DuAnWebBanKhoaHocAPI.dll
+D:\thuc-tap-2\Back-end\DuAnWebBanKhoaHocAPI\DuAnWebBanKhoaHocAPI\obj\Debug\net8.0\DuAnWebBanKhoaHocAPI.sourcelink.json

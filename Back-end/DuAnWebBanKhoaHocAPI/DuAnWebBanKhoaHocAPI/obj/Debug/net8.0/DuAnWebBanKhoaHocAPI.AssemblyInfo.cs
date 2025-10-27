@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DuAnWebBanKhoaHocAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dc0d36fd8e5e268cc485ada9a85dadc74ec1477d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+baad34729a8acee553fc0b679196ae20bb1640ec")]
 [assembly: System.Reflection.AssemblyProductAttribute("DuAnWebBanKhoaHocAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DuAnWebBanKhoaHocAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
