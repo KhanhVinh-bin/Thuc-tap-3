@@ -1,0 +1,156 @@
+@import url("../tao/page.css");
+
+/* Layout chính để đẩy footer xuống cuối */
+.gvc-create-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.gvc-create-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Phần thân cho trang nội dung */
+.gvc-card-title { font-size: 20px; font-weight: 800; }
+.gvc-create-grid { max-width: 900px; width: 100%; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr; gap: 20px; flex: 1; }
+.gvc-card { max-width: 900px; width: 100%; margin: 0 auto; }
+
+/* Icon màu tím giống ảnh */
+.gvc-card-icon { width: 32px; height: 32px; display:grid; place-items:center; border-radius: 10px; box-shadow: 0 8px 16px rgba(124,58,237,0.18); }
+.gvc-card-icon.purple { background: linear-gradient(135deg,#6366f1,#a855f7); color: #fff; }
+.gvc-card-icon svg { width: 20px; height: 20px; }
+
+/* Header layout & nút gradient (giống hình 1) */
+.gvc-card-header{ justify-content: space-between; }
+.gvc-card-left{ display:flex; align-items:center; gap:10px; }
+.gvc-btn.gradient{ border:none; color:#fff; background: linear-gradient(135deg,#6366f1,#a855f7); box-shadow: 0 6px 18px rgba(124,58,237,0.22); }
+.gvc-btn.gradient:hover{ filter: brightness(0.98); }
+.gvc-add-chapter{ display:inline-flex; align-items:center; gap:8px; }
+.gvc-add-chapter .gvc-btn-icon svg{ width:16px; height:16px; }
+
+/* Khung mô tả chương giống hình: nền tím nhạt, bo tròn lớn */
+.gvc-chapter-desc { width: 100%; display: block; background: linear-gradient(180deg, #f6f6fb 0%, #f3f0ff 100%); border-color: #e9e7fb; min-height: 64px; }
+.gvc-chapter-head .gvc-chapter-title { background: #fff; }
+
+/* Tiêu đề "Bài học" với icon video tím */
+.gvc-lessons-title { font-weight:700; color:#0f172a; display:flex; align-items:center; gap:10px; }
+.gvc-lessons-icon { width:20px; height:20px; display:grid; place-items:center; color:#fff; border-radius:6px; background: linear-gradient(135deg,#7c3aed,#a855f7); box-shadow: 0 6px 16px rgba(124,58,237,0.15); }
+.gvc-lessons-icon svg { width:14px; height:14px; }
+
+/* Nút thêm bài học gradient với icon dấu cộng */
+.gvc-add-lesson { display:inline-flex; align-items:center; gap:8px; }
+.gvc-add-lesson .gvc-btn-icon svg { width:16px; height:16px; }
+
+/* Inputs */
+.gvc-input, .gvc-textarea { height: 44px; border: 1px solid #e5e7eb; border-radius: 12px; padding: 0 12px; outline: none; background: #f1f5f9; font-size: 14px; font-weight: 600; color: #0f172a; box-shadow: 0 2px 8px rgba(2,6,23,0.06); transition: border-color .2s, box-shadow .2s, background-color .2s; }
+.gvc-textarea { min-height: 44px; height: auto; padding: 10px 12px; }
+.gvc-input::placeholder, .gvc-textarea::placeholder { color: #64748b; font-weight: 500; }
+.gvc-input:focus, .gvc-textarea:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); background: #fff; }
+
+/* Chapter card */
+.gvc-chapter { margin: 12px 0 0; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; background: #fff; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+.gvc-chapter-head { display:grid; grid-template-columns: 1fr auto; align-items:center; gap:8px; margin-bottom:10px; }
+.gvc-chapter-title { font-weight:700; }
+
+.gvc-lessons-head { display:flex; justify-content: space-between; align-items:center; margin:12px 0; }
+.gvc-lessons-title { font-weight:700; color:#0f172a; display:flex; align-items:center; gap:8px; }
+.gvc-bullet.purple { width:10px; height:10px; border-radius:999px; background:#7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.18); }
+
+/* Lessons list */
+.gvc-lessons { display:flex; flex-direction:column; gap:10px; }
+.gvc-lesson-row { position:relative; display:grid; grid-template-columns: 40px minmax(220px, 1fr) 140px 36px; grid-auto-rows: auto; align-items:center; gap:10px; background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:10px; }
+.gvc-lesson-num { width:40px; height:40px; border-radius:10px; display:grid; place-items:center; font-weight:700; color:#fff; background: linear-gradient(135deg,#7c3aed,#3b82f6); }
+.gvc-lesson-title { font-weight:600; }
+.gvc-lesson-controls {
+  grid-column: 2 / 5;
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+}
+
+/* Field with label above control */
+.gvc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.gvc-field-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.gvc-type { position:relative; }
+.gvc-type-toggle { min-width: 120px; }
+.gvc-type-menu { position:absolute; top:calc(100% + 6px); left:0; background:#fff; border:1px solid #e5e7eb; border-radius:10px; box-shadow: 0 12px 24px rgba(0,0,0,0.12); padding:6px; z-index:20; width:160px; }
+.gvc-type-item { display:flex; align-items:center; gap:8px; width:100%; padding:8px 10px; border-radius:8px; background:transparent; color:#0f172a; }
+.gvc-type-item:hover { background:#f6f6fb; }
+
+/* Khoảng cách nhỏ giữa icon và chữ trên nút toggle */
+.gvc-type-toggle .gvc-type-icon { margin-right:6px; display:inline-flex; }
+
+/* Lesson content area */
+.gvc-lesson-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gvc-drop {
+  flex: 1;
+  min-height: 36px;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.gvc-drop:hover {
+  border-color: #9ca3af;
+  background-color: #f3f4f6;
+}
+
+
+
+.gvc-upload-icon {
+  display: flex;
+  align-items: center;
+}
+
+.gvc-upload-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.gvc-drop-text {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.gvc-upload-name {
+  font-size: 12px;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+/* Footer giống trang chi tiết: lấy từ ../tao/page.css */
+/* Responsive */
+@media (max-width: 860px){
+  .gvc-lesson-row{ grid-template-columns: 32px 1fr 32px; }
+  .gvc-lesson-controls{ grid-column: 2 / 4; grid-template-columns: 1fr; }
+  .gvc-upload-name{ display:none; }
+}

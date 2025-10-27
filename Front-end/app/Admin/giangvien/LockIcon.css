@@ -1,0 +1,260 @@
+/* Lock Icon Component Styles */
+.lock-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Kích thước */
+.lock-icon-small {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+}
+
+.lock-icon-medium {
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+}
+
+.lock-icon-large {
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+}
+
+/* SVG Icon */
+.lock-icon-svg {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+/* Trạng thái khóa đóng (Locked) */
+.lock-icon-locked {
+  background-color: #fee2e2;
+  border: 2px solid #dc2626;
+  color: #dc2626;
+}
+
+.lock-icon-locked .lock-body {
+  fill: #dc2626;
+  stroke: #dc2626;
+  stroke-width: 1.5;
+}
+
+.lock-icon-locked .lock-shackle {
+  stroke: #dc2626;
+  stroke-width: 2;
+  fill: none;
+}
+
+.lock-icon-locked .lock-dot {
+  fill: #fee2e2;
+}
+
+/* Trạng thái khóa mở (Unlocked) */
+.lock-icon-unlocked {
+  background-color: #dcfce7;
+  border: 2px solid #16a34a;
+  color: #16a34a;
+}
+
+.lock-icon-unlocked .lock-body {
+  fill: #16a34a;
+  stroke: #16a34a;
+  stroke-width: 1.5;
+}
+
+.lock-icon-unlocked .lock-shackle {
+  stroke: #16a34a;
+  stroke-width: 2;
+  fill: none;
+}
+
+.lock-icon-unlocked .lock-dot {
+  fill: #dcfce7;
+}
+
+.lock-icon-unlocked .unlock-line {
+  stroke: #16a34a;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.lock-icon-unlocked .unlock-dot {
+  fill: #16a34a;
+}
+
+/* Clickable state */
+.lock-icon-clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.lock-icon-clickable:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Hover effects cho trạng thái locked */
+.lock-icon-clickable.lock-icon-locked:hover {
+  background-color: #fecaca;
+  border-color: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.lock-icon-clickable.lock-icon-locked:hover .lock-body {
+  fill: #b91c1c;
+  stroke: #b91c1c;
+}
+
+.lock-icon-clickable.lock-icon-locked:hover .lock-shackle {
+  stroke: #b91c1c;
+}
+
+/* Hover effects cho trạng thái unlocked */
+.lock-icon-clickable.lock-icon-unlocked:hover {
+  background-color: #bbf7d0;
+  border-color: #15803d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+
+.lock-icon-clickable.lock-icon-unlocked:hover .lock-body {
+  fill: #15803d;
+  stroke: #15803d;
+}
+
+.lock-icon-clickable.lock-icon-unlocked:hover .lock-shackle {
+  stroke: #15803d;
+}
+
+.lock-icon-clickable.lock-icon-unlocked:hover .unlock-line {
+  stroke: #15803d;
+}
+
+.lock-icon-clickable.lock-icon-unlocked:hover .unlock-dot {
+  fill: #15803d;
+}
+
+/* Active state */
+.lock-icon-clickable:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation cho các phần tử SVG */
+.lock-icon-animated .lock-shackle {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lock-icon-animated .unlock-indicator {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.lock-icon-animated .lock-body {
+  transition: all 0.3s ease;
+}
+
+.lock-icon-animated .lock-dot {
+  transition: all 0.3s ease;
+}
+
+.lock-icon-animated .unlock-line {
+  transition: all 0.3s ease;
+  animation: unlock-pulse 2s infinite;
+}
+
+.lock-icon-animated .unlock-dot {
+  transition: all 0.3s ease;
+  animation: unlock-glow 2s infinite;
+}
+
+/* Keyframe animations */
+@keyframes unlock-pulse {
+  0%, 100% {
+    opacity: 1;
+    stroke-width: 2;
+  }
+  50% {
+    opacity: 0.7;
+    stroke-width: 2.5;
+  }
+}
+
+@keyframes unlock-glow {
+  0%, 100% {
+    opacity: 1;
+    r: 1;
+  }
+  50% {
+    opacity: 0.8;
+    r: 1.2;
+  }
+}
+
+/* Overlay effect */
+.lock-overlay {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.lock-icon-clickable:hover .lock-overlay {
+  opacity: 0.1;
+  fill: currentColor;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .lock-icon,
+  .lock-icon-svg,
+  .lock-shackle,
+  .unlock-indicator,
+  .lock-body,
+  .lock-dot,
+  .unlock-line,
+  .unlock-dot {
+    transition: none;
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .lock-icon-locked {
+    border-width: 3px;
+    background-color: #ffffff;
+  }
+  
+  .lock-icon-unlocked {
+    border-width: 3px;
+    background-color: #ffffff;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .lock-icon-large {
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+  }
+  
+  .lock-icon-medium {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+  }
+  
+  .lock-icon-small {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+  }
+}

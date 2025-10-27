@@ -1,0 +1,23 @@
+@import url("../tao/page.css");
+
+/* Thanh tiến độ: bước 2 được set qua class .is-step2 */
+
+/* Tinh chỉnh nhỏ cho trang chi tiết nếu cần */
+.gvc-card-title { font-size: 20px; font-weight: 800; margin: 0; }
+.gvc-create-grid { max-width: 900px; width: 100%; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+
+/* Màu icon theo thẻ giống thiết kế */
+.gvc-card-icon.green { background: #22c55e; color: #fff; box-shadow: 0 4px 12px rgba(34,197,94,0.25); }
+.gvc-card-icon.blue { background: #3b82f6; color: #fff; box-shadow: 0 4px 12px rgba(59,130,246,0.25); }
+.gvc-card-icon.orange { background: #f97316; color: #fff; box-shadow: 0 4px 12px rgba(249,115,22,0.25); }
+.gvc-card-icon.purple { background: #8b5cf6; color: #fff; box-shadow: 0 4px 12px rgba(139,92,246,0.25); }
+.gvc-card-icon { width: 32px; height: 32px; }
+.gvc-card-icon svg { width: 20px; height: 20px; }
+
+/* Hàng có nút cộng ở cuối */
+.gvc-row.two { grid-template-columns: 1fr auto; }
+.gvc-btn.add { width: 44px; height: 44px; padding: 0; border-radius: 12px; background: #111827; color: #fff; border-color: #111827; }
+.gvc-btn.add:hover { filter: brightness(0.95); }
+
+/* Ô placeholder mờ, khóa lại để diễn đạt trạng thái rỗng */
+.gvc-input.placeholder { background: #f8fafc; color: #94a3b8; font-style: italic; }

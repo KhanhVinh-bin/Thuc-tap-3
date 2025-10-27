@@ -1,0 +1,6 @@
+@DuAnWebBanKhoaHocAPI_HostAddress = http://localhost:5173
+
+GET {{DuAnWebBanKhoaHocAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

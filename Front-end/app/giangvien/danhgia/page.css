@@ -1,0 +1,85 @@
+/* ---- Rating & Feedback interactions ---- */
+.stars-select {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.star {
+  font-size: 20px;
+  line-height: 1;
+  color: #c7ced6;
+  background: transparent;
+  border: 1px solid #e5e9ef;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.star:hover {
+  transform: translateY(-1px);
+  border-color: #cbd5e1;
+}
+.star.active {
+  color: #fbbf24; /* amber-400 */
+  border-color: #fbbf24;
+  background: #fff7ed; /* amber-50 */
+}
+
+.add-review {
+  background: #fff;
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0 20px 0;
+}
+.add-review h3 { margin: 0 0 10px 0; }
+.review-form .form-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.review-form .input {
+  flex: 1;
+}
+.textarea {
+  width: 100%;
+  border: 1px solid #e5e9ef;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+}
+.textarea:focus {
+  border-color: #3366ff;
+  box-shadow: 0 0 0 3px rgba(51,102,255,0.1);
+}
+.review-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+.hint {
+  color: #6b7785;
+  font-size: 12px;
+}
+
+/* Dist row alignment tweaks */
+.dist-row { align-items: center; }
+.dist-label { width: 56px; color: #334155; }
+.dist-bar { flex: 1; background: #f1f5f9; border-radius: 999px; height: 8px; overflow: hidden; }
+.dist-fill { height: 100%; background: #10b981; }
+
+/* Review list minor tune */
+.review-item { background: #fff; border: 1px solid #eef2f7; border-radius: 12px; padding: 14px; }
+.review-head .avatar {
+  width: 40px; height: 40px; border-radius: 999px; background: #f1f5f9;
+  color: #334155; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; margin-right: 10px;
+}
+.star-inline { color: #c7ced6; }
+.star-inline.active { color: #fbbf24; }
