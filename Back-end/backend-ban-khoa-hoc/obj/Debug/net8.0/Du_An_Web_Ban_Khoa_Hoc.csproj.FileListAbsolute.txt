@@ -1832,3 +1832,4 @@ D:\thuc-tap-2\Back-end\backend-ban-khoa-hoc\obj\Debug\net8.0\refint\Du_An_Web_Ba
 D:\thuc-tap-2\Back-end\backend-ban-khoa-hoc\obj\Debug\net8.0\Du_An_Web_Ban_Khoa_Hoc.pdb
 D:\thuc-tap-2\Back-end\backend-ban-khoa-hoc\obj\Debug\net8.0\Du_An_Web_Ban_Khoa_Hoc.genruntimeconfig.cache
 D:\thuc-tap-2\Back-end\backend-ban-khoa-hoc\obj\Debug\net8.0\ref\Du_An_Web_Ban_Khoa_Hoc.dll
+D:\thuc-tap-2\Back-end\backend-ban-khoa-hoc\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

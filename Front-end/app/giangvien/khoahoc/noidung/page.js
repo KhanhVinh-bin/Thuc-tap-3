@@ -14,7 +14,7 @@ export default function NoiDungChuongPage() {
       title: "Chương 1",
       desc: "Mô tả sơ bộ nội dung chương...",
       lessons: [
-        { id: 1, title: "Bài học mới", type: "video", duration: "", fileName: "" }
+        { id: 1, title: "Bài học mới", type: "video", duration: "", videoName: "", docName: "" }
       ]
     }
   ])
@@ -47,7 +47,7 @@ export default function NoiDungChuongPage() {
     setChapters(chapters.map(c => {
       if (c.id !== cid) return c
       const nextId = (c.lessons[c.lessons.length - 1]?.id || 0) + 1
-      return { ...c, lessons: [...c.lessons, { id: nextId, title: "Bài học mới", type: "video", duration: "", fileName: "" }] }
+      return { ...c, lessons: [...c.lessons, { id: nextId, title: "Bài học mới", type: "video", duration: "", videoName: "", docName: "" }] }
     }))
   }
   const removeLesson = (cid, lid) => {
@@ -272,45 +272,60 @@ export default function NoiDungChuongPage() {
                         <div className="gvc-field">
                           <div className="gvc-field-label">Tải lên nội dung</div>
                           <div className="gvc-lesson-content">
-                            <div className="gvc-drop" onClick={()=>document.getElementById(inputId)?.click()}>
-                              <input type="file" id={inputId} hidden
-                                accept={ls.type === "video" ? "video/*" : ls.type === "voice" ? "audio/*" : ls.type === "document" ? "application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" : "*/*"}
-                                onChange={(e)=>{
-                                  const name = e.target.files?.[0]?.name || ""
-                                  updateLesson(ch.id, ls.id, { fileName: name })
-                                }} />
-                              <span className="gvc-upload-icon" aria-hidden="true">
-                                {ls.type === "video" && (
+                            <div className="gvc-uploads-row">
+                              {/* Video uploader */}
+                              <div className="gvc-drop" onClick={()=>document.getElementById(`video-${inputId}`)?.click()}>
+                                <input type="file" id={`video-${inputId}`} hidden accept="video/*"
+                                  onChange={(e)=>{
+                                    const name = e.target.files?.[0]?.name || ""
+                                    updateLesson(ch.id, ls.id, { videoName: name })
+                                  }} />
+                                <span className="gvc-upload-icon" aria-hidden="true">
                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="20" height="20" fill="none" stroke="#64748b">
                                     <rect width="256" height="256" fill="none" />
                                     <path d="M24,60H152a32,32,0,0,1,32,32v96a8,8,0,0,1-8,8H48a32,32,0,0,1-32-32V68A8,8,0,0,1,24,60Z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="12" />
                                     <polyline points="184 112 240 80 240 176 184 144" strokeLinecap="round" strokeLinejoin="round" strokeWidth="12" />
                                   </svg>
-                                )}
-                                {ls.type === "document" && (
+                                </span>
+                                <span className="gvc-drop-text">Video</span>
+                              </div>
+
+                              {/* Document uploader */}
+                              <div className="gvc-drop" onClick={()=>document.getElementById(`doc-${inputId}`)?.click()}>
+                                <input type="file" id={`doc-${inputId}`} hidden
+                                  accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                  onChange={(e)=>{
+                                    const name = e.target.files?.[0]?.name || ""
+                                    updateLesson(ch.id, ls.id, { docName: name })
+                                  }} />
+                                <span className="gvc-upload-icon" aria-hidden="true">
                                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#64748b">
                                     <rect x="6" y="4" width="12" height="16" rx="2" strokeWidth="2" />
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 8h8M8 12h8M8 16h8" />
                                   </svg>
-                                )}
-                                {ls.type === "quiz" && (
-                                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#64748b">
-                                    <circle cx="12" cy="12" r="9" strokeWidth="2" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4" />
-                                  </svg>
-                                )}
-                                {ls.type === "voice" && (
-                                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#64748b">
-                                    <rect x="9" y="5" width="6" height="10" rx="3" strokeWidth="2" />
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v3m-4-6a4 4 0 008 0" />
-                                  </svg>
-                                )}
-                              </span>
-                              <span className="gvc-drop-text">
-                                {ls.type === "document" ? "Tài liệu" : ls.type === "voice" ? "Audio" : ls.type === "quiz" ? "Bài kiểm tra" : "Video"}
-                              </span>
+                                </span>
+                                <span className="gvc-drop-text">Tài liệu</span>
+                              </div>
                             </div>
-                            {ls.fileName && <div className="gvc-upload-name">{ls.fileName}</div>}
+
+                            {(ls.videoName || ls.docName) && (
+                              <div className="gvc-upload-items">
+                                {ls.videoName && (
+                                  <div className="gvc-upload-item">
+                                    <span className="gvc-upload-kind">Video</span>
+                                    <span className="gvc-upload-fname">{ls.videoName}</span>
+                                    <button type="button" className="gvc-remove-upload" onClick={()=>updateLesson(ch.id, ls.id, { videoName: "" })}>×</button>
+                                  </div>
+                                )}
+                                {ls.docName && (
+                                  <div className="gvc-upload-item">
+                                    <span className="gvc-upload-kind">Tài liệu</span>
+                                    <span className="gvc-upload-fname">{ls.docName}</span>
+                                    <button type="button" className="gvc-remove-upload" onClick={()=>updateLesson(ch.id, ls.id, { docName: "" })}>×</button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>

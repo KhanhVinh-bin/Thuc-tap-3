@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import "./page.css"
 
@@ -9,6 +9,19 @@ export default function ChiTietKhoaHocPage() {
   const [price, setPrice] = useState(0)
   const [duration, setDuration] = useState("")
   const [level, setLevel] = useState("")
+  const [attempted, setAttempted] = useState(false)
+
+  // Validation logic
+  const isValid = useMemo(() => {
+    return price > 0 && level !== ""
+  }, [price, level])
+
+  const handleContinue = () => {
+    setAttempted(true)
+    if (isValid) {
+      router.push("/giangvien/khoahoc/noidung")
+    }
+  }
 
   return (
     <div className="gvc-create-root">
@@ -62,7 +75,14 @@ export default function ChiTietKhoaHocPage() {
           <div className="gvc-row">
             <label className="gvc-field">
               <div className="gvc-label">Giá khóa học (VND) <span className="req">*</span></div>
-              <input className="gvc-input" type="number" value={price} onChange={(e)=>setPrice(Number(e.target.value))} placeholder="0" />
+              <input 
+                className={`gvc-input ${attempted && price <= 0 ? "is-invalid" : ""}`} 
+                type="number" 
+                value={price} 
+                onChange={(e)=>setPrice(Number(e.target.value))} 
+                placeholder="0" 
+              />
+              {attempted && price <= 0 && <div className="gvc-error">Vui lòng nhập giá khóa học</div>}
               <div className="gvc-hint">💡 Giá đề xuất: 500.000đ - 2.000.000đ</div>
             </label>
             <label className="gvc-field">
@@ -75,13 +95,14 @@ export default function ChiTietKhoaHocPage() {
           <label className="gvc-field">
             <div className="gvc-label">Cấp độ <span className="req">*</span></div>
             <div className="gvc-select-wrap">
-              <select className={`gvc-select ${level === "" ? "placeholder" : ""}`} value={level} onChange={(e)=>setLevel(e.target.value)}>
+              <select className={`gvc-select ${level === "" ? "placeholder" : ""} ${attempted && level === "" ? "is-invalid" : ""}`} value={level} onChange={(e)=>setLevel(e.target.value)}>
                 <option value="">Chọn cấp độ phù hợp</option>
                 <option value="beginner">Cơ bản</option>
                 <option value="intermediate">Trung cấp</option>
                 <option value="advanced">Nâng cao</option>
               </select>
             </div>
+            {attempted && level === "" && <div className="gvc-error">Vui lòng chọn cấp độ khóa học</div>}
           </label>
         </section>
 
@@ -132,7 +153,13 @@ export default function ChiTietKhoaHocPage() {
         <div className="gvc-footer-inner">
           <button className="gvc-btn ghost" onClick={() => router.push("/giangvien/khoahoc/tao")}>Quay lại</button>
           <div className="gvc-step-info">Bước 2 / 4</div>
-          <button className="gvc-btn primary" onClick={() => router.push("/giangvien/khoahoc/noidung")}>Tiếp tục →</button>
+          <button 
+            className={`gvc-btn primary ${!isValid ? "disabled" : ""}`} 
+            onClick={handleContinue}
+            disabled={!isValid}
+          >
+            Tiếp tục →
+          </button>
         </div>
       </div>
     </div>

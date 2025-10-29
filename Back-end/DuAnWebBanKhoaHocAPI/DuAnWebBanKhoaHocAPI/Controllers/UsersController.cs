@@ -26,15 +26,15 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                 .Select(u => new UserDTO
                 {
                     UserId = u.UserId,
-                    Email = u.Email,
-                    FullName = u.FullName,
+                    Email = u.Email ?? string.Empty,
+                    FullName = u.FullName ?? string.Empty,
                     PhoneNumber = u.PhoneNumber,
                     Address = u.Address,
                     AvatarUrl = u.AvatarUrl,
-                    DateOfBirth = u.DateOfBirth, // Giờ kiểu dữ liệu khớp nhau
+                    DateOfBirth = u.DateOfBirth,
                     Gender = u.Gender,
                     Bio = u.Bio,
-                    Status = u.Status,
+                    Status = u.Status ?? "active",
                     CreatedAt = u.CreatedAt,
                     Roles = u.UserRoles.Select(ur => ur.Role.RoleName).ToList()
                 })
@@ -54,15 +54,15 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                 .Select(u => new UserDTO
                 {
                     UserId = u.UserId,
-                    Email = u.Email,
-                    FullName = u.FullName,
+                    Email = u.Email ?? string.Empty,
+                    FullName = u.FullName ?? string.Empty,
                     PhoneNumber = u.PhoneNumber,
                     Address = u.Address,
                     AvatarUrl = u.AvatarUrl,
-                    DateOfBirth = u.DateOfBirth, // Giờ kiểu dữ liệu khớp nhau
+                    DateOfBirth = u.DateOfBirth,
                     Gender = u.Gender,
                     Bio = u.Bio,
-                    Status = u.Status,
+                    Status = u.Status ?? "active",
                     CreatedAt = u.CreatedAt,
                     Roles = u.UserRoles.Select(ur => ur.Role.RoleName).ToList()
                 })
@@ -76,31 +76,39 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
             return user;
         }
 
-        // POST: api/Users
-        [HttpPost]
-        public async Task<ActionResult<UserDTO>> PostUser(UserCreateDTO userCreateDTO)
+        // POST: api/Users/Register
+        [HttpPost("Register")]
+        public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDTO)
         {
             // Validate input
-            if (string.IsNullOrEmpty(userCreateDTO.Email))
+            if (string.IsNullOrEmpty(registerDTO.Email))
             {
                 return BadRequest(new { message = "Email is required" });
             }
 
+            if (string.IsNullOrEmpty(registerDTO.Password))
+            {
+                return BadRequest(new { message = "Password is required" });
+            }
+
             // Check if email already exists
-            if (await _context.Users.AnyAsync(u => u.Email == userCreateDTO.Email))
+            if (await _context.Users.AnyAsync(u => u.Email == registerDTO.Email))
             {
                 return Conflict(new { message = "Email already exists" });
             }
 
+            // Hash password using BCrypt
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password);
+
             var user = new User
             {
-                Email = userCreateDTO.Email,
-                PasswordHash = userCreateDTO.PasswordHash,
-                FullName = userCreateDTO.FullName,
-                PhoneNumber = userCreateDTO.PhoneNumber,
-                Address = userCreateDTO.Address,
-                DateOfBirth = userCreateDTO.DateOfBirth, // DateOnly? khớp với model
-                Gender = userCreateDTO.Gender,
+                Email = registerDTO.Email,
+                PasswordHash = passwordHash,
+                FullName = registerDTO.FullName,
+                PhoneNumber = registerDTO.PhoneNumber,
+                Address = registerDTO.Address,
+                DateOfBirth = registerDTO.DateOfBirth,
+                Gender = registerDTO.Gender,
                 CreatedAt = DateTime.UtcNow,
                 Status = "active"
             };
@@ -108,19 +116,41 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Add user roles
-            if (userCreateDTO.RoleIds != null && userCreateDTO.RoleIds.Any())
+            // Add user roles (default to student if not specified)
+            var roleIds = registerDTO.RoleIds != null && registerDTO.RoleIds.Any()
+                ? registerDTO.RoleIds
+                : new List<int> { 1 }; // Default to student role
+
+            foreach (var roleId in roleIds)
             {
-                foreach (var roleId in userCreateDTO.RoleIds)
+                var roleExists = await _context.Roles.AnyAsync(r => r.RoleId == roleId);
+                if (!roleExists)
                 {
-                    var userRole = new UserRole
-                    {
-                        UserId = user.UserId,
-                        RoleId = roleId,
-                        AssignedAt = DateTime.UtcNow
-                    };
-                    _context.UserRoles.Add(userRole);
+                    return BadRequest(new { message = $"Role with ID {roleId} not found" });
                 }
+
+                var userRole = new UserRole
+                {
+                    UserId = user.UserId,
+                    RoleId = roleId,
+                    AssignedAt = DateTime.UtcNow
+                };
+                _context.UserRoles.Add(userRole);
+            }
+            await _context.SaveChangesAsync();
+
+            // Create student record if user has student role
+            if (roleIds.Contains(1)) // 1 = student
+            {
+                var student = new Student
+                {
+                    StudentId = user.UserId,
+                    EnrollmentCount = 0,
+                    CompletedCourses = 0,
+                    TotalCertificates = 0,
+                    LastActive = DateTime.UtcNow
+                };
+                _context.Students.Add(student);
                 await _context.SaveChangesAsync();
             }
 
@@ -132,13 +162,13 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                 .Select(u => new UserDTO
                 {
                     UserId = u.UserId,
-                    Email = u.Email,
-                    FullName = u.FullName,
+                    Email = u.Email ?? string.Empty,
+                    FullName = u.FullName ?? string.Empty,
                     PhoneNumber = u.PhoneNumber,
                     Address = u.Address,
                     DateOfBirth = u.DateOfBirth,
                     Gender = u.Gender,
-                    Status = u.Status,
+                    Status = u.Status ?? "active",
                     CreatedAt = u.CreatedAt,
                     Roles = u.UserRoles.Select(ur => ur.Role.RoleName).ToList()
                 })
@@ -147,7 +177,101 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
             return CreatedAtAction("GetUser", new { id = user.UserId }, createdUser);
         }
 
-        // Các method PUT, DELETE giữ nguyên...
+        // POST: api/Users/Login
+        [HttpPost("Login")]
+        public async Task<ActionResult<LoginResponseDTO>> Login(LoginDTO loginDTO)
+        {
+            if (string.IsNullOrEmpty(loginDTO.Email) || string.IsNullOrEmpty(loginDTO.Password))
+            {
+                return BadRequest(new { message = "Email and password are required" });
+            }
+
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Email == loginDTO.Email);
+
+            if (user == null)
+            {
+                return Unauthorized(new { message = "Invalid email or password" });
+            }
+
+            // Verify password using BCrypt
+            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDTO.Password, user.PasswordHash);
+            if (!isPasswordValid)
+            {
+                return Unauthorized(new { message = "Invalid email or password" });
+            }
+
+            // Check if user is active
+            if (user.Status != "active")
+            {
+                return Unauthorized(new { message = "Account is not active. Please contact administrator." });
+            }
+
+            // Update last active for student
+            var student = await _context.Students.FindAsync(user.UserId);
+            if (student != null)
+            {
+                student.LastActive = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+
+            // For now, return basic response. We'll add JWT token later
+            var response = new LoginResponseDTO
+            {
+                UserId = user.UserId,
+                Email = user.Email ?? string.Empty,
+                FullName = user.FullName ?? string.Empty,
+                Roles = user.UserRoles.Select(ur => ur.Role.RoleName).ToList(),
+                ExpiresAt = DateTime.UtcNow.AddHours(24) // 24 hours session
+            };
+
+            return Ok(response);
+        }
+
+        // POST: api/Users/5/ChangePassword
+        [HttpPost("{id}/ChangePassword")]
+        public async Task<IActionResult> ChangePassword(int id, ChangePasswordDTO changePasswordDTO)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { message = $"User with ID {id} not found" });
+            }
+
+            // Verify current password using BCrypt
+            bool isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(changePasswordDTO.CurrentPassword, user.PasswordHash);
+            if (!isCurrentPasswordValid)
+            {
+                return BadRequest(new { message = "Current password is incorrect" });
+            }
+
+            // Hash new password using BCrypt
+            string newPasswordHash = BCrypt.Net.BCrypt.HashPassword(changePasswordDTO.NewPassword);
+            user.PasswordHash = newPasswordHash;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Password changed successfully" });
+        }
+
+        // POST: api/Users/CheckEmail
+        [HttpPost("CheckEmail")]
+        public async Task<ActionResult> CheckEmail([FromBody] string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest(new { message = "Email is required" });
+            }
+
+            var emailExists = await _context.Users.AnyAsync(u => u.Email == email);
+
+            return Ok(new { emailExists = emailExists });
+        }
+
+        // PUT: api/Users/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, UserUpdateDTO userUpdateDTO)
         {
@@ -188,6 +312,7 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
             return NoContent();
         }
 
+        // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

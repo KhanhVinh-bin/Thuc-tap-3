@@ -132,31 +132,22 @@ export function CartProvider({ children }) {
 
   // Load cart from localStorage (for guest users)
   const loadCartFromLocalStorage = () => {
-    const savedCart = localStorage.getItem("cart")
-    if (savedCart) {
-      try {
-        const parsedCart = JSON.parse(savedCart)
-        // Convert localStorage format to API format
-        const formattedCart = {
-          cartItems: parsedCart.map(item => ({
-            course: {
-              courseId: item.id,
-              title: item.title,
-              thumbnailUrl: item.image,
-              price: item.price,
-              instructorName: item.instructor
-            },
-            quantity: item.quantity || 1
-          })),
-          totalAmount: parsedCart.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0),
-          totalItems: parsedCart.reduce((total, item) => total + (item.quantity || 1), 0)
-        }
-        dispatch({ type: CART_ACTIONS.LOAD_CART, payload: formattedCart })
-      } catch (error) {
-        console.error("Error loading cart from localStorage:", error)
-      }
+  try {
+    const storedCart = localStorage.getItem("cart");
+    const parsedCart = storedCart ? JSON.parse(storedCart) : [];
+
+    // Nếu không phải mảng, reset lại
+    if (!Array.isArray(parsedCart)) {
+      localStorage.removeItem("cart");
+      return [];
     }
+
+    return parsedCart;
+  } catch (error) {
+    console.error("Error loading cart from localStorage:", error);
+    return [];
   }
+};
 
   // Save cart to localStorage for guest users
   const saveCartToLocalStorage = () => {

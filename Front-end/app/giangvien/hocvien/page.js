@@ -88,15 +88,6 @@ export default function GiangVienHocVienPage() {
           </div>
         </div>
         <div className="gv-topbar-right">
-          <div className="gv-notice" title="Thông báo">
-            <span className="gv-bell" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2z" fill="#f59e0b" />
-                <path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 2h16l-2-2z" fill="#f59e0b" />
-              </svg>
-            </span>
-            <span className="gv-badge">4</span>
-          </div>
           <div className="gv-avatar" title="Tài khoản">
             <span className="gv-presence" />
           </div>

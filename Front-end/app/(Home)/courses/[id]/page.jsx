@@ -195,12 +195,31 @@ export default function CourseDetailPage() {
     }, 100)
   }, [params.id])
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     if (!isAuthenticated) {
       const redirectUrl = `/thanhtoan?courseId=${course.id}`
       router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`)
-    } else {
-      router.push(`/thanhtoan?courseId=${course.id}`)
+      return
+    }
+
+    try {
+      // Add course to cart via API before redirecting to payment
+      const cartItem = {
+        id: course.id,
+        title: course.title,
+        instructor: course.instructor.name,
+        price: parseFloat(course.price.replace(/[^\d]/g, '')),
+        image: course.image
+      }
+      
+      // Add to cart using the cart context which will call the API
+      await addToCart(cartItem)
+      
+      // Redirect to payment page with course ID for immediate purchase
+      router.push(`/thanhtoan?courseId=${course.id}&buyNow=true`)
+    } catch (error) {
+      console.error("Error adding course to cart:", error)
+      alert("Có lỗi xảy ra khi thêm khóa học vào giỏ hàng. Vui lòng thử lại!")
     }
   }
 
@@ -657,66 +676,7 @@ export default function CourseDetailPage() {
               </div>
             )}
 
-            {/* Overview Tab */}
-            {activeTab === "overview" && (
-              <div>
-                {/* Course Description */}
-                <div className="bg-white rounded-xl shadow-md p-8 mb-8 fade-in-element">
-                  <h2 className="text-2xl font-bold mb-6">Mô tả khóa học</h2>
-                  <div className="prose max-w-none">
-                    <p className="text-gray-700 leading-relaxed text-lg">
-                      {course?.description || 'Khóa học này sẽ cung cấp cho bạn những kiến thức cơ bản và nâng cao trong lĩnh vực lập trình.'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* What you'll learn */}
-                <div className="bg-white rounded-xl shadow-md p-8 mb-8 fade-in-element">
-                  <h2 className="text-2xl font-bold mb-6">Bạn sẽ học được gì?</h2>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="flex items-start gap-3">
-                      <span className="text-green-500 text-xl flex-shrink-0">✓</span>
-                      <span className="text-gray-700">Nắm vững các khái niệm cơ bản và nâng cao</span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="text-green-500 text-xl flex-shrink-0">✓</span>
-                      <span className="text-gray-700">Thực hành với các dự án thực tế</span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="text-green-500 text-xl flex-shrink-0">✓</span>
-                      <span className="text-gray-700">Phát triển kỹ năng giải quyết vấn đề</span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <span className="text-green-500 text-xl flex-shrink-0">✓</span>
-                      <span className="text-gray-700">Chuẩn bị cho các dự án chuyên nghiệp</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Course Info */}
-                <div className="bg-white rounded-xl shadow-md p-8 mb-8 fade-in-element">
-                  <h2 className="text-2xl font-bold mb-6">Thông tin khóa học</h2>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-2">Cấp độ</h3>
-                      <p className="text-gray-700">{course?.level}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-2">Ngôn ngữ</h3>
-                      <p className="text-gray-700">{course?.language}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-2">Thời lượng</h3>
-                      <p className="text-gray-700">{course?.duration}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-2">Danh mục</h3>
-                      <p className="text-gray-700">{course?.category}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+          
 
             {/* Content Tab */}
             {activeTab === "content" && (
@@ -867,5 +827,3 @@ export default function CourseDetailPage() {
   )
   
 }
-
-

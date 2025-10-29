@@ -6,16 +6,20 @@ import Image from "next/image"
 import { useSearchParams, useRouter } from "next/navigation"
 import { ArrowLeft, CreditCard, Building2 } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
+import { useAuth } from "@/lib/auth-context"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { getCourseById } from "@/app/(Home)/Data/mockCourses"
+import { getCourseById, formatCourseData, createOrder } from "@/lib/api"
 
 export default function CheckoutPage() {
 const { cart, getCartTotal, clearCart } = useCart()
+const { isAuthenticated, user } = useAuth()
 const router = useRouter()
 const searchParams = useSearchParams()
 const courseId = searchParams.get("courseId") // 🔥 kiểm tra xem có courseId không
+const isBuyNow = searchParams.get("buyNow") === "true" // Check for buyNow parameter
 const [singleCourse, setSingleCourse] = useState(null) // 🔥 lưu khóa học mua ngay
+const [loading, setLoading] = useState(false) // Loading state for API calls
 const [paymentMethod, setPaymentMethod] = useState("ewallet")
 const [formData, setFormData] = useState({
 email: "",
@@ -23,6 +27,14 @@ fullName: "",
 phone: "",
 })
 const [errors, setErrors] = useState({})
+
+// Authentication check - redirect to login if not authenticated
+useEffect(() => {
+  if (!isAuthenticated) {
+    const currentUrl = window.location.pathname + window.location.search
+    router.push(`/login?redirect=${encodeURIComponent(currentUrl)}`)
+  }
+}, [isAuthenticated, router])
 
 const formatPrice = (price) => {
 return new Intl.NumberFormat("vi-VN").format(price) + " đ"
@@ -41,20 +53,33 @@ if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
 return imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
 }
 
-// 🔥 Khi có courseId (mua ngay), lấy thông tin khóa học
+// 🔥 Khi có courseId (mua ngay), lấy thông tin khóa học từ API
 useEffect(() => {
+const fetchCourseData = async () => {
 if (courseId) {
-const foundCourse = getCourseById(courseId)
-if (foundCourse) {
+try {
+setLoading(true)
+const courseData = await getCourseById(courseId)
+if (courseData) {
+const formattedCourse = formatCourseData(courseData)
 setSingleCourse({
-id: foundCourse.id,
-title: foundCourse.title,
-price: parseFloat(foundCourse.price.replace(/[^\d]/g, "")),
-image: foundCourse.image,
+id: formattedCourse.id,
+title: formattedCourse.title,
+price: parseFloat(formattedCourse.price.replace(/[^\d]/g, "")),
+image: formattedCourse.image,
 quantity: 1,
 })
 }
+} catch (error) {
+console.error("Error fetching course:", error)
+alert("Không thể tải thông tin khóa học")
+} finally {
+setLoading(false)
 }
+}
+}
+
+fetchCourseData()
 }, [courseId])
 
 const validateForm = () => {
@@ -66,18 +91,108 @@ setErrors(newErrors)
 return Object.keys(newErrors).length === 0
 }
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
 e.preventDefault()
 if (validateForm()) {
-alert("Thanh toán thành công!")
+try {
+setLoading(true)
 
-  // 🔥 Nếu là mua ngay thì không cần clear giỏ
-  if (!singleCourse) clearCart()
-
-  router.push("/")
+// Check if user is authenticated
+if (!isAuthenticated || !user) {
+alert("Vui lòng đăng nhập để hoàn tất thanh toán!")
+router.push("/login")
+return
 }
 
+// Simulate payment processing
+await new Promise(resolve => setTimeout(resolve, 1000))
 
+// Prepare order data for API
+const orderItems = singleCourse ? [singleCourse] : cart
+const orderData = {
+userId: user.userId || user.id,
+customerName: formData.fullName,
+customerEmail: formData.email,
+customerPhone: formData.phone,
+paymentMethod: paymentMethod,
+totalAmount: singleCourse ? singleCourse.price : getCartTotal(),
+status: "Completed",
+orderItems: orderItems.map(item => ({
+courseId: item.id || item.courseId,
+quantity: item.quantity || 1,
+price: item.price
+}))
+}
+
+// Create order via API
+try {
+const createdOrder = await createOrder(orderData)
+console.log("Order created successfully:", createdOrder)
+} catch (apiError) {
+console.warn("Order API not available, proceeding with local processing:", apiError)
+}
+
+// Show success message
+alert("Thanh toán thành công! Cảm ơn bạn đã mua khóa học.")
+
+// Clear cart if it's not a direct purchase
+if (!singleCourse) {
+clearCart()
+}
+
+// Redirect to success page or home
+router.push("/")
+} catch (error) {
+console.error("Payment error:", error)
+alert("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại!")
+} finally {
+setLoading(false)
+}
+}
+}
+
+// Show loading state
+if (loading) {
+return (
+<>
+<Header />
+<div className="flex flex-col items-center justify-center min-h-screen">
+<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+<p className="mt-4 text-gray-600">Đang xử lý...</p>
+</div>
+<Footer />
+</>
+)
+}
+
+// Check authentication
+if (!isAuthenticated) {
+return (
+<>
+<Header />
+<div className="flex flex-col items-center justify-center min-h-screen">
+<p className="text-lg mb-4">Vui lòng đăng nhập để tiếp tục thanh toán</p>
+<Link href="/login" className="bg-blue-600 text-white px-4 py-2 rounded-md">
+Đăng nhập
+</Link>
+</div>
+<Footer />
+</>
+)
+}
+
+// Show loading state
+if (loading) {
+return (
+<>
+<Header />
+<div className="flex flex-col items-center justify-center min-h-screen">
+<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+<p className="mt-4 text-gray-600">Đang xử lý...</p>
+</div>
+<Footer />
+</>
+)
 }
 
 // 🔥 Kiểm tra trường hợp không có gì để thanh toán
@@ -177,9 +292,14 @@ return (
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700"
+          disabled={loading}
+          className={`w-full py-3 rounded-md transition-colors ${
+            loading 
+              ? "bg-gray-400 cursor-not-allowed" 
+              : "bg-blue-600 hover:bg-blue-700"
+          } text-white`}
         >
-          Hoàn tất thanh toán
+          {loading ? "Đang xử lý..." : "Hoàn tất thanh toán"}
         </button>
       </form>
 

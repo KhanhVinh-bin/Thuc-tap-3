@@ -171,9 +171,31 @@ class ApiService {
   }
 
   async addToCart(addToCartData) {
-    return this.fetchData("/Carts/AddToCart", {
+    // First, get or create a cart for the user
+    let cartId = addToCartData.cartId
+    
+    if (!cartId) {
+      // Get user's cart or create one if it doesn't exist
+      try {
+        const userCart = await this.getCartByUser(addToCartData.userId)
+        cartId = userCart.cartId
+      } catch (error) {
+        // If no cart exists, create one
+        const newCart = await this.createCart({ userId: addToCartData.userId })
+        cartId = newCart.cartId
+      }
+    }
+
+    // Add item to cart using CartItems endpoint
+    const cartItemData = {
+      cartId: cartId,
+      courseId: addToCartData.courseId,
+      quantity: addToCartData.quantity || 1
+    }
+
+    return this.fetchData("/CartItems", {
       method: "POST",
-      body: JSON.stringify(addToCartData),
+      body: JSON.stringify(cartItemData),
     })
   }
 
@@ -203,9 +225,16 @@ class ApiService {
   }
 
   async createCartItem(cartItemData) {
+    // Ensure the data structure matches CartItemCreateDTO
+    const createData = {
+      cartId: cartItemData.cartId,
+      courseId: cartItemData.courseId,
+      quantity: cartItemData.quantity || 1
+    }
+
     return this.fetchData("/CartItems", {
       method: "POST",
-      body: JSON.stringify(cartItemData),
+      body: JSON.stringify(createData),
     })
   }
 
@@ -237,6 +266,29 @@ class ApiService {
   async decreaseCartItemQuantity(cartItemId) {
     return this.fetchData(`/CartItems/${cartItemId}/Decrease`, {
       method: "PATCH",
+    })
+  }
+
+  // Order API methods
+  async createOrder(orderData) {
+    return this.fetchData("/Orders", {
+      method: "POST",
+      body: JSON.stringify(orderData),
+    })
+  }
+
+  async getOrderById(orderId) {
+    return this.fetchData(`/Orders/${orderId}`)
+  }
+
+  async getOrdersByUser(userId) {
+    return this.fetchData(`/Orders/ByUser/${userId}`)
+  }
+
+  async updateOrderStatus(orderId, status) {
+    return this.fetchData(`/Orders/${orderId}/Status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
     })
   }
 }
@@ -349,4 +401,10 @@ export const deleteCartItem = apiService.deleteCartItem.bind(apiService)
 export const deleteCartItemByCartAndCourse = apiService.deleteCartItemByCartAndCourse.bind(apiService)
 export const increaseCartItemQuantity = apiService.increaseCartItemQuantity.bind(apiService)
 export const decreaseCartItemQuantity = apiService.decreaseCartItemQuantity.bind(apiService)
+
+// Order API exports
+export const createOrder = apiService.createOrder.bind(apiService)
+export const getOrderById = apiService.getOrderById.bind(apiService)
+export const getOrdersByUser = apiService.getOrdersByUser.bind(apiService)
+export const updateOrderStatus = apiService.updateOrderStatus.bind(apiService)
 

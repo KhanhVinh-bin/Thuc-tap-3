@@ -1,0 +1,533 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\ordervsorderdetaildtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\ordervsorderdetaildtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\models\\duandbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\models\\duandbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\schedulescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\schedulescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\scheduledtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\scheduledtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\messagescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\messagescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\messagedtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\messagedtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\feedbackscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\feedbackscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\feedbackdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\feedbackdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\paymentdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\paymentdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\orderdetailscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\orderdetailscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\certificatescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\certificatescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\cartitemscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\cartitemscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\cartscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\cartscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\cartvscartitemdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\cartvscartitemdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\commondtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\commondtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\reviewscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\reviewscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\submissiondto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\submissiondto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\lessondto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\lessondto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\reviewdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\reviewdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\enrollmentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\enrollmentdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\dtos\\certificatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\dtos\\certificatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\submissionscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\submissionscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\models\\submission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\models\\submission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|d:\\thuc-tap-2\\back-end\\duanwebbankhoahocapi\\duanwebbankhoahocapi\\controllers\\coursescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0AD98BDA-D392-4E54-AB36-E473B70DD251}|DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI.csproj|solutionrelative:duanwebbankhoahocapi\\controllers\\coursescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Properties\\launchSettings.json",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Properties\\launchSettings.json",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-28T06:08:57.058Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MessageDTOs.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\MessageDTOs.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\MessageDTOs.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\MessageDTOs.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\MessageDTOs.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAA3wCMAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:51:57.058Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "FeedbacksController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\FeedbacksController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\FeedbacksController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\FeedbacksController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\FeedbacksController.cs",
+              "ViewState": "AgIAAHUBAAAAAAAAAAAgwIsBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:46:51.748Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "FeedbackDTOs.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\FeedbackDTOs.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\FeedbackDTOs.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\FeedbackDTOs.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\FeedbackDTOs.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAA3wBUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:46:32.715Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UsersController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\UsersController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\UsersController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\UsersController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\UsersController.cs",
+              "ViewState": "AgIAADMBAAAAAAAAAAAkwDQBAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-21T08:41:11.946Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\appsettings.json",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\appsettings.json",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAB0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-21T08:36:31.646Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DuAnDbContext.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Models\\DuAnDbContext.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Models\\DuAnDbContext.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Models\\DuAnDbContext.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Models\\DuAnDbContext.cs",
+              "ViewState": "AgIAAEAAAAAAAAAAAADwv08AAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-21T08:34:29.163Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "OrdervsOrderDetailDTOs.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\OrdervsOrderDetailDTOs.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\OrdervsOrderDetailDTOs.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\OrdervsOrderDetailDTOs.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\OrdervsOrderDetailDTOs.cs",
+              "ViewState": "AgIAAD0AAAAAAAAAAAAwwDYAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:22:58.469Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MessagesController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\MessagesController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\MessagesController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\MessagesController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\MessagesController.cs",
+              "ViewState": "AgIAAJwBAAAAAAAAAAAgwKgBAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:52:25.54Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ScheduleDTOs.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\ScheduleDTOs.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\ScheduleDTOs.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\ScheduleDTOs.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\ScheduleDTOs.cs",
+              "ViewState": "AgIAACwAAAAAAAAAAAA4wCYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:57:06.693Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SchedulesController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\SchedulesController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\SchedulesController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\SchedulesController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\SchedulesController.cs",
+              "ViewState": "AgIAABACAAAAAAAAAAAAwBkCAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:57:31.284Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "UserDTO.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\UserDTO.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\UserDTO.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\UserDTO.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\UserDTO.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAywBsAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-28T03:47:03.402Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "PaymentsController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\PaymentsController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\PaymentsController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\PaymentsController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\PaymentsController.cs",
+              "ViewState": "AgIAAFoBAAAAAAAAAAAgwGcBAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:36:40.988Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "PaymentDTOs.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\PaymentDTOs.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\PaymentDTOs.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\PaymentDTOs.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\PaymentDTOs.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAA2wB8AAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:36:15.092Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "OrderDetailsController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\OrderDetailsController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\OrderDetailsController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\OrderDetailsController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\OrderDetailsController.cs",
+              "ViewState": "AgIAAKIAAAAAAAAAAAAAwK8AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:26:09.388Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "OrdersController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\OrdersController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\OrdersController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\OrdersController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\OrdersController.cs",
+              "ViewState": "AgIAAAoCAAAAAAAAAAAgwB4CAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:23:32.797Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "CartItemsController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\CartItemsController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\CartItemsController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\CartItemsController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\CartItemsController.cs",
+              "ViewState": "AgIAABkBAAAAAAAAAAAswCwBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:15:29.045Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "CartsController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\CartsController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\CartsController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\CartsController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\CartsController.cs",
+              "ViewState": "AgIAAO8AAAAAAAAAAAAYwHEBAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:13:38.186Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "CartvsCartItemDTOs.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\CartvsCartItemDTOs.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\CartvsCartItemDTOs.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\CartvsCartItemDTOs.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\CartvsCartItemDTOs.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACgAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:13:13.724Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "EnrollmentDTO.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\EnrollmentDTO.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\EnrollmentDTO.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\EnrollmentDTO.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\EnrollmentDTO.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAvwDkAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T09:01:13.725Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "LessonDTO.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\LessonDTO.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\LessonDTO.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\LessonDTO.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\LessonDTO.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAkwC4AAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T08:55:37.955Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "CommonDTOs.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\CommonDTOs.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\CommonDTOs.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\CommonDTOs.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\CommonDTOs.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T08:55:56.103Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "ReviewsController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\ReviewsController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\ReviewsController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\ReviewsController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\ReviewsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAOoBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T03:38:11.605Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "ReviewDTOs.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\ReviewDTOs.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\ReviewDTOs.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\ReviewDTOs.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\ReviewDTOs.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T03:37:42.715Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "CertificatesController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\CertificatesController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\CertificatesController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\CertificatesController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\CertificatesController.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAEwCAAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T02:37:41.302Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "CertificateDTO.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\CertificateDTO.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\CertificateDTO.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\CertificateDTO.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\CertificateDTO.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAjwA0AAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-23T02:36:10.977Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "SubmissionsController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\SubmissionsController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\SubmissionsController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\SubmissionsController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\SubmissionsController.cs",
+              "ViewState": "AgIAAEICAAAAAAAAAAAqwGUCAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-22T09:42:21.481Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "Submission.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Models\\Submission.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Models\\Submission.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Models\\Submission.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Models\\Submission.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAowCAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-22T09:41:03.389Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "SubmissionDTO.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\SubmissionDTO.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\DTOs\\SubmissionDTO.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\DTOs\\SubmissionDTO.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\DTOs\\SubmissionDTO.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAgwBUAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-22T09:40:33.617Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "TestController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\TestController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\TestController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\TestController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\TestController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-21T08:43:00.631Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "CoursesController.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\CoursesController.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Controllers\\CoursesController.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Controllers\\CoursesController.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Controllers\\CoursesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAANAAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-21T08:41:57.194Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Program.cs",
+              "RelativeDocumentMoniker": "DuAnWebBanKhoaHocAPI\\Program.cs",
+              "ToolTip": "D:\\thuc-tap-2\\Back-end\\DuAnWebBanKhoaHocAPI\\DuAnWebBanKhoaHocAPI\\Program.cs",
+              "RelativeToolTip": "DuAnWebBanKhoaHocAPI\\Program.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAUwDIAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-21T08:36:04.882Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

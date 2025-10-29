@@ -8,6 +8,31 @@ import { useState } from "react";
 
 export default function GiangVienCaiDatPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [currentPw, setCurrentPw] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [attempted, setAttempted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const isValid = currentPw && newPw && confirmPw && newPw.length >= 8 && newPw === confirmPw && newPw !== currentPw;
+
+  const handleChangePassword = async () => {
+    setAttempted(true);
+    if (!isValid) return;
+    try {
+      setLoading(true);
+      // TODO: Tích hợp API thật để đổi mật khẩu
+      await new Promise(r => setTimeout(r, 800));
+      alert("Đổi mật khẩu thành công.");
+      setCurrentPw("");
+      setNewPw("");
+      setConfirmPw("");
+      setAttempted(false);
+    } catch (e) {
+      alert("Có lỗi xảy ra, vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className={`gv-dashboard-root ${sidebarCollapsed ? "collapsed" : ""}`}>
       {/* Header/topbar */}
@@ -45,15 +70,6 @@ export default function GiangVienCaiDatPage() {
           </div>
         </div>
         <div className="gv-topbar-right">
-          <div className="gv-notify" title="Thông báo">
-            <span className="gv-bell-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2z" fill="#f59e0b" />
-                <path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 2h16l-2-2z" fill="#f59e0b" />
-              </svg>
-            </span>
-            <span className="gv-badge">4</span>
-          </div>
           <div className="gv-avatar" title="Tài khoản">
             <span className="gv-presence" />
           </div>
@@ -251,7 +267,16 @@ export default function GiangVienCaiDatPage() {
                   </span>
                   Mật khẩu hiện tại
                 </div>
-                <input type="password" className="st-input" placeholder="••••••••" />
+                <input
+                  type="password"
+                  className={`st-input ${attempted && !currentPw ? "is-invalid" : ""}`}
+                  placeholder="••••••••"
+                  value={currentPw}
+                  onChange={(e)=>setCurrentPw(e.target.value)}
+                />
+                {attempted && !currentPw && (
+                  <div className="st-error">Vui lòng nhập mật khẩu hiện tại</div>
+                )}
               </div>
 
               <div className="st-field">
@@ -261,7 +286,19 @@ export default function GiangVienCaiDatPage() {
                   </span>
                   Mật khẩu mới
                 </div>
-                <input type="password" className="st-input" placeholder="Nhập mật khẩu mới" />
+                <input
+                  type="password"
+                  className={`st-input ${attempted && (newPw.length < 8 || newPw === currentPw) ? "is-invalid" : ""}`}
+                  placeholder="Nhập mật khẩu mới"
+                  value={newPw}
+                  onChange={(e)=>setNewPw(e.target.value)}
+                />
+                {attempted && newPw.length < 8 && (
+                  <div className="st-error">Mật khẩu mới phải tối thiểu 8 ký tự</div>
+                )}
+                {attempted && newPw === currentPw && (
+                  <div className="st-error">Mật khẩu mới không được trùng mật khẩu hiện tại</div>
+                )}
               </div>
 
               <div className="st-field">
@@ -271,11 +308,26 @@ export default function GiangVienCaiDatPage() {
                   </span>
                   Xác nhận lại mật khẩu
                 </div>
-                <input type="password" className="st-input" placeholder="Nhập lại mật khẩu" />
+                <input
+                  type="password"
+                  className={`st-input ${attempted && confirmPw !== newPw ? "is-invalid" : ""}`}
+                  placeholder="Nhập lại mật khẩu"
+                  value={confirmPw}
+                  onChange={(e)=>setConfirmPw(e.target.value)}
+                />
+                {attempted && confirmPw !== newPw && (
+                  <div className="st-error">Xác nhận mật khẩu không khớp</div>
+                )}
               </div>
 
               <div className="st-actions">
-                <button className="st-btn">Đổi mật khẩu</button>
+                <button
+                  className="st-btn"
+                  disabled={!isValid || loading}
+                  onClick={handleChangePassword}
+                >
+                  {loading ? "Đang xử lý..." : "Đổi mật khẩu"}
+                </button>
               </div>
             </div>
           </section>

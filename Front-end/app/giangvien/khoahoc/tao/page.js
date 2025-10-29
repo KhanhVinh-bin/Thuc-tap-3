@@ -5,7 +5,7 @@
 import "../tao/page.css"       // import global CSS từ trang “tạo”
 import "./page.css"            // import CSS hiện tại
 
-import { useState, useRef } from "react"
+import { useState, useRef, useMemo } from "react"
 import { useRouter } from "next/navigation"
 
 
@@ -17,6 +17,11 @@ export default function TaoKhoaHocPage() {
   const [category, setCategory] = useState("")
   const [lang, setLang] = useState("vi")
   const [thumbPreview, setThumbPreview] = useState("")
+  const [attempted, setAttempted] = useState(false)
+
+  const isValidBasic = useMemo(() => {
+    return title.trim() !== "" && desc.trim() !== "" && category !== ""
+  }, [title, desc, category])
 
   const handleChooseFile = () => fileRef.current?.click()
   const handleFileChange = (e) => {
@@ -74,13 +79,15 @@ export default function TaoKhoaHocPage() {
 
           <label className="gvc-field">
             <div className="gvc-label">Tiêu đề khóa học <span className="req">*</span></div>
-            <input className="gvc-input" value={title} onChange={(e)=>setTitle(e.target.value)} placeholder="VD: Lập trình React cơ bản đến nâng cao" />
+            <input className={`gvc-input ${attempted && title.trim()==="" ? "is-invalid" : ""}`} value={title} onChange={(e)=>setTitle(e.target.value)} placeholder="VD: Lập trình React cơ bản đến nâng cao" />
+            {attempted && title.trim()==="" && (<div className="gvc-error">Vui lòng nhập tiêu đề khóa học</div>)}
             <div className="gvc-hint"><span className="gvc-hint-icon">💡</span><span>Tiêu đề hấp dẫn sẽ thu hút nhiều học viên hơn</span></div>
           </label>
 
           <label className="gvc-field">
             <div className="gvc-label">Mô tả khóa học <span className="req">*</span></div>
-            <textarea className="gvc-textarea" value={desc} onChange={(e)=>setDesc(e.target.value)} placeholder="Mô tả ngắn gọn về nội dung và lợi ích của khóa học..." />
+            <textarea className={`gvc-textarea ${attempted && desc.trim()==="" ? "is-invalid" : ""}`} value={desc} onChange={(e)=>setDesc(e.target.value)} placeholder="Mô tả ngắn gọn về nội dung và lợi ích của khóa học..." />
+            {attempted && desc.trim()==="" && (<div className="gvc-error">Vui lòng nhập mô tả khóa học</div>)}
             <div className="gvc-hint"><span className="gvc-hint-icon">💡</span><span>Mô tả chi tiết giúp học viên hiểu rõ hơn về khóa học</span></div>
           </label>
 
@@ -88,13 +95,14 @@ export default function TaoKhoaHocPage() {
             <label className="gvc-field">
               <div className="gvc-label">Danh mục <span className="req">*</span></div>
               <div className="gvc-select-wrap">
-                <select className={`gvc-select ${category === "" ? "placeholder" : ""}`} value={category} onChange={(e)=>setCategory(e.target.value)}>
+                <select className={`gvc-select ${category === "" ? "placeholder" : ""} ${attempted && category === "" ? "is-invalid" : ""}`} value={category} onChange={(e)=>setCategory(e.target.value)}>
                   <option value="">Chọn danh mục</option>
                   <option value="dev">Lập trình</option>
                   <option value="design">Thiết kế</option>
                   <option value="marketing">Marketing</option>
                 </select>
               </div>
+              {attempted && category === "" && (<div className="gvc-error">Vui lòng chọn danh mục</div>)}
             </label>
            
           </div>
@@ -127,7 +135,19 @@ export default function TaoKhoaHocPage() {
         <div className="gvc-footer-inner">
           <button className="gvc-btn ghost" type="button" onClick={() => router.push('/giangvien/khoahoc')}>Quay lại</button>
           <div className="gvc-step-info">Bước 1 / 4</div>
-          <button className="gvc-btn primary" onClick={() => router.push("/giangvien/khoahoc/chitiet")}>Tiếp tục →</button>
+          <button
+            className="gvc-btn primary"
+            disabled={!isValidBasic}
+            onClick={() => {
+              if (!isValidBasic) {
+                setAttempted(true)
+                return
+              }
+              router.push("/giangvien/khoahoc/chitiet")
+            }}
+          >
+            Tiếp tục →
+          </button>
         </div>
       </div>
     </div>

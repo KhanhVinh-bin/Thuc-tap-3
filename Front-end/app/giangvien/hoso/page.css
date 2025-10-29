@@ -495,30 +495,16 @@
 }
 
 @media (max-width: 768px) {
-  .gv-dashboard {
-    flex-direction: column;
-  }
-  
-  .gv-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  
+  /* Giữ sidebar bên trái, không đẩy xuống dưới */
+  .gv-dashboard { flex-direction: row; }
+  .gv-sidebar { width: 260px; border-right: 1px solid #e2e8f0; border-bottom: none; }
+
+  /* Nội dung vẫn responsive */
   .info-grid,
-  .social-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .profile-header {
-    flex-direction: column;
-    gap: 16px;
-    align-items: stretch;
-  }
-  
-  .profile-tabs {
-    justify-content: center;
-  }
+  .social-grid { grid-template-columns: 1fr; }
+
+  .profile-header { flex-direction: column; gap: 16px; align-items: stretch; }
+  .profile-tabs { justify-content: center; }
 }
 
 .edit-actions { display:flex; align-items:center; gap:8px; }
