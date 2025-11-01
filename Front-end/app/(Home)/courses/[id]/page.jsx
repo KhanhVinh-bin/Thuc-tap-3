@@ -1,205 +1,189 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import AuthModal from "@/components/auth-modal"
-import { getCourseById, formatCourseData, getReviewsByCourse, createReview } from "@/lib/api"
-import { useCart } from "@/lib/cart-context"
-import { useAuth } from "@/lib/auth-context"
 import TongQuan from "@/components/courseid/tongquan"
 import NoiDung from "@/components/courseid/noidung"
 import KhGiangVien from "@/components/courseid/khgiangvien"
 import DanhGia from "@/components/courseid/danhgia"
-import { addToCartAPI } from "@/lib/api"
+
+import {
+  getCourseById,
+  formatCourseData,
+  getReviewsByCourse,
+  createReview,
+  addToCartAPI,
+} from "@/lib/api"
+
+import { useCart } from "@/lib/cart-context"
+import { useAuth } from "@/lib/auth-context"
 
 
 export default function CourseDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const { addToCart, isInCart } = useCart()
+
+  // contexts
+  const { addToCart: addToCartContext, isInCart } = useCart()
   const { isAuthenticated, user } = useAuth()
+
+  // UI state
   const [showAuthModal, setShowAuthModal] = useState(false)
-  const [imageLoaded, setImageLoaded] = useState(false) 
+  const [imageLoaded, setImageLoaded] = useState(false)
   const [activeTab, setActiveTab] = useState("overview")
+
+  // course state
   const [course, setCourse] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  // review state
   const [rating, setRating] = useState(0)
-  const [reviewContent, setReviewContent] = useState("")
   const [hoveredStar, setHoveredStar] = useState(0)
+  const [reviewContent, setReviewContent] = useState("")
   const [submittingReview, setSubmittingReview] = useState(false)
   const [reviews, setReviews] = useState([])
   const [reviewsLoading, setReviewsLoading] = useState(true)
-const [reviewStats, setReviewStats] = useState({
-  average: 0,
-  total: 0,
-  stars: [0, 0, 0, 0, 0],
-})
+  const [reviewStats, setReviewStats] = useState({
+    average: 0,
+    total: 0,
+    stars: [0,0,0,0,0]
+  })
 
-  const [error, setError] = useState(null)
+  // Ensure tab resets when switching to a different course ID
+  useEffect(() => {
+    setActiveTab("overview")
+  }, [params?.id])
 
-  const handleSubmitReview = async (e) => {
-  e.preventDefault();
-
-  if (!reviewContent.trim()) {
-    alert("Vui lòng nhập nội dung đánh giá!");
-    return;
-  }
-
-  if (!rating || rating < 1 || rating > 5) {
-    alert("Vui lòng chọn số sao từ 1 đến 5!");
-    return;
-  }
-
-  if (reviewContent.trim().length < 10) {
-    alert("Nội dung đánh giá ít nhất 10 ký tự!");
-    return;
-  }
-
-  try {
-    setSubmittingReview(true);
-
-    // ✅ body gửi lên (PascalCase cho .NET)
-    const reviewData = {
-      CourseId: parseInt(course.id),
-      UserId: user?.userId || 1,
-      Rating: rating,
-      Comment: reviewContent.trim(),
-    };
-
-    console.log("Body gửi lên:", reviewData);
-
-    const res = await fetch("https://localhost:7025/api/Reviews", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(reviewData),
-    });
-
-    const text = await res.text(); // debug
-    console.log("Response raw:", text);
-
-    if (!res.ok) {
-      throw new Error(`Lỗi ${res.status}: ${text}`);
-    }
-
-    alert("✅ Đánh giá đã được gửi thành công!");
-    setReviewContent("");
-    setRating(0);
-  } catch (err) {
-    console.error("❌ Lỗi khi gửi đánh giá:", err);
-    alert("Gửi đánh giá thất bại, vui lòng thử lại!");
-  } finally {
-    setSubmittingReview(false);
-  }
-};
-
-
-  // Hàm tải reviews từ API
-  const loadReviews = async () => {
+  // Helper to load reviews (separate, can be reused)
+  const loadReviews = async (courseId) => {
     try {
       setReviewsLoading(true)
-      const courseId = params.id
-      
-      // Gọi API để lấy reviews của khóa học
       const reviewsData = await getReviewsByCourse(courseId)
-      
       if (reviewsData) {
-        // Format reviews data để phù hợp với UI
-        const formattedReviews = reviewsData.reviews.map(review => ({
-          id: review.reviewId,
+        const formattedReviews = (reviewsData.reviews || []).map(r => ({
+          id: r.reviewId ?? r.id,
           user: {
-            name: review.user.fullName || 'Người dùng',
-            avatar: review.user.avatarUrl || '/placeholder-user.jpg'
+            name: (r.user && (r.user.fullName || r.user.name)) || "Người dùng",
+            avatar: (r.user && (r.user.avatarUrl || r.user.avatar)) || "/placeholder-user.jpg"
           },
-          rating: review.rating,
-          content: review.comment,
-          date: new Date(review.createdAt).toLocaleDateString('vi-VN')
+          rating: r.rating ?? r.Rating ?? 0,
+          content: r.comment ?? r.Comment ?? "",
+          date: r.createdAt ? new Date(r.createdAt).toLocaleDateString('vi-VN') : (r.createdAtString || "")
         }))
-        
         setReviews(formattedReviews)
-        setReviewStats(reviewsData.stats)
+        if (reviewsData.stats) setReviewStats(reviewsData.stats)
+      } else {
+        setReviews([])
+        setReviewStats({ average: 0, total: 0, stars: [0,0,0,0,0] })
       }
-    } catch (error) {
-      console.error('Error fetching reviews:', error)
+    } catch (err) {
+      console.error("Error fetching reviews:", err)
       setReviews([])
+      setReviewStats({ average: 0, total: 0, stars: [0,0,0,0,0] })
     } finally {
       setReviewsLoading(false)
     }
   }
 
-  // Fetch course data and reviews on component mount
+  // Fetch course data (robust: isMounted + abort)
   useEffect(() => {
     let isMounted = true
-    
+    const abortController = new AbortController()
+
     const fetchCourseData = async () => {
-      if (!params.id) {
+      const courseId = params?.id
+      if (!courseId) {
         if (isMounted) {
-          setError('Course ID is missing')
+          setError("Course ID is missing")
           setLoading(false)
+          setCourse(null)
         }
         return
       }
 
-      try {
+      // reset states for new course
+      if (isMounted) {
         setLoading(true)
         setError(null)
-        const courseId = params.id
-        
-        console.log('Fetching course with ID:', courseId)
-        
-        // Fetch course details using the API service
-        const courseData = await getCourseById(courseId)
-        
-        console.log('Course data received:', courseData)
-        
+        setCourse(null)
+        setReviews([])
+        setReviewStats({ average: 0, total: 0, stars: [0,0,0,0,0] })
+      }
+
+      try {
+        // Optional: test API connectivity quickly
+        try {
+          // quick test, non-blocking if fails fallback to try getCourseById
+          await fetch("https://localhost:7025/api/Courses", { signal: abortController.signal, method: "HEAD" }).catch(() => {})
+        } catch (e) {
+          // ignore: only for info
+        }
+
+        const courseData = await getCourseById(courseId, { signal: abortController.signal })
         if (!isMounted) return
-        
         if (!courseData) {
           setError(`Khóa học với ID ${courseId} không tồn tại.`)
           setLoading(false)
+          setCourse(null)
           return
         }
 
-        // Format course data to match UI expectations
-        const formattedCourse = formatCourseData(courseData)
-        console.log('Formatted course:', formattedCourse)
-        
+        const formattedCourse = formatCourseData ? formatCourseData(courseData) : courseData
+
+        if (!isMounted) return
         if (!formattedCourse) {
-          setError('Không thể xử lý dữ liệu khóa học. Dữ liệu không hợp lệ.')
+          setError("Không thể xử lý dữ liệu khóa học. Dữ liệu không hợp lệ.")
           setLoading(false)
+          setCourse(null)
           return
         }
-        
-        setCourse(formattedCourse)
-        setLoading(false) // Set loading false ngay khi có data để hiển thị ngay
-        
-        // Load reviews for this course (không block UI)
-        loadReviews().catch(err => console.error('Error loading reviews:', err))
-        
-      } catch (error) {
-        console.error('Error fetching course:', error)
-        console.error('Error details:', {
-          message: error.message,
-          stack: error.stack,
-          name: error.name
-        })
+
+        // set final state
         if (isMounted) {
-          setError(error.message || 'Không thể tải thông tin khóa học')
+          setCourse(formattedCourse)
           setLoading(false)
+          // load reviews but don't block UI
+          loadReviews(formattedCourse.id ?? courseId).catch(err => console.error("Load reviews error:", err))
+        }
+      } catch (err) {
+        console.error("Error fetching course:", err)
+        if (isMounted) {
+          setError(err.message || "Không thể tải thông tin khóa học")
+          setLoading(false)
+          setCourse(null)
         }
       }
     }
 
     fetchCourseData()
-    
+
     return () => {
       isMounted = false
+      abortController.abort()
     }
-  }, [params.id])
+  }, [params?.id])
 
+
+  // UI: fade-in animation (safe usage)
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const t = setTimeout(() => {
+      const elements = document.querySelectorAll(".fade-in-element")
+      elements.forEach((el, index) => {
+        setTimeout(() => {
+          el.classList.add("visible")
+        }, index * 100)
+      })
+    }, 100)
+    return () => clearTimeout(t)
+  }, [course?.id])
+
+
+  // Handle Buy Now (checks auth, adds to cart via context & API)
   const handleBuyNow = async () => {
     if (!course?.id) {
       alert("Thông tin khóa học không hợp lệ!")
@@ -213,33 +197,42 @@ const [reviewStats, setReviewStats] = useState({
     }
 
     try {
-      // Add course to cart via API before redirecting to payment
       const cartItem = {
         id: course.id,
         title: course.title || "Khóa học",
-        instructor: course.instructor?.name || "Giảng viên",
-        price: parseFloat(String(course.price || course.priceValue || 0).replace(/[^\d]/g, '')),
+        instructor: (course.instructor && (course.instructor.name || course.instructor.fullName)) || "Giảng viên",
+        price: parseFloat(String(course.price || course.priceValue || 0).replace(/[^\d]/g, "")) || 0,
         image: course.image || course.thumbnailUrl || "/placeholder-course.jpg"
       }
-      
-      // Add to cart using the cart context which will call the API
-      await addToCart(cartItem)
-      
-      // Redirect to payment page with course ID for immediate purchase
+
+      // Try API add first if addToCartAPI exists
+      if (typeof addToCartAPI === "function") {
+        try {
+          await addToCartAPI({ userId: user?.userId || user?.id, courseId: course.id, quantity: 1 })
+        } catch (apiErr) {
+          console.warn("addToCartAPI failed, falling back to context add:", apiErr)
+        }
+      }
+
+      // Update context
+      if (typeof addToCartContext === "function") {
+        addToCartContext(cartItem)
+      }
+
+      // redirect to payment for immediate purchase
       router.push(`/thanhtoan?courseId=${course.id}&buyNow=true`)
-    } catch (error) {
-      console.error("Error adding course to cart:", error)
-      alert("Có lỗi xảy ra khi thêm khóa học vào giỏ hàng. Vui lòng thử lại!")
+    } catch (err) {
+      console.error("Error in Buy Now:", err)
+      alert("Có lỗi xảy ra khi xử lý mua ngay. Vui lòng thử lại.")
     }
   }
 
-
+  // Handle Add to Cart (uses API helper then context)
   const handleAddToCart = async () => {
     if (!course?.id) {
       alert("Thông tin khóa học không hợp lệ!")
       return
     }
-
     if (!user || !isAuthenticated) {
       alert("Vui lòng đăng nhập để thêm vào giỏ hàng!")
       router.push("/login")
@@ -247,80 +240,129 @@ const [reviewStats, setReviewStats] = useState({
     }
 
     try {
-      // Sử dụng addToCartAPI helper - tự động tạo cart nếu chưa có
-      const cartData = {
-        userId: user.userId || user.id,
+      const cartPayload = {
+        userId: user.userId ?? user.id,
         courseId: course.id,
-        quantity: 1
+        quantity: 1,
       }
-      
-      const result = await addToCartAPI(cartData)
-      console.log("✅ Đã thêm vào giỏ hàng:", result)
-      
-      // Cập nhật cart context
-      const cartItem = {
+
+      let apiResult = null
+      if (typeof addToCartAPI === "function") {
+        apiResult = await addToCartAPI(cartPayload)
+        console.log("addToCartAPI result:", apiResult)
+      } else {
+        // fallback - attempt direct POST
+        try {
+          const resp = await fetch("https://localhost:7025/api/cartItems", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              cartId: user.userId ?? user.id,
+              courseId: course.id,
+              quantity: 1,
+              addedAt: new Date().toISOString()
+            })
+          })
+          if (!resp.ok) {
+            const txt = await resp.text()
+            throw new Error(txt || `HTTP ${resp.status}`)
+          }
+          apiResult = await resp.json()
+        } catch (e) {
+          console.error("fallback addToCart POST failed:", e)
+          throw e
+        }
+      }
+
+      // update context regardless
+      const cartItemForContext = {
         id: course.id,
-        title: course.title || "Khóa học",
+        title: course.title,
         instructor: course.instructor?.name || "Giảng viên",
-        price: parseFloat(String(course.price || course.priceValue || 0).replace(/[^\d]/g, '')),
+        price: parseFloat(String(course.price || course.priceValue || 0).replace(/[^\d]/g, "")) || 0,
         image: course.image || course.thumbnailUrl || "/placeholder-course.jpg"
       }
-      addToCart(cartItem)
-      
+      if (typeof addToCartContext === "function") addToCartContext(cartItemForContext)
+
       alert("Đã thêm vào giỏ hàng thành công!")
-    } catch (error) {
-      console.error("❌ Lỗi khi thêm vào giỏ hàng:", error)
+    } catch (err) {
+      console.error("Lỗi khi thêm vào giỏ hàng:", err)
       alert("Không thể thêm vào giỏ hàng. Vui lòng thử lại!")
     }
   }
 
-  // Hiển thị error nếu có lỗi
-  if (error) {
-    return (
-      <div className="min-h-screen bg-white-50">
-        <Header />
-        <div className="flex items-center justify-center py-20">
-          <div className="text-center max-w-md mx-auto px-4">
-            <div className="text-red-500 text-6xl mb-4">⚠️</div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Không thể tải khóa học</h1>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <div className="space-y-3">
-              <button
-                onClick={() => window.location.reload()}
-                className="w-full px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                Thử lại
-              </button>
-              <button
-                onClick={async () => {
-                  try {
-                    const { getAllCourses } = await import('@/lib/api')
-                    const courses = await getAllCourses()
-                    alert(`Tìm thấy ${courses?.length || 0} khóa học trong hệ thống`)
-                  } catch (e) {
-                    alert('Lỗi kết nối API: ' + e.message)
-                  }
-                }}
-                className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Test API
-              </button>
-              <button
-                onClick={() => router.push('/courses')}
-                className="w-full px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Quay lại danh sách khóa học
-              </button>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    )
+
+  // Review submit - uses createReview if available, else POST fallback
+  const handleSubmitReview = async (e) => {
+    e.preventDefault()
+
+    if (!reviewContent.trim()) {
+      alert("Vui lòng nhập nội dung đánh giá!")
+      return
+    }
+    if (!rating || rating < 1 || rating > 5) {
+      alert("Vui lòng chọn số sao từ 1 đến 5!")
+      return
+    }
+    if (reviewContent.trim().length < 10) {
+      alert("Nội dung đánh giá ít nhất 10 ký tự!")
+      return
+    }
+
+    try {
+      setSubmittingReview(true)
+
+      const reviewData = {
+        CourseId: parseInt(course.id ?? course.courseId),
+        UserId: user?.userId ?? user?.id ?? 1,
+        Rating: rating,
+        Comment: reviewContent.trim()
+      }
+
+      console.log("Sending review:", reviewData)
+
+      // prefer createReview helper
+      if (typeof createReview === "function") {
+        await createReview(reviewData)
+      } else {
+        // fallback POST
+        const res = await fetch("https://localhost:7025/api/Reviews", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(reviewData)
+        })
+        const text = await res.text()
+        console.log("Review response raw:", text)
+        if (!res.ok) throw new Error(`Lỗi ${res.status}: ${text}`)
+      }
+
+      alert("✅ Đánh giá đã được gửi thành công!")
+      setReviewContent("")
+      setRating(0)
+      // reload reviews
+      await loadReviews(course.id ?? course.courseId)
+    } catch (err) {
+      console.error("❌ Lỗi khi gửi đánh giá:", err)
+      alert("Gửi đánh giá thất bại, vui lòng thử lại!")
+    } finally {
+      setSubmittingReview(false)
+    }
   }
 
-  // Hiển thị loading khi đang tải dữ liệu
-  if (loading) {
+
+  // Render: error state - redirect to courses list instead of showing error
+  useEffect(() => {
+    if (error) {
+      router.push('/courses')
+    }
+  }, [error, router])
+  
+  if (error) {
+    return null
+  }
+
+  // Loading state
+  if (loading || !course) {
     return (
       <div className="min-h-screen bg-white-50 flex items-center justify-center">
         <div className="text-center">
@@ -328,8 +370,8 @@ const [reviewStats, setReviewStats] = useState({
           <p className="mt-4 text-gray-600">Đang tải thông tin khóa học...</p>
           {process.env.NODE_ENV === 'development' && (
             <div className="mt-4 text-sm text-gray-500">
-              <p>Course ID: {params.id}</p>
-              <p>Loading: {loading.toString()}</p>
+              <p>Course ID: {params?.id}</p>
+              <p>Loading: {loading?.toString()}</p>
               <p>Course: {course ? 'Loaded' : 'Not loaded'}</p>
             </div>
           )}
@@ -338,42 +380,16 @@ const [reviewStats, setReviewStats] = useState({
     )
   }
 
-  // Nếu không loading nhưng không có course, hiển thị error
-  if (!loading && !course && !error) {
-    return (
-      <div className="min-h-screen bg-white-50">
-        <Header />
-        <div className="flex items-center justify-center py-20">
-          <div className="text-center max-w-md mx-auto px-4">
-            <div className="text-red-500 text-6xl mb-4">⚠️</div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Không tìm thấy khóa học</h1>
-            <p className="text-gray-600 mb-6">Khóa học với ID {params.id} không tồn tại hoặc không thể tải được.</p>
-            <button
-              onClick={() => router.push('/courses')}
-              className="w-full px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Quay lại danh sách khóa học
-            </button>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    )
-  }
 
-  // Đảm bảo course tồn tại trước khi render
-  if (!course) {
-    return null
-  }
-
+  // MAIN RENDER
   return (
     <div className="min-h-screen bg-white-50">
       <Header />
 
       {/* Hero Section */}
-      <section className="bg-[#000044] text-white py-16 relative z-0">
+      <section className="bg-[#000044] text-white py-16">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-3 gap-8 relative">
+          <div className="grid lg:grid-cols-3 gap-8">
             {/* Left Content */}
             <div className="lg:col-span-2 fade-in-element">
               {course.category && (
@@ -382,28 +398,26 @@ const [reviewStats, setReviewStats] = useState({
                 </span>
               )}
 
-              <h1 className="text-4xl font-bold mb-4">{course.title || "Khóa học"}</h1>
+              <h1 className="text-4xl font-bold mb-4">{course.title}</h1>
 
-              {course.description && (
-                <p className="text-white-300 text-lg mb-6">
-                  {course.description}
-                </p>
-              )}
+              <p className="text-white-300 text-lg mb-6">
+                {course.description}
+              </p>
 
               {/* Stats */}
               <div className="flex flex-wrap gap-6 mb-8">
                 <div className="flex items-center gap-2">
                   <span className="text-yellow-400">⭐</span>
-                  <span className="font-semibold">{course.rating || "4.5"}</span>
-                  <span className="text-white-400">({course.reviews || 0} lượt đánh giá)</span>
+                  <span className="font-semibold">{course.rating ?? reviewStats.average ?? "0.0"}</span>
+                  <span className="text-white-400">({course.reviews ?? reviewStats.total ?? 0} lượt đánh giá)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span>👥</span>
-                  <span className="font-semibold">{course.students || "0k"}</span>
+                  <span className="font-semibold">{course.students ?? "0"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span>⏱️</span>
-                  <span className="font-semibold">{course.duration || "20 giờ"}</span>
+                  <span className="font-semibold">{course.duration ?? "—"}</span>
                 </div>
               </div>
 
@@ -411,40 +425,27 @@ const [reviewStats, setReviewStats] = useState({
               {course.instructor && (
                 <div className="flex items-center gap-4 bg-navy-light p-4 rounded-lg">
                   <div className="w-16 h-16 bg-white-600 rounded-full overflow-hidden">
-                    <img 
-                      src={course.instructor.avatar || "/placeholder-user.jpg"} 
-                      alt="Instructor" 
-                      className="w-full h-full object-cover" 
-                      onError={(e) => {
-                        e.target.src = "/placeholder-user.jpg"
-                      }}
+                    <img
+                      src={course.instructor.avatar || "/placeholder-user.jpg"}
+                      alt="Instructor"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <div>
-                    <p className="font-semibold text-lg">Giảng viên: {course.instructor.name || "Chưa có giảng viên"}</p>
-                    {course.instructor.bio && (
-                      <p className="text-white-400 text-sm">
-                        {course.instructor.bio}
-                      </p>
-                    )}
+                    <p className="font-semibold text-lg">Giảng viên: {course.instructor.name}</p>
+                    <p className="text-white-400 text-sm">
+                      {course.instructor.bio}
+                    </p>
                   </div>
                 </div>
               )}
             </div>
 
             {/* Right Card - Price */}
-            <div className="lg:col-span-1 fade-in-element relative z-20">
-              <div className="bg-white text-gray-900 rounded-xl shadow-2xl p-6 sticky top-24 z-20 overflow-visible">
+            <div className="lg:col-span-1 fade-in-element">
+              <div className="bg-white text-white-900 rounded-xl shadow-2xl p-6 sticky top-24">
                 <div
                   className="relative mb-6 rounded-lg overflow-hidden course-preview-image"
-                  onMouseEnter={(e) => {
-                    const img = e.currentTarget.querySelector("img")
-                    if (img) img.style.transform = "scale(1.1)"
-                  }}
-                  onMouseLeave={(e) => {
-                    const img = e.currentTarget.querySelector("img")
-                    if (img) img.style.transform = "scale(1)"
-                  }}
                 >
                   <img
                     src={course.image || course.thumbnailUrl || "/placeholder-course.jpg"}
@@ -452,7 +453,9 @@ const [reviewStats, setReviewStats] = useState({
                     className="w-full h-48 object-cover transition-transform duration-500"
                     onLoad={() => setImageLoaded(true)}
                     onError={(e) => {
-                      e.target.src = "/placeholder.jpg"
+                      if (!e.target.src.includes("/placeholder")) {
+                        e.target.src = "/placeholder-course.jpg"
+                      }
                     }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
@@ -462,97 +465,181 @@ const [reviewStats, setReviewStats] = useState({
                   </div>
                 </div>
 
-                <h3 className="text-xl font-bold mb-4 text-center">{course.title || "Khóa học"}</h3>
+                <h3 className="text-xl font-bold mb-4 text-center">{course.title}</h3>
 
                 <div className="text-center mb-6">
-                  <div className="text-4xl font-bold text-green-600 mb-2">{course.price || "0đ"}</div>
-                  {course.oldPrice && (
-                    <div className="text-gray-400 line-through text-lg">{course.oldPrice}</div>
+                  <div className="text-4xl font-bold text-green-600 mb-2">{course.price ?? course.priceFormatted ?? "0đ"}</div>
+                  {course.oldPrice && course.oldPrice !== course.price && (
+                    <div className="text-white-400 line-through text-lg">{course.oldPrice}</div>
                   )}
-                  {course.discount && course.discount !== "0" && (
+                  {course.discount && String(course.discount) !== "0" && (
                     <div className="text-red-500 font-semibold mt-1">Giảm {course.discount}%</div>
                   )}
                 </div>
 
-                <div className="space-y-4">
-                  <button
-                    onClick={handleBuyNow}
-                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-4 rounded-lg font-bold text-lg hover:from-purple-700 hover:to-purple-800 transition-all hover:shadow-lg hover:scale-105 active:scale-95 buy-now-btn"
-                  >
-                    Mua khóa học
-                  </button>
+                <button
+                  onClick={handleBuyNow}
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-4 rounded-lg font-bold text-lg mb-4 hover:from-purple-700 hover:to-purple-800 transition-all hover:shadow-lg hover:scale-105 active:scale-95 buy-now-btn"
+                >
+                  Mua khóa học
+                </button>
 
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={isInCart(course.id)}
-                    className={`w-full py-4 rounded-lg font-bold text-lg transition-all hover:shadow-lg hover:scale-105 active:scale-95 ${
-                      isInCart(course.id)
-                        ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-                        : "bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800"
-                    }`}
-                  >
-                    {isInCart(course.id) ? "Đã có trong giỏ hàng" : "Thêm vào giỏ hàng"}
-                  </button>
-                </div>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={isInCart && isInCart(course?.id)}
+                  className={`w-full py-4 rounded-lg font-bold text-lg mb-4 transition-all hover:shadow-lg hover:scale-105 active:scale-95 ${
+                    (isInCart && isInCart(course?.id))
+                      ? "bg-gray-400 text-gray-600 cursor-not-allowed"
+                      : "bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800"
+                  }`}
+                >
+                  {(isInCart && isInCart(course?.id)) ? "Đã có trong giỏ hàng" : "Thêm vào giỏ hàng"}
+                </button>
               </div>
             </div>
           </div>
         </div>
       </section>
-{/* Tab Navigation */}
 
-      {/* Course Content */}
-      
+      {/* Tab Navigation & Content */}
       <section className="py-12 bg-gray-50">
-  <div className="container mx-auto px-4">
-    <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-      
-      {/* LEFT CONTENT */}
-      <div className="lg:col-span-5">
-        {/* Tabs */}
-        <div className="flex bg-gray-100 rounded-xl overflow-hidden mb-6">
-          {[
-            { id: "overview", label: "Tổng quan" },
-            { id: "content", label: "Nội dung" },
-            { id: "instructor", label: "Giảng viên" },
-            { id: "reviews", label: "Đánh giá" },
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 py-3 text-center font-semibold transition-all ${
-                activeTab === tab.id
-                  ? "bg-purple-600 text-white shadow-md"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            {/* LEFT CONTENT */}
+            <div className="lg:col-span-2">
+              <div className="flex bg-gray-100 rounded-xl overflow-hidden mb-6">
+                {[
+                  { id: "overview", label: "Tổng quan" },
+                  { id: "content", label: "Nội dung" },
+                  { id: "instructor", label: "Giảng viên" },
+                  { id: "reviews", label: "Đánh giá" },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex-1 py-3 text-center font-semibold transition-all ${
+                      activeTab === tab.id
+                        ? "bg-purple-600 text-white shadow-md"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="bg-white p-6 rounded-xl shadow-md">
+                {activeTab === "overview" && <TongQuan course={course} />}
+                {activeTab === "content" && <NoiDung courseId={course.id} />}
+                {activeTab === "instructor" && <KhGiangVien course={course} />}
+                {activeTab === "reviews" && (
+                  <div>
+                    {/* If you have a DAnhGia component that handles UI, use it */}
+                    {typeof DanhGia === "function" ? (
+                      <DanhGia key={course.id} courseId={course.id} />
+                    ) : (
+                      <>
+                        <h3 className="text-xl font-semibold mb-4">Đánh giá</h3>
+                        {reviewsLoading ? (
+                          <p>Đang tải đánh giá...</p>
+                        ) : (
+                          <div className="space-y-4">
+                            {reviews.length === 0 ? (
+                              <p>Chưa có đánh giá cho khóa học này.</p>
+                            ) : (
+                              reviews.map(r => (
+                                <div key={r.id} className="border p-4 rounded">
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <img src={r.user.avatar} alt={r.user.name} className="w-10 h-10 rounded-full object-cover" />
+                                    <div>
+                                      <div className="font-semibold">{r.user.name}</div>
+                                      <div className="text-sm text-gray-500">{r.date}</div>
+                                    </div>
+                                  </div>
+                                  <div className="text-yellow-500 mb-2">{'⭐'.repeat(r.rating)}</div>
+                                  <div className="text-gray-700">{r.content}</div>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        )}
+
+                        {/* Submit review form */}
+                        <form onSubmit={handleSubmitReview} className="mt-6">
+                          <h4 className="font-semibold mb-2">Gửi đánh giá của bạn</h4>
+
+                          <div className="flex items-center gap-2 mb-3">
+                            {[1,2,3,4,5].map(n => (
+                              <button
+                                type="button"
+                                key={n}
+                                onMouseEnter={() => setHoveredStar(n)}
+                                onMouseLeave={() => setHoveredStar(0)}
+                                onClick={() => setRating(n)}
+                                className={`text-2xl ${ (hoveredStar >= n || rating >= n) ? "text-yellow-400" : "text-gray-300" }`}
+                              >
+                                ⭐
+                              </button>
+                            ))}
+                            <div className="ml-3 text-sm text-gray-500">{rating ? `${rating} sao` : "Chọn số sao"}</div>
+                          </div>
+
+                          <textarea
+                            value={reviewContent}
+                            onChange={(e) => setReviewContent(e.target.value)}
+                            rows={4}
+                            className="w-full p-3 border rounded mb-3"
+                            placeholder="Viết đánh giá của bạn (tối thiểu 10 ký tự)"
+                          />
+
+                          <div className="flex gap-3">
+                            <button
+                              type="submit"
+                              disabled={submittingReview}
+                              className="px-6 py-3 bg-purple-600 text-white rounded disabled:opacity-60"
+                            >
+                              {submittingReview ? "Đang gửi..." : "Gửi đánh giá"}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setRating(0)
+                                setReviewContent("")
+                              }}
+                              className="px-6 py-3 bg-gray-200 rounded"
+                            >
+                              Hủy
+                            </button>
+                          </div>
+                        </form>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* RIGHT SIDEBAR */}
+            <div className="lg:col-span-1">
+              <div className="bg-white border rounded-xl shadow-sm p-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">Thông tin khóa học</h3>
+                <div className="space-y-3 text-gray-600">
+                  <p><strong className="text-gray-800">Cấp độ:</strong> {course.level || "Trung cấp"}</p>
+                  <p><strong className="text-gray-800">Thời lượng:</strong> {course.duration || "—"}</p>
+                  <p><strong className="text-gray-800">Ngôn ngữ:</strong> {course.language || "React"}</p>
+                  <p><strong className="text-gray-800">Chứng chỉ:</strong> {course.certificate ? "Có" : "Không"}</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
-
-        {/* Tab content */}
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          {activeTab === "overview" && course && <TongQuan course={course} />}
-          {activeTab === "content" && course.id && <NoiDung courseId={course.id} />}
-          {activeTab === "instructor" && course && <KhGiangVien course={course} />}
-          {activeTab === "reviews" && course.id && (
-            <DanhGia key={course.id} courseId={course.id} />
-          )}
-        </div>
-      </div>
-
-      {/* RIGHT SIDEBAR */}
-      
-
-    </div>
-  </div>
-</section>
+      </section>
 
       <Footer />
 
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
     </div>
   )
-  
 }

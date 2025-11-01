@@ -1,0 +1,315 @@
+================================================================================
+                    DANH SÁCH CHỨC NĂNG MODULE GIẢNG VIÊN
+                           Hệ thống EduLearn
+================================================================================
+
+Mục lục:
+--------
+1. Trang chủ/Đăng nhập
+2. Trang Tổng quan (Dashboard)
+3. Quản lý Khóa học
+4. Quản lý Học viên
+5. Quản lý Doanh thu
+6. Quản lý Hồ sơ
+7. Đánh giá & Phản hồi
+8. Cài đặt
+9. Hỗ trợ
+
+================================================================================
+
+1. TRANG CHỦ/ĐĂNG NHẬP
+   File: /app/giangvien/page.js
+   - Đăng nhập cho học viên và giảng viên
+   - Chọn vai trò (Student/Instructor)
+   - Validation email và mật khẩu
+   - Ghi nhớ đăng nhập (Remember Me)
+   - Quên mật khẩu (link)
+   - Lưu thông tin vào localStorage và auth context
+   - Redirect sau khi đăng nhập
+
+2. TRANG TỔNG QUAN (DASHBOARD)
+   File: /app/giangvien/tongquan/page.js
+   - Hiển thị thống kê tổng quan:
+     * Tổng số khóa học
+     * Tổng số học viên
+     * Tổng doanh thu
+     * Đánh giá trung bình
+   - Biểu đồ thống kê doanh thu theo tháng
+   - Sidebar navigation với các menu chính
+   - Thu gọn/mở rộng sidebar
+   - Header với avatar và thông tin tài khoản
+
+3. QUẢN LÝ KHÓA HỌC
+   -----------------
+   
+   3.1. Danh sách khóa học
+       File: /app/giangvien/khoahoc/page.js
+       - Hiển thị danh sách tất cả khóa học của giảng viên
+       - Thông tin mỗi khóa học:
+         * Hình ảnh thumbnail
+         * Tiêu đề khóa học
+         * Trạng thái (Đã xuất bản/Đang soạn thảo/Chờ duyệt)
+         * Giá khóa học
+         * Số lượng học viên
+         * Đánh giá trung bình
+         * Số lượng đánh giá
+         * Doanh thu
+       - Chức năng:
+         * Tạo khóa học mới
+         * Chỉnh sửa khóa học
+         * Xóa khóa học
+         * Dropdown menu cho mỗi khóa học
+       - Pagination (phân trang)
+       - Load courses từ API
+       - Xử lý lỗi và loading state
+   
+   3.2. Tạo khóa học - Bước 1: Thông tin cơ bản
+       File: /app/giangvien/khoahoc/tao/page.js
+       - Form nhập thông tin:
+         * Tiêu đề khóa học (bắt buộc)
+         * Mô tả khóa học (bắt buộc)
+         * Danh mục khóa học (bắt buộc)
+         * Ngôn ngữ giảng dạy
+         * Upload hình ảnh thumbnail
+       - Preview hình ảnh thumbnail
+       - Validation form
+       - Chuyển sang bước tiếp theo
+   
+   3.3. Tạo khóa học - Bước 2: Chi tiết khóa học
+       File: /app/giangvien/khoahoc/chitiet/page.js
+       - Form nhập:
+         * Giá khóa học (bắt buộc, > 0)
+         * Thời lượng khóa học
+         * Cấp độ (Beginner/Intermediate/Advanced) (bắt buộc)
+         * Yêu cầu tiên quyết
+       - Validation form
+       - Chuyển sang bước tiếp theo hoặc quay lại
+   
+   3.4. Tạo khóa học - Bước 3: Nội dung chương
+       File: /app/giangvien/khoahoc/noidung/page.js
+       - Quản lý chương và bài học:
+         * Thêm chương mới
+         * Chỉnh sửa tên và mô tả chương
+         * Xóa chương
+         * Thêm bài học vào chương
+         * Chọn loại bài học (Video/Tài liệu/Bài kiểm tra/Bài tập)
+         * Upload file cho bài học
+         * Chỉnh sửa thông tin bài học
+         * Xóa bài học
+         * Sắp xếp lại thứ tự chương/bài học
+       - Dropdown menu cho mỗi bài học
+       - Upload file với validation theo loại
+   
+   3.5. Tạo khóa học - Bước 4: Xem trước
+       File: /app/giangvien/khoahoc/xemtruoc/page.js
+       - Xem trước toàn bộ thông tin khóa học:
+         * Thông tin cơ bản
+         * Chi tiết khóa học
+         * Danh sách chương và bài học
+       - Button hoàn thành tạo khóa học
+       - Quay lại để chỉnh sửa
+   
+   3.6. Chỉnh sửa khóa học
+       File: /app/giangvien/khoahoc/chinhsua/page.js
+       - Chỉnh sửa tất cả thông tin khóa học:
+         * Thông tin cơ bản (tiêu đề, mô tả, danh mục)
+         * Quản lý chương và bài học (giống bước 3)
+         * Thêm/sửa/xóa chương và bài học
+         * Upload file mới
+       - Toast notification khi lưu thành công
+       - Validation form
+   
+   3.7. Cài đặt khóa học
+       File: /app/giangvien/khoahoc/caidat/page.js
+       - Cài đặt chi tiết cho khóa học:
+         * Tiêu đề
+         * Mô tả
+         * Danh mục
+         * Cấp độ
+       - Lưu cài đặt
+       - Toast notification
+
+4. QUẢN LÝ HỌC VIÊN
+   File: /app/giangvien/hocvien/page.js
+   - Danh sách học viên đăng ký các khóa học:
+     * Tên học viên
+     * Email
+     * Khóa học đã đăng ký
+     * Ngày đăng ký
+     * Tiến độ học tập (%)
+     * Số bài đã học / Tổng số bài
+     * Lần truy cập cuối
+     * Trạng thái (Đang học/Không hoạt động/Hoạt động)
+   - Filter theo khóa học
+   - Search học viên
+   - Xem chi tiết tiến độ học tập
+   - Sidebar navigation
+
+5. QUẢN LÝ DOANH THU
+   ------------------
+   
+   5.1. Trang Doanh thu
+       File: /app/giangvien/doanhthu/page.js
+       - Tổng quan doanh thu:
+         * Tổng doanh thu
+         * Doanh thu đang chờ
+         * Số dư khả dụng
+         * Biểu đồ doanh thu theo tháng
+       - Lịch sử giao dịch
+       - Button rút tiền
+   
+   5.2. Rút tiền
+       File: /app/giangvien/doanhthu/ruttien/page.js
+       - Form rút tiền:
+         * Nhập số tiền muốn rút
+         * Chọn phương thức rút (Ngân hàng/MoMo)
+         * Nhập thông tin tài khoản
+       - Quick set số tiền (25%, 50%, 75%, 100%)
+       - Hiển thị:
+         * Số dư khả dụng
+         * Số dư đang chờ
+         * Phí giao dịch
+         * Số tiền sẽ nhận được
+       - Lịch sử yêu cầu rút tiền:
+         * Mã giao dịch
+         * Phương thức
+         * Số tiền
+         * Phí
+         * Trạng thái (Hoàn thành/Đang xử lý/Chờ xử lý)
+         * Ngày tạo
+       - Validation form
+       - Toast notification
+
+6. QUẢN LÝ HỒ SƠ
+   File: /app/giangvien/hoso/page.js
+   - Hiển thị và chỉnh sửa thông tin cá nhân:
+     * Ảnh đại diện
+     * Họ và tên
+     * Email
+     * Số điện thoại
+     * Địa chỉ
+     * Giới tính
+     * Ngày sinh
+   - Thông tin giảng viên:
+     * Tiểu sử (Bio)
+     * Kinh nghiệm
+     * Học vấn
+     * Kỹ năng (Skills) - thêm/xóa
+     * Chuyên môn
+     * Số năm kinh nghiệm
+   - Chế độ xem/chỉnh sửa:
+     * Button "Chỉnh sửa" để vào chế độ edit
+     * Button "Hủy" để quay lại chế độ xem
+     * Button "Lưu" để lưu thay đổi
+   - Upload ảnh đại diện
+   - Sidebar navigation
+
+7. ĐÁNH GIÁ & PHẢN HỒI
+   File: /app/giangvien/danhgia/page.js
+   - Danh sách đánh giá từ học viên:
+     * Tên học viên
+     * Khóa học được đánh giá
+     * Điểm đánh giá (1-5 sao)
+     * Nội dung đánh giá
+     * Ngày đánh giá
+   - Chức năng phản hồi:
+     * Xem đánh giá chưa có phản hồi
+     * Viết phản hồi cho đánh giá
+     * Xem phản hồi đã viết
+     * Chỉnh sửa phản hồi
+   - Filter đánh giá (Tất cả/Chưa phản hồi/Đã phản hồi)
+   - Sidebar navigation
+
+8. CÀI ĐẶT
+   File: /app/giangvien/caidat/page.js
+   - Đổi mật khẩu:
+     * Mật khẩu hiện tại
+     * Mật khẩu mới
+     * Xác nhận mật khẩu
+     * Validation:
+       - Mật khẩu mới >= 8 ký tự
+       - Mật khẩu mới khác mật khẩu cũ
+       - Xác nhận mật khẩu khớp
+   - Thông báo lỗi/ thành công
+   - Loading state khi đổi mật khẩu
+   - Sidebar navigation
+
+9. HỖ TRỢ
+   File: /app/giangvien/hotro/page.js
+   - Trang hỗ trợ và FAQ
+   - Liên hệ với đội ngũ hỗ trợ
+   - Sidebar navigation
+
+================================================================================
+                      CÁC FILE TIỆN ÍCH VÀ API
+================================================================================
+
+- /app/giangvien/lib/instructorApi.js
+  * Hàm getInstructorCourses(): Lấy danh sách khóa học của giảng viên
+  * Hàm formatCourseData(): Format dữ liệu khóa học để hiển thị
+  * Hàm deleteCourse(): Xóa khóa học
+
+- /app/giangvien/services/students.js
+  * Service liên quan đến quản lý học viên
+
+- /app/giangvien/api-test/page.js
+  * Trang test API
+
+- /app/giangvien/debug-auth/page.js
+  * Trang debug authentication
+
+================================================================================
+                        TÍNH NĂNG CHUNG CỦA TẤT CẢ TRANG
+================================================================================
+
+1. Sidebar Navigation:
+   - Tổng quan
+   - Khóa học
+   - Học viên
+   - Doanh thu
+   - Hồ sơ
+   - Đánh giá & Phản hồi
+   - Cài đặt
+   - Hỗ trợ
+   - Thu gọn/mở rộng sidebar
+
+2. Header/Topbar:
+   - Logo EduLearn
+   - Breadcrumb (đường dẫn)
+   - Avatar và thông tin tài khoản
+
+3. Footer:
+   - Footer chung cho tất cả trang
+
+4. Responsive Design:
+   - Hỗ trợ mobile và desktop
+
+5. Error Handling:
+   - Xử lý lỗi khi gọi API
+   - Hiển thị thông báo lỗi
+   - Retry mechanism
+
+6. Loading States:
+   - Hiển thị loading khi tải dữ liệu
+   - Disable button khi đang xử lý
+
+7. Validation:
+   - Validate form input
+   - Hiển thị thông báo lỗi validation
+
+8. Toast Notifications:
+   - Thông báo thành công/thất bại
+
+================================================================================
+                               GHI CHÚ
+================================================================================
+
+- Một số chức năng có thể chưa tích hợp API thật (đang dùng mock data)
+- Các chức năng upload file cần kiểm tra kích thước và định dạng
+- Cần tích hợp đầy đủ với backend API
+- Một số validation có thể cần bổ sung thêm
+
+================================================================================
+                              KẾT THÚC
+================================================================================
+

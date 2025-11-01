@@ -23,8 +23,6 @@ biography: "",
 const [isLoading, setIsLoading] = useState(false);
 const [error, setError] = useState("");
 const [shakeInput, setShakeInput] = useState(false);
-const [fieldErrors, setFieldErrors] = useState({});
-const [touched, setTouched] = useState({});
 
 const shake = () => {
 setShakeInput(true);
@@ -32,137 +30,53 @@ setTimeout(() => setShakeInput(false), 500);
 setIsLoading(false);
 };
 
-// Validation function
-const validateField = (name, value, role) => {
-  const errors = {}
-  
-  if (name === "fullName") {
-    if (!value.trim()) {
-      errors.fullName = "Vui lòng nhập họ và tên"
-    }
-  } else if (name === "email") {
-    if (!value.trim()) {
-      errors.email = "Vui lòng nhập email"
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      errors.email = "Email không hợp lệ"
-    }
-  } else if (name === "password") {
-    if (!value.trim()) {
-      errors.password = "Vui lòng nhập mật khẩu"
-    } else if (value.length < 6) {
-      errors.password = "Mật khẩu phải có ít nhất 6 ký tự"
-    }
-  } else if (name === "confirmPassword") {
-    if (!value.trim()) {
-      errors.confirmPassword = "Vui lòng xác nhận mật khẩu"
-    } else if (value !== formData.password) {
-      errors.confirmPassword = "Mật khẩu xác nhận không khớp"
-    }
-  } else if (role === "instructor") {
-    if (name === "expertise" && !value.trim()) {
-      errors.expertise = "Vui lòng nhập chuyên môn"
-    } else if (name === "experienceYears") {
-      if (!value || value < 0) {
-        errors.experienceYears = "Vui lòng nhập số năm kinh nghiệm hợp lệ"
-      }
-    }
-    // biography không bắt buộc, không validate
-  }
-  
-  return errors
-}
-
 const handleChange = (e) => {
 const { name, value, type, checked } = e.target;
-const newValue = type === "checkbox" ? checked : value;
-
 setFormData({
 ...formData,
-[name]: newValue,
+[name]: type === "checkbox" ? checked : value,
 });
-
-// Clear error khi user đang nhập
-if (fieldErrors[name]) {
-  setFieldErrors(prev => {
-    const updated = { ...prev }
-    delete updated[name]
-    return updated
-  })
-}
-
-// Validate real-time nếu field đã được touch
-if (touched[name]) {
-  const errors = validateField(name, newValue, role)
-  if (errors[name]) {
-    setFieldErrors(prev => ({ ...prev, ...errors }))
-  } else {
-    setFieldErrors(prev => {
-      const updated = { ...prev }
-      delete updated[name]
-      return updated
-    })
-  }
-}
 };
-
-const handleBlur = (e) => {
-  const { name, value } = e.target
-  setTouched(prev => ({ ...prev, [name]: true }))
-  
-  // Validate khi blur
-  const errors = validateField(name, value, role)
-  setFieldErrors(prev => ({ ...prev, ...errors }))
-}
 
 const handleSubmit = async (e) => {
 e.preventDefault();
 setError("");
 setIsLoading(true);
 
-// Validate tất cả fields
-const errors = {}
-const requiredFields = ["fullName", "email", "password", "confirmPassword"]
-if (role === "instructor") {
-  requiredFields.push("expertise", "experienceYears")
+// Kiểm tra cơ bản
+if (!formData.fullName.trim() || !formData.email.trim()) {
+  setError("Vui lòng nhập đầy đủ họ tên và email.");
+  shake();
+  return;
 }
-
-// Validate từng field
-requiredFields.forEach(field => {
-  const fieldError = validateField(field, formData[field], role)
-  if (fieldError[field]) {
-    errors[field] = fieldError[field]
-  }
-})
-
-// Validate confirm password riêng vì cần check với password
-if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
-  errors.confirmPassword = "Mật khẩu xác nhận không khớp"
+if (formData.password.length < 6) {
+  setError("Mật khẩu phải có ít nhất 6 ký tự.");
+  shake();
+  return;
 }
-
-// Validate agreeTerms
+if (formData.password !== formData.confirmPassword) {
+  setError("Mật khẩu xác nhận không khớp.");
+  shake();
+  return;
+}
 if (!formData.agreeTerms) {
-  errors.agreeTerms = "Vui lòng đồng ý với điều khoản dịch vụ"
+  setError("Vui lòng đồng ý với điều khoản dịch vụ.");
+  setIsLoading(false);
+  return;
 }
 
-// Set tất cả fields đã được touch
-setTouched({
-  fullName: true,
-  email: true,
-  password: true,
-  confirmPassword: true,
-  agreeTerms: true,
-  ...(role === "instructor" && {
-    expertise: true,
-    experienceYears: true,
-  })
-})
-
-// Nếu có lỗi, dừng lại
-if (Object.keys(errors).length > 0) {
-  setFieldErrors(errors)
-  setIsLoading(false)
-  shake()
-  return
+// Kiểm tra thông tin giảng viên
+if (role === "instructor") {
+  if (!formData.expertise.trim()) {
+    setError("Vui lòng nhập chuyên môn.");
+    shake();
+    return;
+  }
+  if (!formData.biography.trim()) {
+    setError("Vui lòng nhập giới thiệu.");
+    shake();
+    return;
+  }
 }
 
 try {
@@ -180,9 +94,9 @@ try {
           confirmPassword: formData.confirmPassword,
           fullName: formData.fullName,
           acceptTerms: formData.agreeTerms,
-          expertise: formData.expertise || "Chưa cập nhật",
+          expertise: formData.expertise.trim(),
           experienceYears: Number(formData.experienceYears) || 0,
-          biography: formData.biography || "Chưa có giới thiệu",
+          biography: formData.biography.trim(),
         }
       : {
           email: formData.email,
@@ -199,8 +113,23 @@ try {
   });
 
   if (!res.ok) {
-    const errText = await res.text();
-    throw new Error(errText || "Đăng ký thất bại");
+    let errorMessage = "Đăng ký thất bại";
+    try {
+      const errorData = await res.json();
+      errorMessage = errorData.message || errorData || errorMessage;
+      // Nếu là string, thử parse
+      if (typeof errorMessage === 'string' && errorMessage.includes('"')) {
+        try {
+          const parsed = JSON.parse(errorMessage);
+          errorMessage = parsed.message || parsed || errorMessage;
+        } catch {}
+      }
+    } catch (e) {
+      const errorText = await res.text();
+      console.error("Lỗi từ server:", errorText);
+      errorMessage = errorText || errorMessage;
+    }
+    throw new Error(errorMessage);
   }
 
   const result = await res.json();
@@ -323,7 +252,6 @@ Nền tảng học trực tuyến hàng đầu
                   name={field}
                   value={formData[field]}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   placeholder={
                     field === "fullName"
                       ? "Nguyễn Văn A"
@@ -331,22 +259,10 @@ Nền tảng học trực tuyến hàng đầu
                       ? "email@example.com"
                       : "••••••••"
                   }
-                  className={`w-full px-4 py-3 bg-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-colors ${
+                  className={`w-full px-4 py-3 bg-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 ${
                     shakeInput ? "shake" : ""
-                  } ${
-                    fieldErrors[field] 
-                      ? "border-2 border-red-500 bg-red-50 focus:ring-red-500" 
-                      : touched[field] && !fieldErrors[field]
-                      ? "border-2 border-green-500 bg-green-50"
-                      : "border border-gray-300"
                   }`}
                 />
-                {fieldErrors[field] && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                    <span>⚠️</span>
-                    <span>{fieldErrors[field]}</span>
-                  </p>
-                )}
               </div>
             )
           )}
@@ -355,7 +271,7 @@ Nền tảng học trực tuyến hàng đầu
           {role === "instructor" && (
             <>
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                <label className="block text-sm font-semibold mb-2">
                   Chuyên môn *
                 </label>
                 <input
@@ -363,63 +279,37 @@ Nền tảng học trực tuyến hàng đầu
                   name="expertise"
                   value={formData.expertise}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   placeholder="VD: Lập trình, Thiết kế web..."
-                  className={`w-full px-4 py-3 bg-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                    fieldErrors.expertise 
-                      ? "border-2 border-red-500 bg-red-50 focus:ring-red-500" 
-                      : touched.expertise && !fieldErrors.expertise
-                      ? "border-2 border-green-500 bg-green-50"
-                      : "border border-gray-300"
-                  }`}
+                  className="w-full px-4 py-3 bg-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  required
                 />
-                {fieldErrors.expertise && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                    <span>⚠️</span>
-                    <span>{fieldErrors.expertise}</span>
-                  </p>
-                )}
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Số năm kinh nghiệm *
+                <label className="block text-sm font-semibold mb-2">
+                  Số năm kinh nghiệm
                 </label>
                 <input
                   type="number"
                   name="experienceYears"
                   value={formData.experienceYears}
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   min="0"
-                  placeholder="0"
-                  className={`w-full px-4 py-3 bg-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 transition-colors ${
-                    fieldErrors.experienceYears 
-                      ? "border-2 border-red-500 bg-red-50 focus:ring-red-500" 
-                      : touched.experienceYears && !fieldErrors.experienceYears
-                      ? "border-2 border-green-500 bg-green-50"
-                      : "border border-gray-300"
-                  }`}
+                  className="w-full px-4 py-3 bg-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500"
                 />
-                {fieldErrors.experienceYears && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                    <span>⚠️</span>
-                    <span>{fieldErrors.experienceYears}</span>
-                  </p>
-                )}
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Giới thiệu ngắn
+                <label className="block text-sm font-semibold mb-2">
+                  Giới thiệu ngắn *
                 </label>
                 <textarea
                   name="biography"
                   value={formData.biography}
                   onChange={handleChange}
                   rows="3"
-                  placeholder="Giới thiệu bản thân... (không bắt buộc)"
-                  className="w-full px-4 py-3 bg-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 border border-gray-300"
+                  placeholder="Giới thiệu bản thân..."
+                  className="w-full px-4 py-3 bg-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  required
                 ></textarea>
-                <p className="mt-1 text-xs text-gray-500">Trường này không bắt buộc</p>
               </div>
             </>
           )}
@@ -431,10 +321,7 @@ Nền tảng học trực tuyến hàng đầu
               name="agreeTerms"
               checked={formData.agreeTerms}
               onChange={handleChange}
-              onBlur={handleBlur}
-              className={`w-4 h-4 mt-1 rounded border-gray-300 cursor-pointer ${
-                fieldErrors.agreeTerms ? "border-red-500" : ""
-              }`}
+              className="w-4 h-4 mt-1 rounded border-gray-300 cursor-pointer"
             />
             <label htmlFor="terms" className="text-sm text-gray-600">
               Tôi đồng ý với{" "}
@@ -444,16 +331,9 @@ Nền tảng học trực tuyến hàng đầu
               và{" "}
               <a href="#" className="text-indigo-600 hover:underline font-semibold">
                 Chính sách bảo mật
-              </a>{" "}
-              *
+              </a>
             </label>
           </div>
-          {fieldErrors.agreeTerms && (
-            <p className="text-sm text-red-600 flex items-center gap-1 -mt-2">
-              <span>⚠️</span>
-              <span>{fieldErrors.agreeTerms}</span>
-            </p>
-          )}
 
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">

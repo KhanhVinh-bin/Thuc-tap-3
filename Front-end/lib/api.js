@@ -20,16 +20,43 @@ class ApiService {
         ...options,
       }
 
+      console.log(`[API] Fetching: ${url}`)
       const response = await fetch(url, config)
 
+      // Đọc response text trước
+      const text = await response.text()
+      console.log(`[API] Response status: ${response.status}`, text.substring(0, 200))
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        let errorMessage = `HTTP error! status: ${response.status}`
+        try {
+          const errorData = JSON.parse(text)
+          errorMessage = errorData.message || errorData.Message || errorMessage
+        } catch {
+          errorMessage = text || errorMessage
+        }
+        throw new Error(errorMessage)
       }
 
-      const data = await response.json()
+      // Parse JSON từ text
+      if (!text || text.trim() === '') {
+        console.warn(`[API] Empty response from ${endpoint}`)
+        return null
+      }
+
+      let data
+      try {
+        data = JSON.parse(text)
+      } catch (parseError) {
+        console.error(`[API] Failed to parse JSON from ${endpoint}:`, parseError)
+        console.error(`[API] Response text:`, text.substring(0, 500))
+        throw new Error(`Invalid JSON response from server`)
+      }
+
       return data
     } catch (error) {
-      console.error(`API Error for ${endpoint}:`, error)
+      console.error(`[API] Error for ${endpoint}:`, error)
+      // Không throw để component có thể xử lý gracefully
       throw error
     }
   }
@@ -307,15 +334,19 @@ export const formatCourseData = (courseData) => {
 
   // Xử lý thumbnailUrl - hỗ trợ cả PascalCase và camelCase
   const thumbnailUrlRaw = courseData.ThumbnailUrl || courseData.thumbnailUrl || null
-  let thumbnailUrl = "/placeholder.jpg"
+  let thumbnailUrl = "/placeholder-course.jpg"
   
   if (thumbnailUrlRaw) {
     if (thumbnailUrlRaw.startsWith("http://") || thumbnailUrlRaw.startsWith("https://")) {
       thumbnailUrl = thumbnailUrlRaw
     } else {
+      // Nếu là đường dẫn file, đảm bảo có / ở đầu
       thumbnailUrl = thumbnailUrlRaw.startsWith("/") 
         ? thumbnailUrlRaw 
         : `/${thumbnailUrlRaw.replace(/^\/+/, "")}`
+      
+      // Kiểm tra xem file có tồn tại không, nếu không thì dùng placeholder
+      // Trong production, có thể validate file existence ở đây
     }
   }
 
@@ -358,6 +389,7 @@ export const formatCourseData = (courseData) => {
     title: courseData.Title || courseData.title || "Khóa học",
     description: courseData.Description || courseData.description || "Mô tả khóa học",
     price: formatVND(priceValue),
+    priceFormatted: formatVND(priceValue), // Alias cho consistency
     priceValue: priceValue, // Giá trị số để tính toán
     oldPrice: priceValue ? formatVND(priceValue * 1.5) : "",
     discount: priceValue ? "33" : "0",
