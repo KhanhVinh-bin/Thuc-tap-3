@@ -1,5 +1,5 @@
 // API Configuration
-const BASE_URL = "https://localhost:7025/api"
+const BASE_URL = "https://localhost:7166/api"
 
 // API Service class
 class ApiService {

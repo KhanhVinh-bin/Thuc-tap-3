@@ -1,1 +1,764 @@
-{"Version":1,"Hash":"6A67XB8Z5001YKvyvuWEd3bGpqumBJZTuJxyysw/2fQ=","Source":"Du_An_Web_Ban_Khoa_Hoc","BasePath":"_content/Du_An_Web_Ban_Khoa_Hoc","Mode":"Default","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[{"Identity":"C:\\Users\\Vinhcuto\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css","SourceId":"Microsoft.AspNetCore.Components.QuickGrid","SourceType":"Package","ContentRoot":"C:\\Users\\Vinhcuto\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\","BasePath":"_content/Microsoft.AspNetCore.Components.QuickGrid","RelativePath":"Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css","AssetKind":"All","AssetMode":"Reference","AssetRole":"Primary","AssetMergeBehavior":"","AssetMergeSource":"","RelatedAsset":"","AssetTraitName":"ScopedCss","AssetTraitValue":"ProjectBundle","Fingerprint":"25o87uqmvr","Integrity":"Nuu0BHvGBlwN6c5FSVjV9yxX0YPfwg3ufdOucRJCOz0=","CopyToOutputDirectory":"Never","CopyToPublishDirectory":"PreserveNewest","OriginalItemSpec":"C:\\Users\\Vinhcuto\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css","FileLength":8251,"LastWriteTime":"2024-10-21T23:57:16+00:00"},{"Identity":"C:\\Users\\Vinhcuto\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\QuickGrid.razor.js","SourceId":"Microsoft.AspNetCore.Components.QuickGrid","SourceType":"Package","ContentRoot":"C:\\Users\\Vinhcuto\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\","BasePath":"_content/Microsoft.AspNetCore.Components.QuickGrid","RelativePath":"QuickGrid.razor.js","AssetKind":"All","AssetMode":"All","AssetRole":"Primary","AssetMergeBehavior":"","AssetMergeSource":"","RelatedAsset":"","AssetTraitName":"","AssetTraitValue":"","Fingerprint":"eu7w3d5g1a","Integrity":"tnamWuQ2F5I2J8hbtBt4/9i8Mb2y2o+9Tepj5tUrSdU=","CopyToOutputDirectory":"Never","CopyToPublishDirectory":"PreserveNewest","OriginalItemSpec":"C:\\Users\\Vinhcuto\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\QuickGrid.razor.js","FileLength":2563,"LastWriteTime":"2024-10-21T23:38:08+00:00"},{"Identity":"D:\\thuc-tap-2\\Back-end\\backend-ban-khoa-hoc\\obj\\Debug\\net8.0\\scopedcss\\bundle\\Du_An_Web_Ban_Khoa_Hoc.styles.css","SourceId":"Du_An_Web_Ban_Khoa_Hoc","SourceType":"Computed","ContentRoot":"D:\\thuc-tap-2\\Back-end\\backend-ban-khoa-hoc\\obj\\Debug\\net8.0\\scopedcss\\bundle\\","BasePath":"_content/Du_An_Web_Ban_Khoa_Hoc","RelativePath":"Du_An_Web_Ban_Khoa_Hoc#[.{fingerprint}]?.styles.css","AssetKind":"All","AssetMode":"CurrentProject","AssetRole":"Primary","AssetMergeBehavior":"","AssetMergeSource":"","RelatedAsset":"","AssetTraitName":"ScopedCss","AssetTraitValue":"ApplicationBundle","Fingerprint":"02jfxhbwsz","Integrity":"yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI=","CopyToOutputDirectory":"Never","CopyToPublishDirectory":"PreserveNewest","OriginalItemSpec":"D:\\thuc-tap-2\\Back-end\\backend-ban-khoa-hoc\\obj\\Debug\\net8.0\\scopedcss\\bundle\\Du_An_Web_Ban_Khoa_Hoc.styles.css","FileLength":122,"LastWriteTime":"2025-10-27T08:12:58+00:00"}],"Endpoints":[{"Route":"_content/Microsoft.AspNetCore.Components.QuickGrid/Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css","AssetFile":"C:\\Users\\Vinhcuto\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css","Selectors":[],"ResponseHeaders":[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Content-Length","Value":"8251"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\"Nuu0BHvGBlwN6c5FSVjV9yxX0YPfwg3ufdOucRJCOz0=\""},{"Name":"Last-Modified","Value":"Mon, 21 Oct 2024 23:57:16 GMT"},{"Name":"Cache-Control","Value":"no-cache"}],"EndpointProperties":[{"Name":"integrity","Value":"sha256-Nuu0BHvGBlwN6c5FSVjV9yxX0YPfwg3ufdOucRJCOz0="}]},{"Route":"_content/Microsoft.AspNetCore.Components.QuickGrid/QuickGrid.razor.js","AssetFile":"C:\\Users\\Vinhcuto\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\QuickGrid.razor.js","Selectors":[],"ResponseHeaders":[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Content-Length","Value":"2563"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\"tnamWuQ2F5I2J8hbtBt4/9i8Mb2y2o+9Tepj5tUrSdU=\""},{"Name":"Last-Modified","Value":"Mon, 21 Oct 2024 23:38:08 GMT"},{"Name":"Cache-Control","Value":"no-cache"}],"EndpointProperties":[{"Name":"integrity","Value":"sha256-tnamWuQ2F5I2J8hbtBt4/9i8Mb2y2o+9Tepj5tUrSdU="}]},{"Route":"Du_An_Web_Ban_Khoa_Hoc.02jfxhbwsz.styles.css","AssetFile":"D:\\thuc-tap-2\\Back-end\\backend-ban-khoa-hoc\\obj\\Debug\\net8.0\\scopedcss\\bundle\\Du_An_Web_Ban_Khoa_Hoc.styles.css","Selectors":[],"ResponseHeaders":[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"122"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\"yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI=\""},{"Name":"Last-Modified","Value":"Mon, 27 Oct 2025 08:12:58 GMT"},{"Name":"Link","Value":"<_content/Microsoft.AspNetCore.Components.QuickGrid/Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css>; rel=\"preload\"; as=\"style\""}],"EndpointProperties":[{"Name":"fingerprint","Value":"02jfxhbwsz"},{"Name":"integrity","Value":"sha256-yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI="},{"Name":"label","Value":"Du_An_Web_Ban_Khoa_Hoc.styles.css"}]},{"Route":"Du_An_Web_Ban_Khoa_Hoc.styles.css","AssetFile":"D:\\thuc-tap-2\\Back-end\\backend-ban-khoa-hoc\\obj\\Debug\\net8.0\\scopedcss\\bundle\\Du_An_Web_Ban_Khoa_Hoc.styles.css","Selectors":[],"ResponseHeaders":[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"122"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\"yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI=\""},{"Name":"Last-Modified","Value":"Mon, 27 Oct 2025 08:12:58 GMT"},{"Name":"Link","Value":"<_content/Microsoft.AspNetCore.Components.QuickGrid/Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css>; rel=\"preload\"; as=\"style\""}],"EndpointProperties":[{"Name":"integrity","Value":"sha256-yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI="}]}]}
+{
+  "Version": 1,
+  "Hash": "HU8FnYSsbyQVUqN7jKCHzaATRwYJ3t43ch92iD4sKXQ=",
+  "Source": "Du_An_Web_Ban_Khoa_Hoc",
+  "BasePath": "_content/Du_An_Web_Ban_Khoa_Hoc",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "Du_An_Web_Ban_Khoa_Hoc\\wwwroot",
+      "Source": "Du_An_Web_Ban_Khoa_Hoc",
+      "ContentRoot": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\",
+      "BasePath": "_content/Du_An_Web_Ban_Khoa_Hoc",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\QTHANH\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css",
+      "SourceId": "Microsoft.AspNetCore.Components.QuickGrid",
+      "SourceType": "Package",
+      "ContentRoot": "C:\\Users\\QTHANH\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\",
+      "BasePath": "_content/Microsoft.AspNetCore.Components.QuickGrid",
+      "RelativePath": "Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css",
+      "AssetKind": "All",
+      "AssetMode": "Reference",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "ScopedCss",
+      "AssetTraitValue": "ProjectBundle",
+      "Fingerprint": "25o87uqmvr",
+      "Integrity": "Nuu0BHvGBlwN6c5FSVjV9yxX0YPfwg3ufdOucRJCOz0=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\QTHANH\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css"
+    },
+    {
+      "Identity": "C:\\Users\\QTHANH\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\QuickGrid.razor.js",
+      "SourceId": "Microsoft.AspNetCore.Components.QuickGrid",
+      "SourceType": "Package",
+      "ContentRoot": "C:\\Users\\QTHANH\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\",
+      "BasePath": "_content/Microsoft.AspNetCore.Components.QuickGrid",
+      "RelativePath": "QuickGrid.razor.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "eu7w3d5g1a",
+      "Integrity": "tnamWuQ2F5I2J8hbtBt4/9i8Mb2y2o+9Tepj5tUrSdU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\QTHANH\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\QuickGrid.razor.js"
+    },
+    {
+      "Identity": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\obj\\Debug\\net8.0\\scopedcss\\bundle\\Du_An_Web_Ban_Khoa_Hoc.styles.css",
+      "SourceId": "Du_An_Web_Ban_Khoa_Hoc",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
+      "BasePath": "_content/Du_An_Web_Ban_Khoa_Hoc",
+      "RelativePath": "Du_An_Web_Ban_Khoa_Hoc#[.{fingerprint}]?.styles.css",
+      "AssetKind": "All",
+      "AssetMode": "CurrentProject",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "ScopedCss",
+      "AssetTraitValue": "ApplicationBundle",
+      "Fingerprint": "02jfxhbwsz",
+      "Integrity": "yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\obj\\Debug\\net8.0\\scopedcss\\bundle\\Du_An_Web_Ban_Khoa_Hoc.styles.css"
+    },
+    {
+      "Identity": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\5047d9445de54c6b91b7a368f14a14ca.png",
+      "SourceId": "Du_An_Web_Ban_Khoa_Hoc",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\",
+      "BasePath": "_content/Du_An_Web_Ban_Khoa_Hoc",
+      "RelativePath": "image/banner/5047d9445de54c6b91b7a368f14a14ca#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "o9vqihgqih",
+      "Integrity": "zNZeVXAkrk0bj8SZRActwfxFjPMbejZyy+YIrHiOOw4=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\image\\banner\\5047d9445de54c6b91b7a368f14a14ca.png"
+    },
+    {
+      "Identity": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\5fee7e7749af4f67b7b812de1a3702c2.png",
+      "SourceId": "Du_An_Web_Ban_Khoa_Hoc",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\",
+      "BasePath": "_content/Du_An_Web_Ban_Khoa_Hoc",
+      "RelativePath": "image/banner/5fee7e7749af4f67b7b812de1a3702c2#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "nubbx5qt5g",
+      "Integrity": "v+XUnBvbVLIUhdGJcunnoIamCq7pjqnrhvKD4wHUhaE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\image\\banner\\5fee7e7749af4f67b7b812de1a3702c2.png"
+    },
+    {
+      "Identity": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\d158e8e2804b42d9a7791dfd64247e15.png",
+      "SourceId": "Du_An_Web_Ban_Khoa_Hoc",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\",
+      "BasePath": "_content/Du_An_Web_Ban_Khoa_Hoc",
+      "RelativePath": "image/banner/d158e8e2804b42d9a7791dfd64247e15#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "4b1nnxtagu",
+      "Integrity": "oK6nr6OUbbGV5BP7QldppZtfImbVpxzpludyzTThaGQ=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\image\\banner\\d158e8e2804b42d9a7791dfd64247e15.png"
+    },
+    {
+      "Identity": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\ea3a906b9d3144cca631b1ff4655afab.png",
+      "SourceId": "Du_An_Web_Ban_Khoa_Hoc",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\",
+      "BasePath": "_content/Du_An_Web_Ban_Khoa_Hoc",
+      "RelativePath": "image/banner/ea3a906b9d3144cca631b1ff4655afab#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "v3plrqdz0t",
+      "Integrity": "W6UCi6CXfTElJ/N7MTSyq83H6NG/E8asHg7RsyiAMYY=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\image\\banner\\ea3a906b9d3144cca631b1ff4655afab.png"
+    },
+    {
+      "Identity": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\fe9f614ea9c740058878db5d71ee0ed7.png",
+      "SourceId": "Du_An_Web_Ban_Khoa_Hoc",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\",
+      "BasePath": "_content/Du_An_Web_Ban_Khoa_Hoc",
+      "RelativePath": "image/banner/fe9f614ea9c740058878db5d71ee0ed7#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "w1j4bq6x4j",
+      "Integrity": "dGxS1O3Z7YV2Kw6hn0u/UP8pZE8nspbzvVVwHcHtKEI=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\image\\banner\\fe9f614ea9c740058878db5d71ee0ed7.png"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "_content/Microsoft.AspNetCore.Components.QuickGrid/Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css",
+      "AssetFile": "C:\\Users\\QTHANH\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8251"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"Nuu0BHvGBlwN6c5FSVjV9yxX0YPfwg3ufdOucRJCOz0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Oct 2024 23:57:16 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-Nuu0BHvGBlwN6c5FSVjV9yxX0YPfwg3ufdOucRJCOz0="
+        }
+      ]
+    },
+    {
+      "Route": "_content/Microsoft.AspNetCore.Components.QuickGrid/QuickGrid.razor.js",
+      "AssetFile": "C:\\Users\\QTHANH\\.nuget\\packages\\microsoft.aspnetcore.components.quickgrid\\8.0.11\\staticwebassets\\QuickGrid.razor.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2563"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"tnamWuQ2F5I2J8hbtBt4/9i8Mb2y2o+9Tepj5tUrSdU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Oct 2024 23:38:08 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-tnamWuQ2F5I2J8hbtBt4/9i8Mb2y2o+9Tepj5tUrSdU="
+        }
+      ]
+    },
+    {
+      "Route": "Du_An_Web_Ban_Khoa_Hoc.02jfxhbwsz.styles.css",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\obj\\Debug\\net8.0\\scopedcss\\bundle\\Du_An_Web_Ban_Khoa_Hoc.styles.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "122"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 01 Nov 2025 08:34:49 GMT"
+        },
+        {
+          "Name": "Link",
+          "Value": "<_content/Microsoft.AspNetCore.Components.QuickGrid/Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css>; rel=\"preload\"; as=\"style\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "02jfxhbwsz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI="
+        },
+        {
+          "Name": "label",
+          "Value": "Du_An_Web_Ban_Khoa_Hoc.styles.css"
+        }
+      ]
+    },
+    {
+      "Route": "Du_An_Web_Ban_Khoa_Hoc.styles.css",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\obj\\Debug\\net8.0\\scopedcss\\bundle\\Du_An_Web_Ban_Khoa_Hoc.styles.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "122"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 01 Nov 2025 08:34:49 GMT"
+        },
+        {
+          "Name": "Link",
+          "Value": "<_content/Microsoft.AspNetCore.Components.QuickGrid/Microsoft.AspNetCore.Components.QuickGrid.bundle.scp.css>; rel=\"preload\"; as=\"style\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-yJzMRujk3CbSbBe5hogvoEpcGbz0ThnTl058XcI1svI="
+        }
+      ]
+    },
+    {
+      "Route": "image/banner/5047d9445de54c6b91b7a368f14a14ca.o9vqihgqih.png",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\5047d9445de54c6b91b7a368f14a14ca.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "269119"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"zNZeVXAkrk0bj8SZRActwfxFjPMbejZyy+YIrHiOOw4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 30 Oct 2025 14:27:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "o9vqihgqih"
+        },
+        {
+          "Name": "label",
+          "Value": "image/banner/5047d9445de54c6b91b7a368f14a14ca.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-zNZeVXAkrk0bj8SZRActwfxFjPMbejZyy+YIrHiOOw4="
+        }
+      ]
+    },
+    {
+      "Route": "image/banner/5047d9445de54c6b91b7a368f14a14ca.png",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\5047d9445de54c6b91b7a368f14a14ca.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "269119"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"zNZeVXAkrk0bj8SZRActwfxFjPMbejZyy+YIrHiOOw4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 30 Oct 2025 14:27:41 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-zNZeVXAkrk0bj8SZRActwfxFjPMbejZyy+YIrHiOOw4="
+        }
+      ]
+    },
+    {
+      "Route": "image/banner/5fee7e7749af4f67b7b812de1a3702c2.nubbx5qt5g.png",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\5fee7e7749af4f67b7b812de1a3702c2.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2584048"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"v+XUnBvbVLIUhdGJcunnoIamCq7pjqnrhvKD4wHUhaE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 30 Oct 2025 14:00:43 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "nubbx5qt5g"
+        },
+        {
+          "Name": "label",
+          "Value": "image/banner/5fee7e7749af4f67b7b812de1a3702c2.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-v+XUnBvbVLIUhdGJcunnoIamCq7pjqnrhvKD4wHUhaE="
+        }
+      ]
+    },
+    {
+      "Route": "image/banner/5fee7e7749af4f67b7b812de1a3702c2.png",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\5fee7e7749af4f67b7b812de1a3702c2.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2584048"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"v+XUnBvbVLIUhdGJcunnoIamCq7pjqnrhvKD4wHUhaE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 30 Oct 2025 14:00:43 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-v+XUnBvbVLIUhdGJcunnoIamCq7pjqnrhvKD4wHUhaE="
+        }
+      ]
+    },
+    {
+      "Route": "image/banner/d158e8e2804b42d9a7791dfd64247e15.4b1nnxtagu.png",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\d158e8e2804b42d9a7791dfd64247e15.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "452916"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"oK6nr6OUbbGV5BP7QldppZtfImbVpxzpludyzTThaGQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 30 Oct 2025 14:01:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "4b1nnxtagu"
+        },
+        {
+          "Name": "label",
+          "Value": "image/banner/d158e8e2804b42d9a7791dfd64247e15.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-oK6nr6OUbbGV5BP7QldppZtfImbVpxzpludyzTThaGQ="
+        }
+      ]
+    },
+    {
+      "Route": "image/banner/d158e8e2804b42d9a7791dfd64247e15.png",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\d158e8e2804b42d9a7791dfd64247e15.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "452916"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"oK6nr6OUbbGV5BP7QldppZtfImbVpxzpludyzTThaGQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 30 Oct 2025 14:01:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-oK6nr6OUbbGV5BP7QldppZtfImbVpxzpludyzTThaGQ="
+        }
+      ]
+    },
+    {
+      "Route": "image/banner/ea3a906b9d3144cca631b1ff4655afab.png",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\ea3a906b9d3144cca631b1ff4655afab.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "183375"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"W6UCi6CXfTElJ/N7MTSyq83H6NG/E8asHg7RsyiAMYY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 30 Oct 2025 14:02:09 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-W6UCi6CXfTElJ/N7MTSyq83H6NG/E8asHg7RsyiAMYY="
+        }
+      ]
+    },
+    {
+      "Route": "image/banner/ea3a906b9d3144cca631b1ff4655afab.v3plrqdz0t.png",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\ea3a906b9d3144cca631b1ff4655afab.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "183375"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"W6UCi6CXfTElJ/N7MTSyq83H6NG/E8asHg7RsyiAMYY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 30 Oct 2025 14:02:09 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "v3plrqdz0t"
+        },
+        {
+          "Name": "label",
+          "Value": "image/banner/ea3a906b9d3144cca631b1ff4655afab.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-W6UCi6CXfTElJ/N7MTSyq83H6NG/E8asHg7RsyiAMYY="
+        }
+      ]
+    },
+    {
+      "Route": "image/banner/fe9f614ea9c740058878db5d71ee0ed7.png",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\fe9f614ea9c740058878db5d71ee0ed7.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "34285"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"dGxS1O3Z7YV2Kw6hn0u/UP8pZE8nspbzvVVwHcHtKEI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 01 Nov 2025 00:45:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-dGxS1O3Z7YV2Kw6hn0u/UP8pZE8nspbzvVVwHcHtKEI="
+        }
+      ]
+    },
+    {
+      "Route": "image/banner/fe9f614ea9c740058878db5d71ee0ed7.w1j4bq6x4j.png",
+      "AssetFile": "C:\\Users\\QTHANH\\Desktop\\New folder (7) - Copy\\Thuc-tap-3\\Back-end\\backend-ban-khoa-hoc\\wwwroot\\image\\banner\\fe9f614ea9c740058878db5d71ee0ed7.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "34285"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"dGxS1O3Z7YV2Kw6hn0u/UP8pZE8nspbzvVVwHcHtKEI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 01 Nov 2025 00:45:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "w1j4bq6x4j"
+        },
+        {
+          "Name": "label",
+          "Value": "image/banner/fe9f614ea9c740058878db5d71ee0ed7.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-dGxS1O3Z7YV2Kw6hn0u/UP8pZE8nspbzvVVwHcHtKEI="
+        }
+      ]
+    }
+  ]
+}

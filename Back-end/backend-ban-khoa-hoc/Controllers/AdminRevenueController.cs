@@ -65,9 +65,45 @@ namespace Du_An_Web_Ban_Khoa_Hoc.Controllers
 
             var totalRevenue = await totalRevenueQuery.SumAsync(o => o.TotalAmount);
 
+            // Doanh thu kỳ trước để tính phần trăm thay đổi
+            DateTime prevStart = startDate, prevEnd = endDate;
+            switch ((period ?? "all").ToLower())
+            {
+                case "day":
+                    prevStart = startDate.AddDays(-1);
+                    prevEnd = endDate.AddDays(-1);
+                    break;
+                case "month":
+                    prevStart = new DateTime(startDate.Year, startDate.Month, 1).AddMonths(-1);
+                    prevEnd = prevStart.AddMonths(1).AddTicks(-1);
+                    break;
+                case "quarter":
+                    // Lùi 1 quý
+                    var currentQuarterStart = new DateTime(startDate.Year, ((startDate.Month - 1) / 3) * 3 + 1, 1);
+                    prevStart = currentQuarterStart.AddMonths(-3);
+                    prevEnd = prevStart.AddMonths(3).AddTicks(-1);
+                    break;
+                default:
+                    // 'all' hoặc không xác định: không tính tỷ lệ thay đổi
+                    prevStart = DateTime.MinValue;
+                    prevEnd = DateTime.MinValue;
+                    break;
+            }
+
+            decimal previousTotalRevenue = 0;
+            if (prevStart != DateTime.MinValue)
+            {
+                previousTotalRevenue = await _context.Orders
+                    .Include(o => o.Payments)
+                    .Where(o => o.OrderDate >= prevStart && o.OrderDate <= prevEnd)
+                    .Where(o => o.Payments.Any(p => PaidStatuses.Contains(p.PaymentStatus)))
+                    .SumAsync(o => o.TotalAmount);
+            }
+
             // 2. Tổng tiền đã chi trả cho giảng viên
             var totalPayoutsQuery = _context.Payouts
-                .Where(p => p.Status == "Processed")
+                // Theo schema SQL: Status có các giá trị 'pending', 'paid', 'rejected'
+                .Where(p => p.Status == "paid")
                 .Where(p => p.ProcessedAt >= startDate && p.ProcessedAt <= endDate);
 
             var totalPayouts = await totalPayoutsQuery.SumAsync(p => p.NetAmount);
@@ -134,6 +170,8 @@ namespace Du_An_Web_Ban_Khoa_Hoc.Controllers
                 Summary = new
                 {
                     TotalRevenue = totalRevenue,
+                    PreviousTotalRevenue = previousTotalRevenue,
+                    RevenueChangePercent = previousTotalRevenue > 0 ? Math.Round(((totalRevenue - previousTotalRevenue) / previousTotalRevenue) * 100, 2) : 0,
                     TotalPayouts = totalPayouts,
                     ActualProfit = actualProfit,
                     ProfitMargin = totalRevenue > 0 ? Math.Round((actualProfit / totalRevenue) * 100, 2) : 0,
@@ -284,11 +322,12 @@ namespace Du_An_Web_Ban_Khoa_Hoc.Controllers
             var courseRevenueWithPayouts = new List<object>();
             foreach (var course in courseRevenues)
             {
-                var totalPayouts = course.InstructorId.HasValue ? 
-                    await _context.Payouts
-                        .Where(p => p.InstructorId == course.InstructorId.Value && p.Status == "Processed")
+                var totalPayouts = course.InstructorId.HasValue
+                    ? await _context.Payouts
+                        .Where(p => p.InstructorId == course.InstructorId.Value && p.Status == "paid")
                         .Where(p => p.ProcessedAt >= startDate && p.ProcessedAt <= endDate)
-                        .SumAsync(p => p.NetAmount) : 0;
+                        .SumAsync(p => p.NetAmount)
+                    : 0;
 
                 courseRevenueWithPayouts.Add(new
                 {
@@ -353,12 +392,12 @@ namespace Du_An_Web_Ban_Khoa_Hoc.Controllers
             foreach (var instructor in instructorRevenues)
             {
                 var totalPayouts = await _context.Payouts
-                    .Where(p => p.InstructorId == instructor.InstructorId && p.Status == "Processed")
+                    .Where(p => p.InstructorId == instructor.InstructorId && p.Status == "paid")
                     .Where(p => p.ProcessedAt >= startDate && p.ProcessedAt <= endDate)
                     .SumAsync(p => p.NetAmount);
 
                 var pendingPayouts = await _context.Payouts
-                    .Where(p => p.InstructorId == instructor.InstructorId && p.Status == "Pending")
+                    .Where(p => p.InstructorId == instructor.InstructorId && p.Status == "pending")
                     .SumAsync(p => p.NetAmount);
 
                 instructorRevenueWithPayouts.Add(new
@@ -383,6 +422,137 @@ namespace Du_An_Web_Ban_Khoa_Hoc.Controllers
                 Data = instructorRevenueWithPayouts,
                 TotalCount = instructorRevenueWithPayouts.Count,
                 Period = new { From = startDate, To = endDate }
+            });
+        }
+        [HttpGet("trend")]
+        public async Task<IActionResult> GetRevenueTrend(
+            [FromQuery] DateTime? dateFrom,
+            [FromQuery] DateTime? dateTo,
+            [FromQuery] string groupBy = "month")
+        {
+            var startDate = dateFrom ?? DateTime.Now.AddMonths(-12);
+            var endDate = dateTo ?? DateTime.Now;
+
+            var paidOrders = _context.Orders
+                .Include(o => o.Payments)
+                .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate)
+                .Where(o => o.Payments.Any(p => PaidStatuses.Contains(p.PaymentStatus)));
+
+            var data = new List<object>();
+
+            if (groupBy.Equals("day", StringComparison.OrdinalIgnoreCase))
+            {
+                var points = await paidOrders
+                    .GroupBy(o => o.OrderDate.Date)
+                    .Select(g => new
+                    {
+                        From = g.Key,
+                        To = g.Key.AddDays(1).AddTicks(-1),
+                        Label = g.Key.ToString("yyyy-MM-dd"),
+                        TotalRevenue = g.Sum(x => x.TotalAmount),
+                        OrderCount = g.Count(),
+                        StudentCount = g.Select(x => x.UserId).Distinct().Count()
+                    })
+                    .OrderBy(x => x.From)
+                    .ToListAsync();
+
+                foreach (var pt in points)
+                {
+                    var payouts = await _context.Payouts
+                        .Where(p => p.ProcessedAt >= pt.From && p.ProcessedAt <= pt.To)
+                        .Where(p => p.Status == "paid")
+                        .SumAsync(p => p.NetAmount);
+
+                    data.Add(new
+                    {
+                        pt.From, pt.To, pt.Label,
+                        pt.TotalRevenue,
+                        TotalPayouts = payouts,
+                        NetProfit = pt.TotalRevenue - payouts,
+                        pt.OrderCount,
+                        pt.StudentCount
+                    });
+                }
+            }
+            else if (groupBy.Equals("quarter", StringComparison.OrdinalIgnoreCase))
+            {
+                var points = await paidOrders
+                    .GroupBy(o => new { o.OrderDate.Year, Quarter = ((o.OrderDate.Month - 1) / 3) + 1 })
+                    .Select(g => new
+                    {
+                        Year = g.Key.Year,
+                        Quarter = g.Key.Quarter,
+                        From = new DateTime(g.Key.Year, ((g.Key.Quarter - 1) * 3) + 1, 1),
+                        To = new DateTime(g.Key.Year, ((g.Key.Quarter - 1) * 3) + 1, 1).AddMonths(3).AddTicks(-1),
+                        Label = $"Q{g.Key.Quarter}-{g.Key.Year}",
+                        TotalRevenue = g.Sum(x => x.TotalAmount),
+                        OrderCount = g.Count(),
+                        StudentCount = g.Select(x => x.UserId).Distinct().Count()
+                    })
+                    .OrderBy(x => x.Year).ThenBy(x => x.Quarter)
+                    .ToListAsync();
+
+                foreach (var pt in points)
+                {
+                    var payouts = await _context.Payouts
+                        .Where(p => p.ProcessedAt >= pt.From && p.ProcessedAt <= pt.To)
+                        .Where(p => p.Status == "paid")
+                        .SumAsync(p => p.NetAmount);
+
+                    data.Add(new
+                    {
+                        pt.From, pt.To, pt.Label,
+                        pt.TotalRevenue,
+                        TotalPayouts = payouts,
+                        NetProfit = pt.TotalRevenue - payouts,
+                        pt.OrderCount,
+                        pt.StudentCount
+                    });
+                }
+            }
+            else
+            {
+                // groupBy: month (mặc định)
+                var points = await paidOrders
+                    .GroupBy(o => new { o.OrderDate.Year, o.OrderDate.Month })
+                    .Select(g => new
+                    {
+                        Year = g.Key.Year,
+                        Month = g.Key.Month,
+                        From = new DateTime(g.Key.Year, g.Key.Month, 1),
+                        To = new DateTime(g.Key.Year, g.Key.Month, 1).AddMonths(1).AddTicks(-1),
+                        Label = $"{g.Key.Year}-{g.Key.Month:D2}",
+                        TotalRevenue = g.Sum(x => x.TotalAmount),
+                        OrderCount = g.Count(),
+                        StudentCount = g.Select(x => x.UserId).Distinct().Count()
+                    })
+                    .OrderBy(x => x.Year).ThenBy(x => x.Month)
+                    .ToListAsync();
+
+                foreach (var pt in points)
+                {
+                    var payouts = await _context.Payouts
+                        .Where(p => p.ProcessedAt >= pt.From && p.ProcessedAt <= pt.To)
+                        .Where(p => p.Status == "paid")
+                        .SumAsync(p => p.NetAmount);
+
+                    data.Add(new
+                    {
+                        pt.From, pt.To, pt.Label,
+                        pt.TotalRevenue,
+                        TotalPayouts = payouts,
+                        NetProfit = pt.TotalRevenue - payouts,
+                        pt.OrderCount,
+                        pt.StudentCount
+                    });
+                }
+            }
+
+            return Ok(new
+            {
+                GroupBy = groupBy,
+                Period = new { From = startDate, To = endDate },
+                Data = data
             });
         }
     }

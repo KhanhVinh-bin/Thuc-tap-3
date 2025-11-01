@@ -53,7 +53,14 @@ builder.Services.AddCors(options =>
             "http://localhost:3001",
             "https://localhost:3001",
             "http://localhost:3002",
-            "https://localhost:3002"
+            "https://localhost:3002",
+            // Bổ sung 127.0.0.1 để tránh bị CORS chặn khi mở bằng IP loopback
+            "http://127.0.0.1:3000",
+            "https://127.0.0.1:3000",
+            "http://127.0.0.1:3001",
+            "https://127.0.0.1:3001",
+            "http://127.0.0.1:3002",
+            "https://127.0.0.1:3002"
         )
         .AllowAnyHeader()
         .AllowAnyMethod()
@@ -114,6 +121,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Tạo thư mục wwwroot/image/banner nếu chưa tồn tại trước khi phục vụ static files
+var webRoot = app.Environment.WebRootPath ?? Path.Combine(AppContext.BaseDirectory, "wwwroot");
+System.IO.Directory.CreateDirectory(System.IO.Path.Combine(webRoot, "image", "banner"));
+
 app.UseStaticFiles();
 
 // dùng CORS cho frontend

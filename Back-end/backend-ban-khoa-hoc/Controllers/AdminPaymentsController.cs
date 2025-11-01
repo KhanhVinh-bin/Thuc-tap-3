@@ -25,16 +25,16 @@ namespace Du_An_Web_Ban_Khoa_Hoc.Controllers
         }
 
         // Danh sách thanh toán + filter: học viên, khóa học, trạng thái, ngày
-        [HttpGet]
+        [HttpGet("")]
         public async Task<IActionResult> GetPayments(
+            [FromQuery] int? orderId,
             [FromQuery] int? studentId,
             [FromQuery] string? studentName,
-            [FromQuery] int? orderId,
             [FromQuery] int? courseId,
-            [FromQuery] string? status, // pending/success/failed/paid/completed
+            [FromQuery] string? status,
             [FromQuery] DateTime? dateFrom,
-            [FromQuery] DateTime? dateTo)
-        {
+            [FromQuery] DateTime? dateTo
+        ) {
             var query = _context.Payments
                 .Include(p => p.Order).ThenInclude(o => o.User)
                 .Include(p => p.Order).ThenInclude(o => o.OrderDetails).ThenInclude(od => od.Course)
@@ -53,7 +53,7 @@ namespace Du_An_Web_Ban_Khoa_Hoc.Controllers
                 query = query.Where(p => p.Order != null && p.Order.OrderDetails.Any(od => od.CourseId == courseId.Value));
 
             if (!string.IsNullOrWhiteSpace(status))
-                query = query.Where(p => p.PaymentStatus.Equals(status, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(p => p.PaymentStatus == status);
 
             if (dateFrom.HasValue)
                 query = query.Where(p => p.PaidAt != null && p.PaidAt!.Value >= dateFrom.Value);
@@ -232,7 +232,7 @@ namespace Du_An_Web_Ban_Khoa_Hoc.Controllers
             {
                 var courseIds = order.OrderDetails.Select(od => od.CourseId).Distinct().ToList();
                 var completedCount = await _context.Enrollments
-                    .Where(e => e.UserId == order.UserId && courseIds.Contains(e.CourseId) && e.Status.Equals("completed", StringComparison.OrdinalIgnoreCase))
+                    .Where(e => e.UserId == order.UserId && courseIds.Contains(e.CourseId) && e.Status == "completed")
                     .Select(e => e.CourseId)
                     .Distinct()
                     .CountAsync();
