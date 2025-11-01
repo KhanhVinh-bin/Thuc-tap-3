@@ -56,8 +56,8 @@ Back-end/**/wwwroot/
 Back-end/**/appsettings.Development.json
 Back-end/**/appsettings.Local.json
 
-# Ignore nested git repositories (PR folder seems to be separate)
-Back-end/PR/
+# Ignore nested git repositories (uncomment if PR folder is separate git repo)
+# Back-end/PR/
 
 # Others
 *.db
