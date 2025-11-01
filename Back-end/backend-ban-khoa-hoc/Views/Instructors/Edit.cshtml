@@ -1,0 +1,111 @@
+﻿@model Du_An_Web_Ban_Khoa_Hoc.Models.Instructor
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Instructor</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="InstructorId" />
+            <div class="form-group">
+                <label asp-for="Expertise" class="control-label"></label>
+                <input asp-for="Expertise" class="form-control" />
+                <span asp-validation-for="Expertise" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Biography" class="control-label"></label>
+                <input asp-for="Biography" class="form-control" />
+                <span asp-validation-for="Biography" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExperienceYears" class="control-label"></label>
+                <input asp-for="ExperienceYears" class="form-control" />
+                <span asp-validation-for="ExperienceYears" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Education" class="control-label"></label>
+                <input asp-for="Education" class="form-control" />
+                <span asp-validation-for="Education" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Certifications" class="control-label"></label>
+                <input asp-for="Certifications" class="form-control" />
+                <span asp-validation-for="Certifications" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RatingAverage" class="control-label"></label>
+                <input asp-for="RatingAverage" class="form-control" />
+                <span asp-validation-for="RatingAverage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TotalStudents" class="control-label"></label>
+                <input asp-for="TotalStudents" class="form-control" />
+                <span asp-validation-for="TotalStudents" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TotalCourses" class="control-label"></label>
+                <input asp-for="TotalCourses" class="form-control" />
+                <span asp-validation-for="TotalCourses" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Earnings" class="control-label"></label>
+                <input asp-for="Earnings" class="form-control" />
+                <span asp-validation-for="Earnings" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PayoutMethod" class="control-label"></label>
+                <input asp-for="PayoutMethod" class="form-control" />
+                <span asp-validation-for="PayoutMethod" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PayoutAccount" class="control-label"></label>
+                <input asp-for="PayoutAccount" class="form-control" />
+                <span asp-validation-for="PayoutAccount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VerificationStatus" class="control-label"></label>
+                <input asp-for="VerificationStatus" class="form-control" />
+                <span asp-validation-for="VerificationStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastPayoutDate" class="control-label"></label>
+                <input asp-for="LastPayoutDate" class="form-control" />
+                <span asp-validation-for="LastPayoutDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LinkedInUrl" class="control-label"></label>
+                <input asp-for="LinkedInUrl" class="form-control" />
+                <span asp-validation-for="LinkedInUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FacebookUrl" class="control-label"></label>
+                <input asp-for="FacebookUrl" class="form-control" />
+                <span asp-validation-for="FacebookUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="YouTubeUrl" class="control-label"></label>
+                <input asp-for="YouTubeUrl" class="form-control" />
+                <span asp-validation-for="YouTubeUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Xurl" class="control-label"></label>
+                <input asp-for="Xurl" class="form-control" />
+                <span asp-validation-for="Xurl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

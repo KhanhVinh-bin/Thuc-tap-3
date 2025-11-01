@@ -1,0 +1,86 @@
+# ========================
+# NODE MODULES
+# ========================
+node_modules/
+Front-end/node_modules/
+Back-end/node_modules/
+
+# ========================
+# FRONT-END (Next.js)
+# ========================
+# next.js build output
+Front-end/.next/
+Front-end/out/
+
+# production build
+Front-end/build/
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# environment files
+.env*
+!.env.example
+
+# vercel deployment
+Front-end/.vercel/
+
+# typescript
+*.tsbuildinfo
+Front-end/next-env.d.ts
+
+
+# ========================
+# BACK-END (ASP.NET)
+# ========================
+# Visual Studio
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Dd]ebug/
+[Rr]elease/
+
+# ASP.NET Core files
+Back-end/**/wwwroot/
+Back-end/**/appsettings.Development.json
+Back-end/**/appsettings.Local.json
+
+# Ignore nested git repositories (PR folder seems to be separate)
+Back-end/PR/
+
+# Others
+*.db
+*.cache
+*.pdb
+*.dll
+*.exe
+*.lock.json
+
+
+# ========================
+# COMMON / SYSTEM
+# ========================
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE
+.idea/
+
+# Package lock files (optional - uncomment if you want to ignore)
+# package-lock.json
+# yarn.lock

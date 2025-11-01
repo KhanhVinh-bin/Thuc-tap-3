@@ -1,0 +1,6 @@
+@Du_An_Web_Ban_Khoa_Hoc_HostAddress = http://localhost:5075
+
+GET {{Du_An_Web_Ban_Khoa_Hoc_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

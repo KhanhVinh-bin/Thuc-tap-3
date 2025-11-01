@@ -1,0 +1,91 @@
+/* Student page styles without Action column */
+
+/* Main content area - expand to full width */
+.gv-content {
+  flex: 1;
+  padding: 24px 0 24px 24px; /* Remove right padding to extend to edge */
+  overflow-x: auto;
+}
+
+.gvs-card {
+  background: #fff;
+  border-radius: 12px 0 0 12px; /* Remove right border radius to extend to edge */
+  padding: 16px 24px 16px 16px; /* Add right padding inside card, remove left padding */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  margin-right: 0; /* Ensure no right margin */
+}
+
+.gvs-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 16px; }
+.gvs-title { font-weight: 600; font-size: 18px; color:#0f172a; }
+.gvs-sub { font-size: 13px; color:#64748b; margin-top: 4px; }
+
+.gvs-table-head {
+  display: grid;
+  grid-template-columns: 2.2fr 2.4fr 2fr 1.4fr 1.2fr; /* 5 columns */
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.gvs-table-body { display: flex; flex-direction: column; }
+.gvs-row {
+  display: grid;
+  grid-template-columns: 2.2fr 2.4fr 2fr 1.4fr 1.2fr; /* 5 columns */
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Student col */
+.gvs-student { display:flex; align-items:center; gap:12px; }
+.gvs-avatar { width:36px; height:36px; border-radius: 50%; overflow:hidden; flex-shrink:0; background:#e2e8f0; display:inline-flex; align-items:center; justify-content:center; }
+.gvs-avatar img { width:100%; height:100%; object-fit:cover; }
+.gvs-student-name { font-weight:600; color:#0f172a; }
+.gvs-student-email { font-size:12px; color:#64748b; }
+
+/* Course col */
+.gvs-course-title { font-weight:500; color:#0f172a; }
+.gvs-course-date { font-size:12px; color:#64748b; margin-top: 4px; }
+
+/* Progress col */
+.gvs-progress-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.gvs-progress-percent { font-weight:600; color:#0f172a; }
+.gvs-progress-text { font-size:12px; color:#64748b; }
+.gvs-progress-bar { position:relative; width:100%; height:10px; background:#e5e7eb; border-radius:999px; overflow:hidden; }
+.gvs-progress-fill { position:absolute; height:100%; left:0; top:0; background:#111827; border-radius:999px; }
+
+/* Access col */
+.gvs-access { color:#334155; font-size:14px; }
+
+/* Status col */
+.gvs-status { display:flex; align-items:center; }
+.gvs-pill { font-size:12px; padding:6px 10px; border-radius:999px; font-weight:600; }
+.gvs-pill.learning { background:#e0e7ff; color:#3730a3; }
+.gvs-pill.active { background:#dcfce7; color:#166534; }
+.gvs-pill.inactive { background:#f1f5f9; color:#0f172a; }
+
+/* Pagination (reuse style pattern) */
+.gvc-pagination { display:flex; align-items:center; justify-content:center; gap:8px; padding: 16px 0; }
+.gvc-page { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border-radius:8px; background:#f1f5f9; color:#111827; font-weight:600; }
+.gvc-page.active { background:#7c3aed; color:#fff; }
+.gvc-page.arrow { width:auto; padding:0 10px; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .gvs-table-head { grid-template-columns: 2.4fr 2.2fr 2fr 1.2fr 1.2fr; }
+  .gvs-row { grid-template-columns: 2.4fr 2.2fr 2fr 1.2fr 1.2fr; }
+}
+@media (max-width: 768px) {
+  .gvs-table-head { grid-template-columns: 1.8fr 1.6fr 1.6fr 1fr; }
+  .gvs-row { grid-template-columns: 1.8fr 1.6fr 1.6fr 1fr; }
+  .gvs-status { display:none; }
+}
+@media (max-width: 560px) {
+  .gvs-table-head { display:none; }
+  .gvs-row { grid-template-columns: 1fr; gap: 8px; }
+  .gvs-student { margin-bottom: 8px; }
+  .gvc-pagination { padding-top: 8px; }
+}

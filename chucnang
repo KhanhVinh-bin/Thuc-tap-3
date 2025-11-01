@@ -1,0 +1,539 @@
+Progress
+GET    /api/Progress                           - Lấy tất cả tiến độ học tập
+GET    /api/Progress/{id}                      - Lấy tiến độ theo ID
+GET    /api/Progress/ByEnrollment/{enrollmentId} - Lấy tiến độ theo enrollment
+GET    /api/Progress/ByUser/{userId}           - Lấy tiến độ theo user
+GET    /api/Progress/Student/{studentId}/Summary - Tóm tắt tiến độ học sinh
+GET    /api/Progress/Course/{courseId}/Statistics - Thống kê tiến độ khóa học
+POST   /api/Progress                           - Tạo/cập nhật tiến độ
+POST   /api/Progress/Bulk                      - Tạo nhiều tiến độ cùng lúc
+PUT    /api/Progress/{id}                      - Cập nhật tiến độ
+PATCH  /api/Progress/{id}/Complete             - Đánh dấu hoàn thành
+PATCH  /api/Progress/{id}/Incomplete           - Đánh dấu chưa hoàn thành
+DELETE /api/Progress/{id}                      - Xóa tiến độ
+DELETE /api/Progress/ByEnrollment/{enrollmentId} - Xóa tiến độ theo enrollment
+
+### . StudentsController - Quản lý học sinh
+```
+GET    /api/
+Students                           - Lấy 
+tất cả học sinh
+GET    /api/Students/
+{id}                      - Lấy thông 
+tin học sinh theo ID
+GET    /api/Students/
+stats                     - Thống kê học 
+sinh
+GET    /api/Students/{id}/
+enrollments          - Lấy danh sách 
+đăng ký của học sinh
+POST   /api/
+Students                           - Tạo 
+học sinh mới
+PUT    /api/Students/
+{id}                      - Cập nhật 
+thông tin học sinh
+PATCH  /api/Students/{id}/
+last-active          - Cập nhật thời 
+gian hoạt động cuối
+PATCH  /api/Students/{id}/
+stats                - Cập nhật thống kê 
+học sinh
+DELETE /api/Students/
+{id}                      - Xóa học sinh
+```
+### 3. CoursesController - Quản lý khóa học
+```
+GET    /api/
+Courses                            - Lấy 
+tất cả khóa học
+GET    /api/Courses/
+{id}                       - Lấy thông 
+tin khóa học theo ID
+POST   /api/
+Courses                            - Tạo 
+khóa học mới
+PUT    /api/Courses/
+{id}                       - Cập nhật 
+khóa học
+DELETE /api/Courses/
+{id}                       - Xóa khóa học
+```
+### 4. EnrollmentsController - Quản lý đăng ký khóa học
+```
+GET    /api/
+Enrollments                        - Lấy 
+tất cả đăng ký
+GET    /api/Enrollments/
+{id}                   - Lấy đăng ký 
+theo ID
+GET    /api/Enrollments/ByUser/
+{userId}        - Lấy đăng ký theo user
+GET    /api/Enrollments/ByCourse/
+{courseId}    - Lấy đăng ký theo khóa học
+GET    /api/Enrollments/{id}/
+Progress          - Lấy tiến độ của đăng 
+ký
+POST   /api/
+Enrollments                        - Tạo 
+đăng ký mới
+PUT    /api/Enrollments/
+{id}                   - Cập nhật đăng ký
+PATCH  /api/Enrollments/{id}/
+Complete          - Hoàn thành khóa học
+POST   /api/Enrollments/{enrollmentId}/
+Progress/{lessonId}/Complete - Hoàn 
+thành bài học
+DELETE /api/Enrollments/
+{id}                   - Xóa đăng ký
+DELETE /api/Enrollments/
+ByUserAndCourse        - Xóa đăng ký 
+theo user và khóa học
+```
+### 5. LessonsController - Quản lý bài học
+```
+GET    /api/
+Lessons                            - Lấy 
+tất cả bài học
+GET    /api/Lessons/
+{id}                       - Lấy bài học 
+theo ID
+GET    /api/Lessons/ByCourse/
+{courseId}        - Lấy bài học theo 
+khóa học
+GET    /api/Lessons/ByCourse/{courseId}/
+WithProgress - Lấy bài học với tiến độ
+POST   /api/
+Lessons                            - Tạo 
+bài học mới
+POST   /api/Lessons/
+Bulk                       - Tạo nhiều 
+bài học
+PUT    /api/Lessons/
+{id}                       - Cập nhật 
+bài học
+PATCH  /api/Lessons/{id}/
+Reorder               - Sắp xếp lại thứ 
+tự
+DELETE /api/Lessons/
+{id}                       - Xóa bài học
+DELETE /api/Lessons/ByCourse/
+{courseId}        - Xóa tất cả bài học 
+của khóa học
+```
+### 6. AssignmentsController - Quản lý bài tập
+```
+GET    /api/
+Assignments                        - Lấy 
+tất cả bài tập
+GET    /api/Assignments/
+{id}                   - Lấy bài tập 
+theo ID
+GET    /api/Assignments/ByCourse/
+{courseId}    - Lấy bài tập theo khóa học
+GET    /api/Assignments/Stats/ByCourse/
+{courseId} - Thống kê bài tập theo khóa 
+học
+GET    /api/Assignments/{id}/
+Questions         - Lấy câu hỏi của bài 
+tập
+POST   /api/
+Assignments                        - Tạo 
+bài tập mới
+POST   /api/Assignments/
+WithQuestions          - Tạo bài tập với 
+câu hỏi
+PUT    /api/Assignments/
+{id}                   - Cập nhật bài tập
+POST   /api/Assignments/{id}/
+Questions         - Thêm câu hỏi vào bài 
+tập
+PUT    /api/Assignments/Questions/
+{questionId} - Cập nhật câu hỏi
+DELETE /api/Assignments/
+{id}                   - Xóa bài tập
+DELETE /api/Assignments/Questions/
+{questionId} - Xóa câu hỏi
+PATCH  /api/Assignments/{id}/
+DueDate           - Cập nhật hạn nộp
+```
+### 7. SubmissionsController - Quản lý bài nộp
+```
+GET    /api/
+Submissions                        - Lấy 
+tất cả bài nộp
+GET    /api/Submissions/
+{id}                   - Lấy bài nộp 
+theo ID
+GET    /api/Submissions/ByAssignment/
+{assignmentId} - Lấy bài nộp theo bài tập
+GET    /api/Submissions/ByUser/
+{userId}        - Lấy bài nộp theo user
+GET    /api/Submissions/
+ByUserAndAssignment    - Lấy bài nộp 
+theo user và bài tập
+GET    /api/Submissions/Stats/
+ByAssignment/{assignmentId} - Thống kê 
+bài nộp
+POST   /api/
+Submissions                        - Tạo 
+bài nộp mới
+PUT    /api/Submissions/
+{id}                   - Cập nhật bài nộp
+PATCH  /api/Submissions/{id}/
+Grade             - Chấm điểm bài nộp
+PATCH  /api/Submissions/{id}/
+Unsubmit          - Hủy nộp bài
+DELETE /api/Submissions/
+{id}                   - Xóa bài nộp
+GET    /api/Submissions/Late/
+ByAssignment/{assignmentId} - Lấy bài 
+nộp trễ
+GET    /api/Submissions/Ungraded/
+ByAssignment/{assignmentId} - Lấy bài 
+chưa chấm
+```
+### 8. ReviewsController - Quản lý đánh giá
+```
+GET    /api/
+Reviews                            - Lấy 
+tất cả đánh giá
+GET    /api/Reviews/
+{id}                       - Lấy đánh 
+giá theo ID
+GET    /api/Reviews/ByCourse/
+{courseId}        - Lấy đánh giá theo 
+khóa học
+GET    /api/Reviews/ByUser/
+{userId}            - Lấy đánh giá theo 
+user
+GET    /api/Reviews/Stats/ByCourse/
+{courseId}  - Thống kê đánh giá theo 
+khóa học
+POST   /api/
+Reviews                            - Tạo 
+đánh giá mới
+PUT    /api/Reviews/
+{id}                       - Cập nhật 
+đánh giá
+DELETE /api/Reviews/
+{id}                       - Xóa đánh giá
+GET    /api/Reviews/Recent/
+{count}             - Lấy đánh giá gần 
+đây
+```
+### 9. CertificatesController - Quản lý chứng chỉ
+```
+GET    /api/
+Certificates                       - Lấy 
+tất cả chứng chỉ
+GET    /api/Certificates/
+{id}                  - Lấy chứng chỉ 
+theo ID
+GET    /api/Certificates/ByUser/
+{userId}       - Lấy chứng chỉ theo user
+GET    /api/Certificates/ByCourse/
+{courseId}   - Lấy chứng chỉ theo khóa 
+học
+GET    /api/Certificates/
+Stats                 - Thống kê chứng 
+chỉ
+GET    /api/Certificates/Student/
+{studentId}/Summary - Tóm tắt chứng chỉ 
+học sinh
+GET    /api/Certificates/
+Verify                - Xác minh chứng 
+chỉ
+POST   /api/
+Certificates                       - Tạo 
+chứng chỉ mới
+POST   /api/Certificates/
+Generate              - Tạo chứng chỉ tự 
+động
+PUT    /api/Certificates/
+{id}                  - Cập nhật chứng 
+chỉ
+PATCH  /api/Certificates/{id}/
+Regenerate       - Tạo lại chứng chỉ
+DELETE /api/Certificates/
+{id}                  - Xóa chứng chỉ
+DELETE /api/Certificates/
+ByUserAndCourse       - Xóa chứng chỉ 
+theo user và khóa học
+```
+### 10. CartsController - Quản lý giỏ hàng
+```
+GET    /api/
+Carts                              - Lấy 
+tất cả giỏ hàng
+GET    /api/Carts/
+{id}                         - Lấy giỏ 
+hàng theo ID
+GET    /api/Carts/ByUser/
+{userId}              - Lấy giỏ hàng 
+theo user
+GET    /api/Carts/Summary/ByUser/
+{userId}      - Tóm tắt giỏ hàng theo 
+user
+POST   /api/
+Carts                              - Tạo 
+giỏ hàng mới
+POST   /api/Carts/
+AddToCart                    - Thêm vào 
+giỏ hàng
+DELETE /api/Carts/
+{id}                         - Xóa giỏ 
+hàng
+DELETE /api/Carts/Clear/
+{userId}               - Xóa toàn bộ giỏ 
+hàng của user
+```
+### 11. CartItemsController - Quản lý sản phẩm trong giỏ hàng
+```
+GET    /api/
+CartItems                          - Lấy 
+tất cả sản phẩm trong giỏ
+GET    /api/CartItems/
+{id}                     - Lấy sản phẩm 
+theo ID
+GET    /api/CartItems/ByCart/
+{cartId}          - Lấy sản phẩm theo 
+giỏ hàng
+POST   /api/
+CartItems                          - 
+Thêm sản phẩm vào giỏ
+PUT    /api/CartItems/
+{id}                     - Cập nhật sản 
+phẩm trong giỏ
+DELETE /api/CartItems/
+{id}                     - Xóa sản phẩm 
+khỏi giỏ
+DELETE /api/CartItems/
+ByCartAndCourse          - Xóa sản phẩm 
+theo giỏ và khóa học
+PATCH  /api/CartItems/{id}/
+Increase            - Tăng số lượng
+PATCH  /api/CartItems/{id}/
+Decrease            - Giảm số lượng
+```
+### 12. OrdersController - Quản lý đơn hàng
+```
+GET    /api/
+Orders                             - Lấy 
+tất cả đơn hàng
+GET    /api/Orders/
+{id}                        - Lấy đơn 
+hàng theo ID
+GET    /api/Orders/ByUser/
+{userId}             - Lấy đơn hàng theo 
+user
+GET    /api/Orders/
+Stats                       - Thống kê 
+đơn hàng
+POST   /api/
+Orders                             - Tạo 
+đơn hàng mới
+POST   /api/Orders/
+CreateFromCart              - Tạo đơn 
+hàng từ giỏ hàng
+PUT    /api/Orders/
+{id}                        - Cập nhật 
+đơn hàng
+PATCH  /api/Orders/{id}/
+Status                 - Cập nhật trạng 
+thái đơn hàng
+DELETE /api/Orders/
+{id}                        - Xóa đơn 
+hàng
+GET    /api/Orders/Recent/
+{count}              - Lấy đơn hàng gần 
+đây
+```
+### 13. OrderDetailsController - Quản lý chi tiết đơn hàng
+```
+GET    /api/
+OrderDetails                       - Lấy 
+tất cả chi tiết đơn hàng
+GET    /api/OrderDetails/
+{id}                  - Lấy chi tiết 
+theo ID
+GET    /api/OrderDetails/ByOrder/
+{orderId}     - Lấy chi tiết theo đơn 
+hàng
+GET    /api/OrderDetails/ByCourse/
+{courseId}   - Lấy chi tiết theo khóa học
+POST   /api/
+OrderDetails                       - Tạo 
+chi tiết đơn hàng
+PUT    /api/OrderDetails/
+{id}                  - Cập nhật chi 
+tiết đơn hàng
+DELETE /api/OrderDetails/
+{id}                  - Xóa chi tiết đơn 
+hàng
+```
+### 14. PaymentsController - Quản lý thanh toán
+```
+GET    /api/
+Payments                           - Lấy 
+tất cả thanh toán
+GET    /api/Payments/
+{id}                      - Lấy thanh 
+toán theo ID
+GET    /api/Payments/ByOrder/
+{orderId}         - Lấy thanh toán theo 
+đơn hàng
+GET    /api/Payments/ByTransaction/
+{transactionId} - Lấy thanh toán theo 
+giao dịch
+POST   /api/
+Payments                           - Tạo 
+thanh toán mới
+PUT    /api/Payments/
+{id}                      - Cập nhật 
+thanh toán
+PATCH  /api/Payments/{id}/
+Status               - Cập nhật trạng 
+thái thanh toán
+DELETE /api/Payments/
+{id}                      - Xóa thanh 
+toán
+GET    /api/Payments/Recent/
+{count}            - Lấy thanh toán gần 
+đây
+GET    /api/Payments/
+Stats                     - Thống kê 
+thanh toán
+```
+### 15. UsersController - Quản lý người dùng
+```
+GET    /api/
+Users                              - Lấy 
+tất cả người dùng
+GET    /api/Users/
+{id}                         - Lấy người 
+dùng theo ID
+POST   /api/Users/
+Register                     - Đăng ký 
+tài khoản
+POST   /api/Users/
+Login                        - Đăng nhập
+POST   /api/Users/{id}/
+ChangePassword          - Đổi mật khẩu
+POST   /api/Users/
+CheckEmail                   - Kiểm tra 
+email
+PUT    /api/Users/
+{id}                         - Cập nhật 
+thông tin người dùng
+DELETE /api/Users/
+{id}                         - Xóa người 
+dùng
+```
+### 16. MessagesController - Quản lý tin nhắn
+```
+GET    /api/
+Messages                           - Lấy 
+tất cả tin nhắn
+GET    /api/Messages/
+{id}                      - Lấy tin nhắn 
+theo ID
+GET    /api/Messages/ByUser/
+{userId}           - Lấy tin nhắn theo 
+user
+GET    /api/Messages/Conversation/
+{userId1}/{userId2} - Lấy cuộc trò chuyện
+GET    /api/Messages/Conversations/
+ByUser/{userId} - Lấy danh sách cuộc trò 
+chuyện
+POST   /api/
+Messages                           - Gửi 
+tin nhắn mới
+PUT    /api/Messages/
+{id}                      - Cập nhật tin 
+nhắn
+PATCH  /api/Messages/{id}/
+MarkAsRead           - Đánh dấu đã đọc
+PATCH  /api/Messages/
+MarkConversationAsRead    - Đánh dấu 
+cuộc trò chuyện đã đọc
+DELETE /api/Messages/
+{id}                      - Xóa tin nhắn
+GET    /api/Messages/UnreadCount/
+{userId}      - Đếm tin nhắn chưa đọc
+```
+### 17. FeedbacksController - Quản lý phản hồi
+```
+GET    /api/
+Feedbacks                          - Lấy 
+tất cả phản hồi
+GET    /api/Feedbacks/
+{id}                     - Lấy phản hồi 
+theo ID
+GET    /api/Feedbacks/ByUser/
+{userId}          - Lấy phản hồi theo 
+user
+GET    /api/Feedbacks/
+WithRating               - Lấy phản hồi 
+có đánh giá
+GET    /api/Feedbacks/Recent/
+{count}           - Lấy phản hồi gần đây
+GET    /api/Feedbacks/
+Stats                    - Thống kê phản 
+hồi
+POST   /api/
+Feedbacks                          - Tạo 
+phản hồi mới
+PUT    /api/Feedbacks/
+{id}                     - Cập nhật phản 
+hồi
+DELETE /api/Feedbacks/
+{id}                     - Xóa phản hồi
+GET    /api/Feedbacks/
+Search                   - Tìm kiếm phản 
+hồi
+GET    /api/Feedbacks/ByRating/
+{rating}        - Lấy phản hồi theo điểm 
+đánh giá
+```
+### 18. SchedulesController - Quản lý lịch trình
+```
+GET    /api/
+Schedules                          - Lấy 
+tất cả lịch trình
+GET    /api/Schedules/
+{id}                     - Lấy lịch 
+trình theo ID
+GET    /api/Schedules/ByCourse/
+{courseId}      - Lấy lịch trình theo 
+khóa học
+GET    /api/Schedules/ByInstructor/
+{instructorId} - Lấy lịch trình theo 
+giảng viên
+GET    /api/Schedules/
+Upcoming                 - Lấy lịch 
+trình sắp tới
+GET    /api/Schedules/
+Current                  - Lấy lịch 
+trình hiện tại
+GET    /api/Schedules/
+Stats                    - Thống kê lịch 
+trình
+POST   /api/
+Schedules                          - Tạo 
+lịch trình mới
+PUT    /api/Schedules/
+{id}                     - Cập nhật lịch 
+trình
+DELETE /api/Schedules/
+{id}                     - Xóa lịch trình
+GET    /api/Schedules/
+ByDate                   - Lấy lịch 
+trình theo ngày
+```
+### 19. TestController - Controller kiểm tra
+```
+GET    /api/Test/
+database                      - Kiểm tra 
+kết nối database
+```

@@ -1,0 +1,225 @@
+/* LockIcon Component Styles */
+
+.lock-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  overflow: hidden;
+}
+
+/* Kích thước biểu tượng */
+.lock-icon.small {
+  width: 24px;
+  height: 24px;
+}
+
+.lock-icon.medium {
+  width: 32px;
+  height: 32px;
+}
+
+.lock-icon.large {
+  width: 48px;
+  height: 48px;
+}
+
+/* SVG styles */
+.lock-svg {
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+  z-index: 2;
+  position: relative;
+}
+
+/* Trạng thái khóa */
+.lock-icon.locked {
+  color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.lock-icon.unlocked {
+  color: #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+/* Clickable states */
+.lock-icon.clickable {
+  cursor: pointer;
+}
+
+.lock-icon.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.lock-icon.clickable.locked:hover {
+  background-color: rgba(220, 53, 69, 0.15);
+  border-color: rgba(220, 53, 69, 0.3);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+}
+
+.lock-icon.clickable.unlocked:hover {
+  background-color: rgba(40, 167, 69, 0.15);
+  border-color: rgba(40, 167, 69, 0.3);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
+}
+
+.lock-icon.clickable:active {
+  transform: translateY(0);
+  transition: transform 0.1s ease;
+}
+
+/* Animation cho các phần tử SVG */
+.lock-icon.animated .lock-shackle {
+  transition: d 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lock-icon.animated .unlock-indicator {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.lock-icon.locked .unlock-indicator {
+  opacity: 0;
+  transform: scale(0.8) rotate(-10deg);
+}
+
+.lock-icon.unlocked .unlock-indicator {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+/* Animation cho unlock line */
+.unlock-line {
+  stroke-dasharray: 8;
+  stroke-dashoffset: 8;
+  animation: drawLine 0.6s ease-out forwards;
+}
+
+@keyframes drawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Animation cho unlock dot */
+.unlock-dot {
+  transform-origin: center;
+  animation: pulseDot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* Lock body animation */
+.lock-icon.animated .lock-body {
+  transition: all 0.3s ease;
+}
+
+.lock-icon.locked .lock-body {
+  stroke-width: 2.5;
+}
+
+.lock-icon.unlocked .lock-body {
+  stroke-width: 2;
+}
+
+/* Lock dot animation */
+.lock-dot {
+  transition: all 0.3s ease;
+}
+
+.lock-icon.locked .lock-dot {
+  r: 2;
+  fill: currentColor;
+}
+
+.lock-icon.unlocked .lock-dot {
+  r: 1.5;
+  fill: currentColor;
+  opacity: 0.8;
+}
+
+/* Overlay effect */
+.lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 30%, rgba(255, 255, 255, 0.1) 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.lock-icon.clickable:hover .lock-overlay {
+  opacity: 1;
+}
+
+/* Focus styles for accessibility */
+.lock-icon.clickable:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.lock-icon.clickable:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .lock-icon.large {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .lock-icon.medium {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .lock-icon.locked {
+    color: #000;
+    background-color: #fff;
+    border: 2px solid #000;
+  }
+  
+  .lock-icon.unlocked {
+    color: #000;
+    background-color: #fff;
+    border: 2px solid #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .lock-icon,
+  .lock-svg,
+  .lock-shackle,
+  .unlock-indicator,
+  .lock-body,
+  .lock-dot,
+  .lock-overlay {
+    transition: none;
+    animation: none;
+  }
+}

@@ -1,0 +1,303 @@
+/* Withdraw page styles */
+.gvr-main { flex: 1; padding: 20px; }
+
+/* Summary cards */
+.wd-top-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+.wd-card { 
+  border-radius: 12px; 
+  padding: 20px; 
+  position: relative; 
+  border: 1px solid #e5e7eb; 
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wd-card .wd-card-title { 
+  font-weight: 500; 
+  color: #374151; 
+  font-size: 14px;
+}
+.wd-card .wd-card-value { 
+  font-weight: 700; 
+  font-size: 24px; 
+  color: #111827; 
+}
+.wd-card .wd-card-sub { 
+  font-size: 13px; 
+  color: #6b7280; 
+}
+.wd-card.mint { 
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); 
+  border-color: #10b981; 
+}
+.wd-card.mint::after {
+  content: "💰";
+  font-size: 20px;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+.wd-card.cream { 
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); 
+  border-color: #f59e0b; 
+}
+.wd-card.cream::after {
+  content: "⏰";
+  font-size: 20px;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+/* Request form */
+.wd-request { margin-top: 18px; }
+.wd-section-title { font-weight: 700; color: #0f172a; margin-bottom: 10px; }
+.wd-form { display: grid; gap: 10px; }
+.wd-label { font-size: 13px; color: #334155; }
+.wd-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; }
+.wd-input { border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 12px; background: #fff; }
+.wd-quick { display: grid; grid-auto-flow: column; gap: 8px; }
+.wd-chip { padding: 8px 12px; border-radius: 999px; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; font-weight: 600; color: #0f172a; }
+.wd-chip:hover { background: #eef2f7; }
+.wd-limit { font-size: 12px; color: #64748b; }
+.wd-select { border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 12px; background: #fff; }
+.wd-actions { display: flex; align-items: center; gap: 12px; }
+.wd-submit { border-radius: 10px; }
+.wd-note { font-size: 12px; color: #64748b; }
+
+/* History */
+.wd-history { margin-top: 16px; }
+.wd-history-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+/* ruttien page.css additions for filter + export */
+.wd-tools {
+  display: flex;
+  gap: 8px;
+}
+
+.wd-filter {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f7f7fb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.wd-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.wd-filter-q {
+  grid-column: span 4;
+}
+
+.wd-filter .wd-label {
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.wd-filter-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* utility */
+.btn.btn-light {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+}
+
+.btn.btn-primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.wd-input, .wd-select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+}
+
+/* maintain existing list styles */
+.wd-list { list-style: none; padding: 0; margin: 12px 0 0; }
+.wd-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px dashed #e5e7eb; }
+.wd-item-left { display: flex; gap: 10px; align-items: center; }
+.wd-item-title { font-weight: 600; }
+.wd-item-sub { font-size: 13px; color: #6b7280; }
+.wd-amount { font-weight: 700; }
+.wd-fee { font-size: 12px; color: #6b7280; }
+.wd-net { font-size: 13px; color: #111827; }
+
+.wd-list { display: grid; gap: 10px; }
+.wd-item { display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e7eb; background: #fff; border-radius: 12px; padding: 12px; }
+.wd-item-left { display: flex; gap: 12px; align-items: center; }
+.wd-bank-icon { width: 28px; height: 28px; border-radius: 8px; background: #eef2ff; color: #4338ca; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
+.wd-item-info { display: grid; gap: 4px; }
+.wd-item-title { font-weight: 700; color: #0f172a; }
+.wd-badge { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #ecfeff; color: #0f172a; border: 1px solid #a5f3fc; font-size: 12px; font-weight: 700; }
+.wd-item-sub { font-size: 12px; color: #64748b; }
+.wd-item-right { text-align: right; display: grid; gap: 2px; }
+.wd-amount { font-weight: 800; color: #0f172a; }
+.wd-fee { font-size: 12px; color: #64748b; }
+.wd-net { font-size: 12px; color: #16a34a; font-weight: 700; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .wd-top-cards { grid-template-columns: 1fr; }
+  .wd-row { grid-template-columns: 1fr; }
+}
+
+/* Withdrawal form styles */
+.wd-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wd-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f9fafb;
+}
+
+.wd-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: white;
+}
+
+/* Quick amount selection chips - horizontal layout */
+.wd-quick {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.wd-chip {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.wd-chip:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.wd-chip:active {
+  transform: translateY(1px);
+}
+
+/* Withdraw all button */
+.wd-all {
+  margin-top: 4px;
+}
+
+.wd-all button {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.wd-all button:hover {
+  color: #1d4ed8;
+}
+
+/* Label row with add account button */
+.wd-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.wd-add-account {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.wd-add-account:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.wd-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+.wd-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: white;
+}
+
+/* Submit button - full width */
+.wd-submit {
+  width: 100%;
+  padding: 14px 20px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.wd-submit:hover {
+  background: #059669;
+}
+
+.wd-btn-icon {
+  font-size: 14px;
+}
+
+/* Processing time note */
+.wd-note {
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 8px;
+}
