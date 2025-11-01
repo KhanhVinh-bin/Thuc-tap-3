@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Du_An_Web_Ban_Khoa_Hoc.Models.Student>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EnrollmentCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompletedCourses)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalCertificates)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastActive)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EnrollmentCount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompletedCourses)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalCertificates)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentNavigation.UserId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.StudentId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.StudentId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

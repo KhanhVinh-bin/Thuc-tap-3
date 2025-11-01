@@ -1,0 +1,137 @@
+﻿@model IEnumerable<Du_An_Web_Ban_Khoa_Hoc.Models.Instructor>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Expertise)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Biography)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExperienceYears)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Education)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Certifications)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RatingAverage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalStudents)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalCourses)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Earnings)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PayoutMethod)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PayoutAccount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VerificationStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastPayoutDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LinkedInUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FacebookUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.YouTubeUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Xurl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InstructorNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Expertise)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Biography)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExperienceYears)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Education)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Certifications)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RatingAverage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalStudents)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalCourses)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Earnings)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PayoutMethod)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PayoutAccount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VerificationStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastPayoutDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LinkedInUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FacebookUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.YouTubeUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Xurl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InstructorNavigation.UserId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.InstructorId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.InstructorId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.InstructorId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
