@@ -155,7 +155,8 @@ Mã giao dịch: ${paymentResult.transactionId}
 Số tiền: ${new Intl.NumberFormat("vi-VN").format(paymentResult.amount || (singleCourse ? singleCourse.price : getCartTotal()))} đ
 Cảm ơn bạn đã mua khóa học.`)
 
-          if (!singleCourse) clearCart()
+          // Xóa giỏ hàng sau thanh toán thành công
+          clearCart()
           router.push("/khoa-hoc-cua-toi")
         } else {
           throw new Error("Payment processing failed")
@@ -217,7 +218,8 @@ Mã giao dịch: ${transactionId}
 Số tiền: ${new Intl.NumberFormat("vi-VN").format(totalAmount)} đ
 Cảm ơn bạn đã mua khóa học.`)
 
-          if (!singleCourse) clearCart()
+          // Xóa giỏ hàng sau thanh toán thành công
+          clearCart()
           router.push("/khoa-hoc-cua-toi")
 
         } catch (fallbackError) {

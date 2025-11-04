@@ -9,7 +9,8 @@ export default function sideBar() {
 
   const menuItems = [
     { label: "Khóa học của tôi", href: "/khoa-hoc-cua-toi", icon: BookOpen },
-    { label: "Chứng chỉ", href: "/khoa-hoc-cua-toi/chung-chi", icon: Award },
+    // Tạm thời ẩn trang Chứng chỉ
+    // { label: "Chứng chỉ", href: "/khoa-hoc-cua-toi/chung-chi", icon: Award },
     { label: "Cài đặt", href: "/khoa-hoc-cua-toi/cai-dat", icon: Settings },
   ]
 

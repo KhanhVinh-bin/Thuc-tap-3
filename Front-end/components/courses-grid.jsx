@@ -70,9 +70,14 @@ export default function CoursesGrid({ courses = [] }) {
 
   // Lọc dữ liệu
   const filteredCourses = courses.filter((course) => {
+    if (!course || !course.id) return false // Skip invalid courses
+    
     const matchSearch =
+      !searchTerm ||
       course.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.instructorName?.toLowerCase().includes(searchTerm.toLowerCase())
+      course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.instructorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.instructor?.name?.toLowerCase().includes(searchTerm.toLowerCase())
 
     // Match category: check if selectedCategories includes "Tất cả" or matches course category
     const matchCategory = selectedCategories.length === 0 ||
@@ -90,11 +95,22 @@ export default function CoursesGrid({ courses = [] }) {
       )
 
     // Match price: course price should be <= maxPrice
-    const coursePrice = course.price || 0
+    // Handle both number and string price formats
+    const coursePrice = typeof course.price === 'number' 
+      ? course.price 
+      : typeof course.price === 'string' 
+        ? parseFloat(course.price.replace(/[^\d.]/g, '')) || 0 
+        : 0
     const matchPrice = coursePrice <= maxPrice
 
     return matchSearch && matchCategory && matchLevel && matchPrice
   })
+  
+  // Debug log
+  if (typeof window !== 'undefined') {
+    console.log(`🔍 Filtered courses: ${filteredCourses.length} from ${courses.length} total`)
+    console.log(`🔍 Search term: "${searchTerm}", Categories: [${selectedCategories.join(', ')}], Levels: [${selectedLevels.join(', ')}], Max price: ${maxPrice}`)
+  }
 
   // Hàm xử lý đổi giá (single slider for max price)
   const handlePriceChange = (e) => {
@@ -174,6 +190,14 @@ export default function CoursesGrid({ courses = [] }) {
             <div className="mb-6">
               <h3 className="font-medium mb-3 text-gray-700">Giá</h3>
               <div className="flex flex-col gap-3">
+                {/* Price display when dragging */}
+                <div className="relative">
+                  <div className="text-center mb-2">
+                    <span className="text-lg font-semibold text-gray-900">
+                      {new Intl.NumberFormat("vi-VN").format(maxPrice || 0)} đ
+                    </span>
+                  </div>
+                </div>
                 {/* Single slider */}
                 <input
                   type="range"

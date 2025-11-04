@@ -17,7 +17,48 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [shakeInput, setShakeInput] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [touchedFields, setTouchedFields] = useState({});
+  const [fieldStates, setFieldStates] = useState({}); // 'idle', 'error', 'success'
   
+  // Validation function cho từng trường
+  const validateField = (name, value) => {
+    switch (name) {
+      case "email":
+        if (!value.trim()) return "Vui lòng nhập email";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Email không hợp lệ";
+        return "";
+      case "password":
+        if (!value.trim()) return "Vui lòng nhập mật khẩu";
+        return "";
+      default:
+        return "";
+    }
+  };
+
+  // Handle blur - validate khi rời khỏi input
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setTouchedFields(prev => ({ ...prev, [name]: true }));
+    const error = validateField(name, value);
+    if (error) {
+      setFieldErrors(prev => ({ ...prev, [name]: error }));
+      setFieldStates(prev => ({ ...prev, [name]: 'error' }));
+    } else {
+      setFieldErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+      // Only show success if field has value
+      if (value.trim()) {
+        setFieldStates(prev => ({ ...prev, [name]: 'success' }));
+      } else {
+        setFieldStates(prev => ({ ...prev, [name]: 'idle' }));
+      }
+    }
+  };
+
   // Hiệu ứng rung khi nhập sai
   const triggerShake = (msg) => {
     setError(msg);
@@ -30,6 +71,34 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    setFieldErrors({});
+
+    // Validation
+    const errors = {};
+    if (!formData.email.trim()) {
+      errors.email = "Vui lòng nhập email";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Email không hợp lệ";
+    }
+    if (!formData.password.trim()) {
+      errors.password = "Vui lòng nhập mật khẩu";
+    }
+
+    // Đánh dấu tất cả các trường là đã touched khi submit
+    setTouchedFields({ email: true, password: true });
+    // Reset field states on submit
+    setFieldStates({ email: 'idle', password: 'idle' });
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setError("Vui lòng điền đầy đủ thông tin");
+      // Set error states for invalid fields
+      Object.keys(errors).forEach(field => {
+        setFieldStates(prev => ({ ...prev, [field]: 'error' }));
+      });
+      triggerShake("");
+      return;
+    }
 
     const apiUrl =
       userType === "student"
@@ -45,16 +114,27 @@ export default function LoginPage() {
         body: JSON.stringify(formData),
       });
 
+      // ✅ Clone response để có thể đọc nhiều lần nếu cần
+      const responseClone = res.clone();
+      
       // Kiểm tra lỗi và lấy thông tin chi tiết
       if (!res.ok) {
         let errorMessage = "Đăng nhập thất bại";
         try {
-          const errorData = await res.json();
-          errorMessage = errorData.message || errorData.error || errorMessage;
-          console.error("Lỗi từ server:", errorData);
-        } catch (e) {
-          const errorText = await res.text();
+          // ✅ Đọc text trước, rồi parse JSON nếu có thể
+          const errorText = await responseClone.text();
           console.error("Lỗi server (status " + res.status + "):", errorText);
+          
+          // Thử parse JSON
+          try {
+            const errorData = JSON.parse(errorText);
+            errorMessage = errorData.message || errorData.error || errorText;
+          } catch {
+            // Nếu không parse được, dùng text trực tiếp
+            errorMessage = errorText || `Đăng nhập thất bại (${res.status})`;
+          }
+        } catch (e) {
+          console.error("Lỗi khi đọc response:", e);
           errorMessage = `Đăng nhập thất bại (${res.status})`;
         }
         throw new Error(errorMessage);
@@ -114,21 +194,51 @@ export default function LoginPage() {
         }
       }
 
-      // Xử lý role từ response
-      if (result.roles && Array.isArray(result.roles)) {
-        const roleName = result.roles[0];
-        if (roleName) {
-          const roleLower = roleName.toLowerCase();
-          isInstructor = roleLower === "instructor";
-          userRole = isInstructor ? "Giảng viên" : 
-                     roleLower === "student" ? "Học viên" : roleName;
+      // Xử lý role từ response - Hỗ trợ nhiều cách xác định role
+      // 1. Kiểm tra RoleId (thường 2 = instructor, 1 = student)
+      if (result.roleId !== undefined || result.RoleId !== undefined) {
+        const roleId = result.roleId || result.RoleId;
+        if (roleId === 2 || roleId === "2") {
+          isInstructor = true;
+          userRole = "Giảng viên";
+        } else {
+          isInstructor = false;
+          userRole = "Học viên";
         }
-      } else if (result.role) {
-        const roleLower = result.role.toLowerCase();
-        isInstructor = roleLower === "instructor";
+      }
+      
+      // 2. Kiểm tra roles array
+      if (result.roles && Array.isArray(result.roles)) {
+        const hasInstructor = result.roles.some(r => {
+          const roleLower = String(r).toLowerCase();
+          return roleLower === "instructor" || roleLower === "giảng viên";
+        });
+        
+        if (hasInstructor) {
+          isInstructor = true;
+          userRole = "Giảng viên";
+        } else {
+          // Chỉ set student nếu chưa xác định được role từ RoleId
+          if (result.roleId === undefined && result.RoleId === undefined) {
+            const roleName = result.roles[0];
+            if (roleName) {
+              const roleLower = String(roleName).toLowerCase();
+              isInstructor = roleLower === "instructor";
+              userRole = isInstructor ? "Giảng viên" : 
+                         roleLower === "student" ? "Học viên" : roleName;
+            }
+          }
+        }
+      } 
+      // 3. Kiểm tra role (single value)
+      else if (result.role) {
+        const roleLower = String(result.role).toLowerCase();
+        isInstructor = roleLower === "instructor" || roleLower === "giảng viên";
         userRole = isInstructor ? "Giảng viên" : 
                    roleLower === "student" ? "Học viên" : result.role;
-      } else if (userType === "instructor" || isInstructor) {
+      } 
+      // 4. Fallback: dựa vào userType
+      else if (userType === "instructor" || isInstructor) {
         userRole = "Giảng viên";
         isInstructor = true;
       }
@@ -136,33 +246,100 @@ export default function LoginPage() {
       // Lấy thông tin từ student login response (nếu có)
       if (userType === "student" && result.userId) {
         userId = result.userId;
-        userName = result.fullName || result.name;
+        userName = result.fullName || result.name || userName;
         userEmail = result.email || userEmail;
-        if (result.roles && Array.isArray(result.roles)) {
-          const roleLower = result.roles[0]?.toLowerCase();
-          userRole = roleLower === "student" ? "Học viên" : result.roles[0];
+        // Chỉ override nếu chưa xác định được role từ RoleId hoặc roles
+        if (result.roleId === undefined && result.RoleId === undefined && 
+            (!result.roles || !result.roles.length)) {
+          if (result.roles && Array.isArray(result.roles)) {
+            const roleLower = result.roles[0]?.toLowerCase();
+            userRole = roleLower === "student" ? "Học viên" : result.roles[0];
+            isInstructor = false;
+          }
         }
       }
 
       // ✅ Lưu user vào context + localStorage
-      login({
+      // Lấy token từ response
+      const authToken = result.token || result.Token || null;
+      
+      // Xác định lại role một lần nữa để chắc chắn
+      // Kiểm tra RoleId, roles array, role string, và userType
+      const roleId = result.roleId || result.RoleId;
+      const hasInstructorRoleId = roleId === 2 || roleId === "2";
+      
+      const finalIsInstructor = hasInstructorRoleId ||
+                                 userType === "instructor" || 
+                                 isInstructor || 
+                                 userRole === "Giảng viên" || 
+                                 userRole === "Instructor" ||
+                                 (result.roles && result.roles.some(r => {
+                                   const rStr = String(r).toLowerCase();
+                                   return rStr === "instructor" || rStr === "giảng viên";
+                                 }));
+      
+      const finalRole = finalIsInstructor ? "Giảng viên" : "Học viên";
+      
+      // Log để debug
+      console.log("🔍 Xác định role:", {
+        roleId: roleId,
+        hasInstructorRoleId,
+        roles: result.roles,
+        userRole,
+        isInstructor,
+        finalIsInstructor,
+        finalRole,
+        userType
+      });
+      
+      // ✅ Kiểm tra role có khớp với tab đã chọn không
+      if (userType === "student" && finalIsInstructor) {
+        // Học viên đăng nhập nhưng là giảng viên
+        throw new Error("Không tìm thấy tài khoản học viên. Vui lòng đăng nhập bằng tab Giảng viên.");
+      }
+      
+      if (userType === "instructor" && !finalIsInstructor) {
+        // Giảng viên đăng nhập nhưng là học viên
+        throw new Error("Không tìm thấy tài khoản giảng viên. Vui lòng đăng nhập bằng tab Học viên.");
+      }
+      
+      // ✅ Lưu vào localStorage TRƯỚC để đảm bảo layout có thể đọc được
+      const userData = {
         id: userId,
         userId: userId,
         name: userName || result.fullName || result.name || "Người dùng",
         email: userEmail,
-        role: userRole,
-        token: result.token || result.Token || null,
-      });
-
-      // ✅ Chuyển trang theo role
-      // Role ID: 2 = instructor, 1 = student
-      if (isInstructor || userRole === "Giảng viên" || userRole === "Instructor" || 
-          (result.roles && result.roles.some(r => r.toLowerCase() === "instructor"))) {
-        router.push("/giangvien/tongquan");
-      } else {
-        // Student chỉ vào được trang học viên
-        router.push("/");
+        role: finalRole,
       }
+      
+      // Lưu vào localStorage ngay lập tức
+      localStorage.setItem("currentUser", JSON.stringify(userData))
+      if (authToken) {
+        localStorage.setItem("authToken", authToken)
+      }
+      
+      // Sau đó mới update state
+      login(userData, authToken); // ✅ Truyền token riêng như tham số thứ 2
+
+      // ✅ Chuyển trang theo role - Tăng delay để đảm bảo state đã được cập nhật
+      setTimeout(() => {
+        try {
+          if (finalIsInstructor) {
+            // Instructor chuyển sang trang dashboard giảng viên
+            console.log("✅ Chuyển trang giảng viên → /giangvien/tongquan");
+            // Sử dụng window.location để đảm bảo full reload và clear redirect params
+            window.location.href = "/giangvien/tongquan";
+          } else {
+            // Student hoặc user khác chuyển sang trang khóa học
+            console.log("✅ Chuyển trang học viên → /courses");
+            window.location.href = "/courses";
+          }
+        } catch (redirectError) {
+          console.error("❌ Lỗi khi chuyển trang:", redirectError);
+          // Fallback: chuyển sang trang khóa học nếu có lỗi
+          router.push("/courses");
+        }
+      }, 200);
     } catch (err) {
       console.error("Lỗi đăng nhập:", err);
       triggerShake(err.message || "Sai email hoặc mật khẩu!");
@@ -272,11 +449,53 @@ export default function LoginPage() {
                   type="email"
                   name="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setFormData({ ...formData, email: value });
+                    // Validate real-time nếu đã từng touched
+                    if (touchedFields.email) {
+                      const error = validateField("email", value);
+                      if (error) {
+                        setFieldErrors(prev => ({ ...prev, email: error }));
+                        setFieldStates(prev => ({ ...prev, email: 'error' }));
+                      } else {
+                        setFieldErrors(prev => {
+                          const newErrors = { ...prev };
+                          delete newErrors.email;
+                          return newErrors;
+                        });
+                        setFieldStates(prev => ({ ...prev, email: value.trim() ? 'success' : 'idle' }));
+                      }
+                    } else {
+                      // Reset state when not touched yet
+                      setFieldStates(prev => ({ ...prev, email: 'idle' }));
+                    }
+                  }}
+                  onBlur={handleBlur}
                   placeholder="email@example.com"
-                  className={`w-full px-4 py-3 bg-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 ${shakeInput ? "shake" : ""}`}
+                  className={`w-full px-4 py-3 rounded-lg focus:ring-2 transition-all ${
+                    shakeInput ? "shake" : ""
+                  } ${
+                    touchedFields.email && fieldErrors.email 
+                      ? "border-2 border-red-400 bg-red-50 focus:ring-red-500" 
+                      : touchedFields.email && fieldStates.email === 'success' && !fieldErrors.email
+                      ? "border-2 border-green-400 bg-green-50 focus:ring-green-500"
+                      : "border-0 bg-gray-100 focus:ring-indigo-500"
+                  }`}
                   required
                 />
+                {touchedFields.email && fieldErrors.email && (
+                  <p className="text-red-600 text-xs mt-1 animate-fade-in flex items-center gap-1">
+                    <span>⚠️</span>
+                    <span>{fieldErrors.email}</span>
+                  </p>
+                )}
+                {touchedFields.email && !fieldErrors.email && fieldStates.email === 'success' && (
+                  <p className="text-green-600 text-xs mt-1 animate-fade-in flex items-center gap-1">
+                    <span>✓</span>
+                    <span>Email hợp lệ</span>
+                  </p>
+                )}
               </div>
 
               <div>
@@ -285,11 +504,53 @@ export default function LoginPage() {
                   type="password"
                   name="password"
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setFormData({ ...formData, password: value });
+                    // Validate real-time nếu đã từng touched
+                    if (touchedFields.password) {
+                      const error = validateField("password", value);
+                      if (error) {
+                        setFieldErrors(prev => ({ ...prev, password: error }));
+                        setFieldStates(prev => ({ ...prev, password: 'error' }));
+                      } else {
+                        setFieldErrors(prev => {
+                          const newErrors = { ...prev };
+                          delete newErrors.password;
+                          return newErrors;
+                        });
+                        setFieldStates(prev => ({ ...prev, password: value.trim() ? 'success' : 'idle' }));
+                      }
+                    } else {
+                      // Reset state when not touched yet
+                      setFieldStates(prev => ({ ...prev, password: 'idle' }));
+                    }
+                  }}
+                  onBlur={handleBlur}
                   placeholder="••••••••"
-                  className={`w-full px-4 py-3 bg-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 ${shakeInput ? "shake" : ""}`}
+                  className={`w-full px-4 py-3 rounded-lg focus:ring-2 transition-all ${
+                    shakeInput ? "shake" : ""
+                  } ${
+                    touchedFields.password && fieldErrors.password 
+                      ? "border-2 border-red-400 bg-red-50 focus:ring-red-500" 
+                      : touchedFields.password && fieldStates.password === 'success' && !fieldErrors.password
+                      ? "border-2 border-green-400 bg-green-50 focus:ring-green-500"
+                      : "border-0 bg-gray-100 focus:ring-indigo-500"
+                  }`}
                   required
                 />
+                {touchedFields.password && fieldErrors.password && (
+                  <p className="text-red-600 text-xs mt-1 animate-fade-in flex items-center gap-1">
+                    <span>⚠️</span>
+                    <span>{fieldErrors.password}</span>
+                  </p>
+                )}
+                {touchedFields.password && !fieldErrors.password && fieldStates.password === 'success' && (
+                  <p className="text-green-600 text-xs mt-1 animate-fade-in flex items-center gap-1">
+                    <span>✓</span>
+                    <span>Mật khẩu hợp lệ</span>
+                  </p>
+                )}
               </div>
 
               {error && (
@@ -323,11 +584,16 @@ export default function LoginPage() {
             75% { transform: translateX(5px); }
           }
           .shake { animation: shake 0.5s ease-in-out; }
-          .zoom-in { animation: zoomIn 0.3s ease-out; }
-          @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-          }
+      .zoom-in { animation: zoomIn 0.3s ease-out; }
+      @keyframes zoomIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(-4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in { animation: fade-in 0.3s ease-out; }
         `}</style>
       </div>
       <Footer />

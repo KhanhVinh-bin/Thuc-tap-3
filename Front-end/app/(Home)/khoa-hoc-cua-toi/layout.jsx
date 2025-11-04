@@ -11,7 +11,8 @@ export default function MyCoursesLayout({ children }) {
 
   const menu = [
     { id: "khoa-hoc-cua-toi", label: "Khóa học của tôi", icon: BookOpen, href: "/khoa-hoc-cua-toi" },
-    { id: "chung-chi", label: "Chứng chỉ", icon: Award, href: "/khoa-hoc-cua-toi/chung-chi" },
+    // Tạm thời ẩn trang Chứng chỉ
+    // { id: "chung-chi", label: "Chứng chỉ", icon: Award, href: "/khoa-hoc-cua-toi/chung-chi" },
     { id: "oders", label: "Lịch sử giao dịch", icon: Award, href: "/khoa-hoc-cua-toi/oders" },
     { id: "cai-dat", label: "Cài đặt", icon: Settings, href: "/khoa-hoc-cua-toi/cai-dat" },
   ]

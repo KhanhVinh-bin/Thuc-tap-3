@@ -17,6 +17,7 @@ import {
   createReview,
   addToCartAPI,
 } from "@/lib/api"
+import { getEnrollmentsByCourse } from "@/lib/enrollmentApi"
 
 import { useCart } from "@/lib/cart-context"
 import { useAuth } from "@/lib/auth-context"
@@ -52,6 +53,9 @@ export default function CourseDetailPage() {
     total: 0,
     stars: [0,0,0,0,0]
   })
+  
+  // students count state
+  const [studentsCount, setStudentsCount] = useState(0)
 
   // Ensure tab resets when switching to a different course ID
   useEffect(() => {
@@ -75,7 +79,16 @@ export default function CourseDetailPage() {
           date: r.createdAt ? new Date(r.createdAt).toLocaleDateString('vi-VN') : (r.createdAtString || "")
         }))
         setReviews(formattedReviews)
-        if (reviewsData.stats) setReviewStats(reviewsData.stats)
+        if (reviewsData.stats) {
+          setReviewStats(reviewsData.stats)
+        } else {
+          // Tính toán từ reviews nếu không có stats
+          const total = formattedReviews.length
+          const average = total > 0 
+            ? (formattedReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / total).toFixed(1)
+            : 0
+          setReviewStats({ average: parseFloat(average), total, stars: [0,0,0,0,0] })
+        }
       } else {
         setReviews([])
         setReviewStats({ average: 0, total: 0, stars: [0,0,0,0,0] })
@@ -86,6 +99,18 @@ export default function CourseDetailPage() {
       setReviewStats({ average: 0, total: 0, stars: [0,0,0,0,0] })
     } finally {
       setReviewsLoading(false)
+    }
+  }
+
+  // Helper to load students count
+  const loadStudentsCount = async (courseId) => {
+    try {
+      const enrollments = await getEnrollmentsByCourse(courseId)
+      const count = Array.isArray(enrollments) ? enrollments.length : 0
+      setStudentsCount(count)
+    } catch (err) {
+      console.error("Error fetching students count:", err)
+      setStudentsCount(0)
     }
   }
 
@@ -146,8 +171,10 @@ export default function CourseDetailPage() {
         if (isMounted) {
           setCourse(formattedCourse)
           setLoading(false)
-          // load reviews but don't block UI
-          loadReviews(formattedCourse.id ?? courseId).catch(err => console.error("Load reviews error:", err))
+          const finalCourseId = formattedCourse.id ?? courseId
+          // load reviews and students count but don't block UI
+          loadReviews(finalCourseId).catch(err => console.error("Load reviews error:", err))
+          loadStudentsCount(finalCourseId).catch(err => console.error("Load students count error:", err))
         }
       } catch (err) {
         console.error("Error fetching course:", err)
@@ -339,8 +366,10 @@ export default function CourseDetailPage() {
       alert("✅ Đánh giá đã được gửi thành công!")
       setReviewContent("")
       setRating(0)
-      // reload reviews
-      await loadReviews(course.id ?? course.courseId)
+      // reload reviews để cập nhật rating và count
+      const courseId = course.id ?? course.courseId
+      await loadReviews(courseId)
+      // Không cần reload students count vì mua khóa học sẽ tự động +1 enrollment
     } catch (err) {
       console.error("❌ Lỗi khi gửi đánh giá:", err)
       alert("Gửi đánh giá thất bại, vui lòng thử lại!")
@@ -408,12 +437,14 @@ export default function CourseDetailPage() {
               <div className="flex flex-wrap gap-6 mb-8">
                 <div className="flex items-center gap-2">
                   <span className="text-yellow-400">⭐</span>
-                  <span className="font-semibold">{course.rating ?? reviewStats.average ?? "0.0"}</span>
-                  <span className="text-white-400">({course.reviews ?? reviewStats.total ?? 0} lượt đánh giá)</span>
+                  <span className="font-semibold">
+                    {reviewStats.average > 0 ? reviewStats.average.toFixed(1) : "0.0"}
+                  </span>
+                  <span className="text-white-400">({reviewStats.total || 0} lượt đánh giá)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span>👥</span>
-                  <span className="font-semibold">{course.students ?? "0"}</span>
+                  <span className="font-semibold">{studentsCount}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span>⏱️</span>
@@ -432,7 +463,7 @@ export default function CourseDetailPage() {
                     />
                   </div>
                   <div>
-                    <p className="font-semibold text-lg">Giảng viên: {course.instructor.name}</p>
+                    <p className="font-semibold text-lg">Giảng viên: {course.instructor.full_name}</p>
                     <p className="text-white-400 text-sm">
                       {course.instructor.bio}
                     </p>
@@ -450,7 +481,7 @@ export default function CourseDetailPage() {
                   <img
                     src={course.image || course.thumbnailUrl || "/placeholder-course.jpg"}
                     alt="Course preview"
-                    className="w-full h-48 object-cover transition-transform duration-500"
+                    className="w-full h-89 object-cover transition-transform duration-500"
                     onLoad={() => setImageLoaded(true)}
                     onError={(e) => {
                       if (!e.target.src.includes("/placeholder")) {
@@ -458,10 +489,8 @@ export default function CourseDetailPage() {
                       }
                     }}
                   />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                    <button className="w-16 h-16 bg-white rounded-full flex items-center justify-center hover:scale-110 transition-transform">
-                      <span className="text-3xl text-purple-600">▶</span>
-                    </button>
+                  <div className="">
+                    
                   </div>
                 </div>
 

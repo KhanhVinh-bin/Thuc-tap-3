@@ -4,9 +4,13 @@ import Link from "next/link";
 import "../tongquan/page.css";
 import "./page.css";
 import Footer from "@/components/footer";
+import AvatarMenu from "@/app/giangvien/components/AvatarMenu.js";
 import { useState } from "react";
+import { useAuth } from "@/lib/auth-context";
+import { changeInstructorPassword } from "../lib/instructorApi";
 
 export default function GiangVienCaiDatPage() {
+  const { token } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
@@ -20,15 +24,25 @@ export default function GiangVienCaiDatPage() {
     if (!isValid) return;
     try {
       setLoading(true);
-      // TODO: Tích hợp API thật để đổi mật khẩu
-      await new Promise(r => setTimeout(r, 800));
-      alert("Đổi mật khẩu thành công.");
+      if (!token) {
+        alert("Bạn chưa đăng nhập hoặc thiếu token.");
+        return;
+      }
+      const payload = {
+        currentPassword: currentPw,
+        newPassword: newPw,
+        confirmPassword: confirmPw,
+      };
+      const res = await changeInstructorPassword(payload, token);
+      const msg = res?.message || "Đổi mật khẩu thành công.";
+      alert(msg);
       setCurrentPw("");
       setNewPw("");
       setConfirmPw("");
       setAttempted(false);
     } catch (e) {
-      alert("Có lỗi xảy ra, vui lòng thử lại.");
+      const msg = e?.message || "Có lỗi xảy ra, vui lòng thử lại.";
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -38,7 +52,7 @@ export default function GiangVienCaiDatPage() {
       {/* Header/topbar */}
       <header className="gv-topbar" role="banner">
         <div className="gv-topbar-left">
-          <div className="gv-brand-mini">
+          <Link href="/giangvien/tongquan" className="gv-brand-mini" aria-label="Về trang Tổng quan">
             <span className="gv-brand-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="#1e3a8a">
                 <path
@@ -50,7 +64,7 @@ export default function GiangVienCaiDatPage() {
               </svg>
             </span>
             <span className="gv-brand-text">EduLearn</span>
-          </div>
+          </Link>
           <span className="gv-divider" aria-hidden="true" />
           <div className="gv-breadcrumb" aria-label="Breadcrumb"> 
             <button 
@@ -70,9 +84,7 @@ export default function GiangVienCaiDatPage() {
           </div>
         </div>
         <div className="gv-topbar-right">
-          <div className="gv-avatar" title="Tài khoản">
-            <span className="gv-presence" />
-          </div>
+          <AvatarMenu />
         </div>
       </header>
 
@@ -323,7 +335,7 @@ export default function GiangVienCaiDatPage() {
               <div className="st-actions">
                 <button
                   className="st-btn"
-                  disabled={!isValid || loading}
+                  disabled={loading}
                   onClick={handleChangePassword}
                 >
                   {loading ? "Đang xử lý..." : "Đổi mật khẩu"}
@@ -332,16 +344,7 @@ export default function GiangVienCaiDatPage() {
             </div>
           </section>
 
-          {/* Danger zone */}
-          <section className="st-danger" aria-labelledby="st-danger-title">
-            <div className="st-danger-inner">
-              <div>
-                <h2 id="st-danger-title">Xóa tài khoản</h2>
-                <p>Xóa tài khoản và tất cả các dữ liệu</p>
-              </div>
-              <button className="st-btn danger">Xóa tài khoản</button>
-            </div>
-          </section>
+          {/* Danger zone đã xóa theo yêu cầu */}
         </main>
       </div>
 

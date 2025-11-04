@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, Trash2, Plus, Minus } from "lucide-react"
+import { ArrowLeft, Trash2, Plus, Minus, X } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
@@ -21,6 +21,9 @@ export default function CartPage() {
     getCartItemsCount 
   } = useCart()
   const [isClearing, setIsClearing] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState(null)
+  const [deleteType, setDeleteType] = useState(null) // 'item' or 'all'
 
   // Ensure image URL is properly formatted for next/image
   const getImageSrc = (imageUrl) => {
@@ -36,13 +39,37 @@ export default function CartPage() {
   }
 
   const handleClearCart = () => {
-    if (window.confirm("Bạn có chắc muốn xóa tất cả khóa học trong giỏ hàng?")) {
+    setDeleteType('all')
+    setShowDeleteConfirm(true)
+  }
+
+  const handleDeleteItem = (courseId) => {
+    setItemToDelete(courseId)
+    setDeleteType('item')
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDelete = () => {
+    if (deleteType === 'all') {
       setIsClearing(true)
       setTimeout(() => {
         clearCart()
         setIsClearing(false)
+        setShowDeleteConfirm(false)
+        setDeleteType(null)
       }, 300)
+    } else if (deleteType === 'item' && itemToDelete) {
+      removeFromCart(itemToDelete)
+      setShowDeleteConfirm(false)
+      setItemToDelete(null)
+      setDeleteType(null)
     }
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false)
+    setItemToDelete(null)
+    setDeleteType(null)
   }
 
   const formatPrice = (price) => {
@@ -135,7 +162,7 @@ export default function CartPage() {
                         </div>
                       </div>
                       <button
-                        onClick={() => removeFromCart(course.id)}
+                        onClick={() => handleDeleteItem(course.id)}
                         className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                         disabled={loading}
                       >
@@ -226,6 +253,59 @@ export default function CartPage() {
           )}
         </div>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-scale-in">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Xác nhận xóa</h3>
+              <button
+                onClick={cancelDelete}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <p className="text-gray-700 mb-6">
+              {deleteType === 'all' 
+                ? "Bạn có chắc muốn xóa tất cả khóa học trong giỏ hàng?"
+                : "Bạn có chắc muốn xóa khóa học này khỏi giỏ hàng?"}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={cancelDelete}
+                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-gray-700"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+              >
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes scale-in {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        .animate-scale-in {
+          animation: scale-in 0.2s ease-out;
+        }
+      `}</style>
+
       <Footer />
     </>
   )

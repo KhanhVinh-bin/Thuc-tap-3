@@ -29,6 +29,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'localhost',
+        port: '3001',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'www.icantech.vn',
         pathname: '/**',
       },

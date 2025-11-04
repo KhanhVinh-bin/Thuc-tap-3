@@ -28,69 +28,11 @@ export default function TongQuan({ course }) {
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-4">{title}</h2>
       </div>
-
-      {/* Thumbnail */}
-      {thumbnailUrl && (
-        <div className="relative w-full h-64 rounded-lg overflow-hidden">
-          <Image
-            src={thumbnailUrl}
-            alt={title}
-            fill
-            className="object-cover"
-          />
-        </div>
-      )}
-
       {/* Preview Video */}
-      {previewVideoUrl && (
-        <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
-          <iframe
-            src={previewVideoUrl}
-            className="w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
-      )}
+     
 
       {/* Course Info - Thumbnail images */}
-      {thumbnailUrl && (
-        <div className="flex gap-4 items-center">
-          <div className="flex-shrink-0">
-            <div className="relative w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-200">
-              <Image
-                src={thumbnailUrl}
-                alt={title}
-                width={96}
-                height={96}
-                className="object-cover"
-              />
-            </div>
-          </div>
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-4 text-sm">
-              {(priceValue > 0 || (typeof priceValue === 'string' && priceValue)) && (
-                <div>
-                  <span className="text-gray-600">Giá: </span>
-                  <span className="font-bold text-indigo-600">{formatPrice(priceValue)}</span>
-                </div>
-              )}
-              {duration && (
-                <div>
-                  <span className="text-gray-600">Thời lượng: </span>
-                  <span className="font-semibold">{duration}</span>
-                </div>
-              )}
-              {level && (
-                <div>
-                  <span className="text-gray-600">Cấp độ: </span>
-                  <span className="font-semibold">{level}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+     
 
       {/* Description */}
       <div>

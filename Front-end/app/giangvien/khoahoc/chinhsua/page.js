@@ -5,16 +5,27 @@ import Link from "next/link"
 import "../../tongquan/page.css"
 import "../page.css"
 import "./page.css"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/lib/auth-context"
+import { getLessonsByCourse, updateLesson, patchLesson, deleteLesson, uploadLessonFile } from "../../lib/instructorApi"
 
 export default function GiangVienKhoaHocChinhSuaPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const { token } = useAuth()
+  const { toast } = useToast()
+  
+  const courseId = searchParams?.get('courseId') || searchParams?.get('id') || null
+  
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [courseData, setCourseData] = useState(null)
   const [chapters, setChapters] = useState([])
   // Thêm state cho bài học bổ sung vào các chương tĩnh
   const [extraLessons, setExtraLessons] = useState({ chapter1: [], chapter2: [] })
-
-  const { toast } = useToast()
 
   // Helper function để lấy accept attribute dựa trên loại bài học
   const getFileAcceptByType = (lessonType) => {
@@ -88,7 +99,8 @@ export default function GiangVienKhoaHocChinhSuaPage() {
     ))
   }
 
-  const updateLessonTitle = (chapterId, lessonId, newTitle) => {
+  const updateLessonTitle = async (chapterId, lessonId, newTitle) => {
+    // Update UI immediately
     setChapters(prev => prev.map(ch => 
       ch.id === chapterId 
         ? {
@@ -99,14 +111,58 @@ export default function GiangVienKhoaHocChinhSuaPage() {
           }
         : ch
     ))
+
+    // Update via API if lesson exists in DB
+    const chapter = chapters.find(ch => ch.id === chapterId)
+    const lesson = chapter?.lessons.find(l => l.id === lessonId)
+    
+    if (lesson?.lessonId && courseId && token) {
+      try {
+        await patchLesson(courseId, lesson.lessonId, { title: newTitle }, token)
+      } catch (err) {
+        console.error("Error updating lesson title:", err)
+      }
+    }
   }
 
-  const deleteLesson = (chapterId, lessonId) => {
-    setChapters(prev => prev.map(ch => 
-      ch.id === chapterId 
-        ? { ...ch, lessons: ch.lessons.filter(lesson => lesson.id !== lessonId) }
-        : ch
-    ))
+  const handleDeleteLesson = async (chapterId, lessonId) => {
+    const chapter = chapters.find(ch => ch.id === chapterId)
+    const lesson = chapter?.lessons.find(l => l.id === lessonId)
+    
+    if (!lesson || !lesson.lessonId || !courseId || !token) {
+      // Nếu không có lessonId (chưa lưu vào DB), chỉ xóa khỏi UI
+      setChapters(prev => prev.map(ch => 
+        ch.id === chapterId 
+          ? { ...ch, lessons: ch.lessons.filter(l => l.id !== lessonId) }
+          : ch
+      ))
+      return
+    }
+
+    // Confirm deletion
+    if (!confirm(`Bạn có chắc muốn xóa bài học "${lesson.title}"?`)) {
+      return
+    }
+
+    try {
+      await deleteLesson(courseId, lesson.lessonId, token)
+      setChapters(prev => prev.map(ch => 
+        ch.id === chapterId 
+          ? { ...ch, lessons: ch.lessons.filter(l => l.id !== lessonId) }
+          : ch
+      ))
+      toast({
+        title: "Đã xóa",
+        description: "Bài học đã được xóa thành công.",
+      })
+    } catch (err) {
+      console.error("Error deleting lesson:", err)
+      toast({
+        title: "Lỗi",
+        description: err.message || "Không thể xóa bài học",
+        variant: "destructive",
+      })
+    }
   }
 
   const deleteChapter = (chapterId) => {
@@ -138,11 +194,79 @@ export default function GiangVienKhoaHocChinhSuaPage() {
   const chapter1Count = (staticState?.l1?.deleted ? 0 : 1) + (staticState?.l2?.deleted ? 0 : 1) + extraLessons.chapter1.length
 
   // Thêm handler lưu cài đặt
-  const saveSettings = () => {
-    toast({
-      title: "Đã lưu cài đặt",
-      description: "Cài đặt đã được lưu.",
-    })
+  const saveSettings = async () => {
+    if (!courseId || !token) {
+      toast({
+        title: "Lỗi",
+        description: "Không có Course ID hoặc token",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (loading) {
+      toast({
+        title: "Đang tải",
+        description: "Vui lòng đợi dữ liệu tải xong",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      // Save all lessons
+      const savePromises = []
+      let savedCount = 0
+      let errorCount = 0
+      
+      chapters.forEach((ch) => {
+        ch.lessons.forEach((lesson) => {
+          if (lesson.lessonId) {
+            // Update existing lesson
+            const lessonData = {
+              title: lesson.title || "",
+              contentType: lesson.type === "Video" ? "video" : lesson.type === "Tài liệu" ? "pdf" : "text",
+              videoUrl: lesson.videoUrl || null,
+              durationSec: lesson.durationSec || (lesson.duration ? 
+                lesson.duration.split(':').reduce((acc, val) => acc * 60 + parseInt(val), 0) : 0),
+              sortOrder: lesson.sortOrder || 0,
+            }
+            savePromises.push(
+              patchLesson(courseId, lesson.lessonId, lessonData, token)
+                .then(() => {
+                  savedCount++
+                })
+                .catch((err) => {
+                  console.error("Error saving lesson:", lesson.title, err)
+                  errorCount++
+                })
+            )
+          }
+        })
+      })
+
+      await Promise.all(savePromises)
+      
+      if (errorCount === 0) {
+        toast({
+          title: "Đã lưu thành công",
+          description: `Đã lưu ${savedCount} bài học.`,
+        })
+      } else {
+        toast({
+          title: "Lưu không hoàn toàn",
+          description: `Đã lưu ${savedCount} bài học, ${errorCount} bài lỗi.`,
+          variant: "destructive",
+        })
+      }
+    } catch (err) {
+      console.error("Error saving lessons:", err)
+      toast({
+        title: "Lỗi",
+        description: err.message || "Không thể lưu cài đặt",
+        variant: "destructive",
+      })
+    }
   }
 
   // Handlers cho bài tĩnh
@@ -488,124 +612,142 @@ export default function GiangVienKhoaHocChinhSuaPage() {
               <Link href="/giangvien/khoahoc" className="gvc-back">Quay lại</Link>
               <div className="gvc-editor-title">
                 <h2>Quản lý nội dung khóa học</h2>
-                <span className="gvc-course-id">ID: 1</span>
+                {courseId && <span className="gvc-course-id">ID: {courseId}</span>}
+                {!courseId && (
+                  <span className="gvc-course-id" style={{color: 'red'}}>Không có Course ID</span>
+                )}
               </div>
 
             </div>
+
+            {/* Loading state */}
+            {loading && (
+              <div style={{ padding: '40px', textAlign: 'center' }}>
+                <div style={{ fontSize: '18px', color: '#666' }}>Đang tải dữ liệu...</div>
+              </div>
+            )}
+
+            {/* Error state */}
+            {error && !loading && (
+              <div style={{ padding: '40px', textAlign: 'center' }}>
+                <div style={{ fontSize: '18px', color: 'red', marginBottom: '20px' }}>{error}</div>
+                <button
+                  onClick={() => router.push('/giangvien/khoahoc')}
+                  style={{ padding: '10px 20px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                >
+                  Quay lại danh sách khóa học
+                </button>
+              </div>
+            )}
 
             {/* Summary cards */}
-            <div className="gvc-summary">
-              {/* Tổng bài học */}
-              <div className="gvc-summary-card blue">
-                <div className="icon" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-
-  <path
-    d="M24,60H152a32,32,0,0,1,32,32v96a8,8,0,0,1-8,8H48a32,32,0,0,1-32-32V68A8,8,0,0,1,24,60Z"
-    fill="none"
-    stroke="#000"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="24"
-  />
-  <polyline
-    points="184 112 240 80 240 176 184 144"
-    fill="none"
-    stroke="#000"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="24"
-  />
-</svg>
-
-                  
+            {!loading && !error && (
+              <div className="gvc-summary">
+                {/* Tổng bài học */}
+                <div className="gvc-summary-card blue">
+                  <div className="icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                      <path
+                        d="M24,60H152a32,32,0,0,1,32,32v96a8,8,0,0,1-8,8H48a32,32,0,0,1-32-32V68A8,8,0,0,1,24,60Z"
+                        fill="none"
+                        stroke="#000"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="24"
+                      />
+                      <polyline
+                        points="184 112 240 80 240 176 184 144"
+                        fill="none"
+                        stroke="#000"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="24"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="value">{courseData?.totalLessons || chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)}</div>
+                    <div className="label">Tổng bài học</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="value">4</div>
-                  <div className="label">Tổng bài học</div>
+                {/* Đã xuất bản */}
+                <div className="gvc-summary-card green">
+                  <div className="icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="value">{chapters.reduce((sum, ch) => sum + ch.lessons.filter(l => l.status === 'published').length, 0)}</div>
+                    <div className="label">Đã xuất bản</div>
+                  </div>
                 </div>
-              </div>
-              {/* Đã xuất bản */}
-              <div className="gvc-summary-card green">
-                <div className="icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
+                {/* Tổng thời lượng */}
+                <div className="gvc-summary-card purple">
+                  <div className="icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M12 7v5l4 2" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="value">
+                      {courseData?.totalDurationSec 
+                        ? `${Math.floor(courseData.totalDurationSec / 60)} phút`
+                        : chapters.reduce((sum, ch) => sum + ch.lessons.reduce((s, l) => s + (l.durationSec || 0), 0), 0) 
+                        ? `${Math.floor(chapters.reduce((sum, ch) => sum + ch.lessons.reduce((s, l) => s + (l.durationSec || 0), 0), 0) / 60)} phút`
+                        : '0 phút'}
+                    </div>
+                    <div className="label">Tổng thời lượng</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="value">3</div>
-                  <div className="label">Đã xuất bản</div>
-                </div>
-              </div>
-              {/* Tổng thời lượng */}
-              <div className="gvc-summary-card purple">
-                <div className="icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 7v5l4 2" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="value">69 phút</div>
-                  <div className="label">Tổng thời lượng</div>
-                </div>
-              </div>
-              {/* Tỷ lệ hoàn thành TB */}
-              <div className="gvc-summary-card orange">
-                <div className="icon" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
- 
-  <g>
-
-   
-    
-    
-    <path
-      d="
-        M2 22
-        a8 8 0 1 1 16 0
-        h-2
-        a6 6 0 1 0-12 0
-        H2
-        z
-
-        m8-9
-        c-3.315 0-6-2.685-6-6
-        s2.685-6 6-6 6 2.685 6 6-2.685 6-6 6
-        z
-
-        m0-2
-        c2.21 0 4-1.79 4-4
-        s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4
-        z
-
-        m8.284 3.703
-        A8.002 8.002 0 0 1 23 22
-        h-2
-        a6.001 6.001 0 0 0-3.537-5.473
-        l.82-1.824
-        z
-
-        m-.688-11.29
-        A5.5 5.5 0 0 1 21 8.5
-        a5.499 5.499 0 0 1-5 5.478
-        v-2.013
-        a3.5 3.5 0 0 0 1.041-6.609
-        l.555-1.943
-        z
-      "
-    />
-  </g>
-</svg>
-
-                </div>
-                <div>
-                  <div className="value">59%</div>
-                  <div className="label">Tỷ lệ hoàn thành TB</div>
+                {/* Tỷ lệ hoàn thành TB - Fake data removed, showing placeholder */}
+                <div className="gvc-summary-card orange">
+                  <div className="icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <g>
+                        <path
+                          d="
+                            M2 22
+                            a8 8 0 1 1 16 0
+                            h-2
+                            a6 6 0 1 0-12 0
+                            H2
+                            z
+                            m8-9
+                            c-3.315 0-6-2.685-6-6
+                            s2.685-6 6-6 6 2.685 6 6-2.685 6-6 6
+                            z
+                            m0-2
+                            c2.21 0 4-1.79 4-4
+                            s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4
+                            z
+                            m8.284 3.703
+                            A8.002 8.002 0 0 1 23 22
+                            h-2
+                            a6.001 6.001 0 0 0-3.537-5.473
+                            l.82-1.824
+                            z
+                            m-.688-11.29
+                            A5.5 5.5 0 0 1 21 8.5
+                            a5.499 5.499 0 0 1-5 5.478
+                            v-2.013
+                            a3.5 3.5 0 0 0 1.041-6.609
+                            l.555-1.943
+                            z
+                          "
+                        />
+                      </g>
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="value">-</div>
+                    <div className="label">Tỷ lệ hoàn thành TB</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Tabs */}
             <div className="gvc-tabbar">
@@ -1502,7 +1644,7 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                             <button 
                               className="gvc-icon-btn danger" 
                               title="Xóa"
-                              onClick={() => deleteLesson(ch.id, lesson.id)}
+                              onClick={() => handleDeleteLesson(ch.id, lesson.id)}
                             >
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -1551,9 +1693,21 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                 )}
               </div>
             ))}
-            <div className="gvc-settings-actions">
-              <button className="gvc-save-btn" onClick={saveSettings}>Lưu cài đặt</button>
-            </div>
+            {!loading && !error && (
+              <div className="gvc-settings-actions">
+                <button 
+                  className="gvc-save-btn" 
+                  onClick={saveSettings}
+                  disabled={loading || chapters.length === 0}
+                  style={{
+                    opacity: (loading || chapters.length === 0) ? 0.6 : 1,
+                    cursor: (loading || chapters.length === 0) ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {loading ? 'Đang lưu...' : 'Lưu cài đặt'}
+                </button>
+              </div>
+            )}
           </div>
         </main>
       </div>

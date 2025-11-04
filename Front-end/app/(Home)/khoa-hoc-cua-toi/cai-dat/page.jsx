@@ -1,166 +1,229 @@
 "use client"
-import { useState, useEffect } from "react"
-import { Lock, Trash2, User, Mail, Phone, MapPin, Calendar } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Lock, Trash2, Upload, Image as ImageIcon, X } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
+import Image from "next/image"
 
 const API_URL = "https://localhost:7025/api"
 
 export default function CaiDatPage() {
-  const { user, token, logout } = useAuth()
-  const [loading, setLoading] = useState(true);
+  const { user, token, logout, login } = useAuth()
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
-  const [profile, setProfile] = useState(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Form states
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phoneNumber: '',
-    address: '',
-    dateOfBirth: '',
-    gender: '',
-    bio: ''
-  });
+  const [avatarUrl, setAvatarUrl] = useState(null)
+  const [avatarPreview, setAvatarPreview] = useState(null)
 
   const buildHeaders = (extra = {}) => {
-    const headers = { 'Content-Type': 'application/json', ...extra }
+    const headers = { ...extra }
+    if (!extra['Content-Type']) headers['Content-Type'] = 'application/json'
     if (token) headers['Authorization'] = `Bearer ${token}`
     return headers
   }
 
   const getUserId = () => user?.userId ?? user?.id ?? null
 
+  // Load avatar từ user
   useEffect(() => {
-    let mounted = true
-    const studentId = getUserId()
-    if (!studentId) {
-      setLoading(false)
-      return
-    }
-
-    const fetchProfile = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-
-        const res = await fetch(`${API_URL}/Students/${studentId}`, {
-          headers: buildHeaders()
-        })
-
-        if (!res.ok) {
-          const text = await res.text().catch(() => '')
-          throw new Error(`Lỗi API (${res.status}) ${text}`)
+    if (user) {
+      // Lấy avatar từ user object hoặc localStorage
+      const storedUser = typeof window !== 'undefined' ? localStorage.getItem("currentUser") : null
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser)
+          const userAvatar = parsedUser.avatarUrl || user.avatarUrl || user.AvatarUrl
+          if (userAvatar) {
+            setAvatarUrl(userAvatar)
+            setAvatarPreview(userAvatar)
+          }
+        } catch (e) {
+          console.error("Error parsing user:", e)
         }
-
-        const data = await res.json()
-
-        if (!mounted) return
-        setProfile(data)
-        setFormData({
-          fullName: data.fullName ?? '',
-          email: data.email ?? '',
-          phoneNumber: data.phoneNumber ?? '',
-          address: data.address ?? '',
-          dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth).toISOString().split('T')[0] : '',
-          gender: data.gender ?? '',
-          bio: data.bio ?? ''
-        })
-      } catch (err) {
-        console.error("Lỗi khi tải thông tin học viên:", err)
-        if (mounted) setError(err.message)
-      } finally {
-        if (mounted) setLoading(false)
       }
     }
-
-    fetchProfile()
-    return () => { mounted = false }
-  }, [user, token])
-
-  const handleProfileUpdate = async (e) => {
-    e.preventDefault()
-    if (!user) { alert("Vui lòng đăng nhập để cập nhật thông tin!"); return }
-
-    const studentId = getUserId()
-    if (!studentId) { alert("Không tìm thấy ID học viên!"); return }
-
-    setSaving(true)
-    try {
-      const updateData = {
-        fullName: formData.fullName,
-        phoneNumber: formData.phoneNumber,
-        address: formData.address,
-        dateOfBirth: formData.dateOfBirth || null,
-        gender: formData.gender,
-        bio: formData.bio,
-        status: profile?.status ?? 'active',
-        enrollmentCount: profile?.enrollmentCount ?? 0,
-        completedCourses: profile?.completedCourses ?? 0,
-        totalCertificates: profile?.totalCertificates ?? 0,
-        lastActive: new Date().toISOString()
-      }
-
-      const res = await fetch(`${API_URL}/Students/${studentId}`, {
-        method: 'PUT',
-        headers: buildHeaders(),
-        body: JSON.stringify(updateData)
-      })
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => '')
-        throw new Error(`Lỗi API (${res.status}) ${text}`)
-      }
-
-      alert("Cập nhật thông tin thành công!")
-      const newProfileRes = await fetch(`${API_URL}/Students/${studentId}`, { headers: buildHeaders() })
-      if (newProfileRes.ok) {
-        const newProfileData = await newProfileRes.json()
-        setProfile(newProfileData)
-        setFormData(prev => ({ ...prev, fullName: newProfileData.fullName ?? prev.fullName }))
-      }
-    } catch (err) {
-      console.error("Lỗi khi cập nhật thông tin:", err)
-      alert("Lỗi khi cập nhật thông tin: " + err.message)
-    } finally {
-      setSaving(false)
-    }
-  }
+  }, [user])
 
   const handlePasswordChange = async (e) => {
     e.preventDefault()
     if (!user) { alert("Vui lòng đăng nhập để thay đổi mật khẩu!"); return }
-    if (!currentPassword || !newPassword || !confirmPassword) { alert("Vui lòng điền đầy đủ thông tin mật khẩu!"); return }
-    if (newPassword !== confirmPassword) { alert("Mật khẩu xác nhận không khớp!"); return }
-    if (newPassword.length < 6) { alert("Mật khẩu mới phải có ít nhất 6 ký tự!"); return }
+    if (!currentPassword || !newPassword || !confirmPassword) { 
+      alert("Vui lòng điền đầy đủ thông tin mật khẩu!"); 
+      return 
+    }
+    if (newPassword !== confirmPassword) { 
+      alert("Mật khẩu xác nhận không khớp!"); 
+      return 
+    }
+    if (newPassword.length < 6) { 
+      alert("Mật khẩu mới phải có ít nhất 6 ký tự!"); 
+      return 
+    }
 
     setSaving(true)
     try {
       const userId = getUserId()
+      if (!userId) {
+        throw new Error("Không tìm thấy ID người dùng!")
+      }
+
       const res = await fetch(`${API_URL}/Users/${userId}/ChangePassword`, {
         method: 'POST',
         headers: buildHeaders(),
         body: JSON.stringify({
           currentPassword,
-          newPassword
+          newPassword,
+          confirmPassword
         })
       })
 
       if (!res.ok) {
         const text = await res.text().catch(() => '')
-        throw new Error(`Lỗi API (${res.status}) ${text}`)
+        let errorMessage = `Lỗi API (${res.status}) ${text}`
+        try {
+          const errorData = JSON.parse(text)
+          errorMessage = errorData.message || errorData.Message || errorMessage
+        } catch (e) {
+          // Giữ nguyên errorMessage nếu không parse được
+        }
+        throw new Error(errorMessage)
       }
 
-      alert("Đổi mật khẩu thành công!")
-      setCurrentPassword(''); setNewPassword(''); setConfirmPassword('')
+      alert("✅ Đổi mật khẩu thành công!")
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
     } catch (err) {
       console.error("Lỗi khi đổi mật khẩu:", err)
-      alert("Lỗi khi đổi mật khẩu: " + err.message)
+      alert("❌ Lỗi khi đổi mật khẩu: " + err.message)
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleAvatarSelect = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Kiểm tra đuôi file (chỉ png, jpg, jpeg)
+    const fileExtension = file.name.split('.').pop()?.toLowerCase()
+    const allowedExtensions = ['png', 'jpg', 'jpeg']
+    
+    if (!allowedExtensions.includes(fileExtension)) {
+      alert("⚠️ Chỉ chấp nhận file ảnh có đuôi .png, .jpg hoặc .jpeg")
+      return
+    }
+
+    // Kiểm tra kích thước file (tối đa 5MB)
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    if (file.size > maxSize) {
+      alert("⚠️ File ảnh không được vượt quá 5MB")
+      return
+    }
+
+    // Đọc file và convert sang base64
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const base64String = reader.result
+      setAvatarPreview(base64String)
+      // Lưu base64 vào state để upload
+      setAvatarUrl(base64String)
+    }
+    reader.onerror = () => {
+      alert("❌ Lỗi khi đọc file ảnh")
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleAvatarUpload = async () => {
+    if (!avatarPreview || !avatarUrl) {
+      alert("⚠️ Vui lòng chọn ảnh đại diện!")
+      return
+    }
+
+    if (!user) {
+      alert("⚠️ Vui lòng đăng nhập!")
+      return
+    }
+
+    const userId = getUserId()
+    if (!userId) {
+      alert("⚠️ Không tìm thấy ID người dùng!")
+      return
+    }
+
+    setUploadingAvatar(true)
+    try {
+      // Lấy thông tin user hiện tại trước
+      const getUserRes = await fetch(`${API_URL}/Users/${userId}`, {
+        headers: buildHeaders()
+      })
+
+      if (!getUserRes.ok) {
+        throw new Error("Không thể lấy thông tin người dùng")
+      }
+
+      const currentUserData = await getUserRes.json()
+
+      // Update avatar URL
+      const updateRes = await fetch(`${API_URL}/Users/${userId}`, {
+        method: 'PUT',
+        headers: buildHeaders(),
+        body: JSON.stringify({
+          fullName: currentUserData.fullName || currentUserData.FullName || user.name || "",
+          phoneNumber: currentUserData.phoneNumber || currentUserData.PhoneNumber || "",
+          address: currentUserData.address || currentUserData.Address || "",
+          avatarUrl: avatarUrl, // Base64 data URL
+          dateOfBirth: currentUserData.dateOfBirth || currentUserData.DateOfBirth || null,
+          gender: currentUserData.gender || currentUserData.Gender || "",
+          bio: currentUserData.bio || currentUserData.Bio || "",
+          status: currentUserData.status || currentUserData.Status || "active"
+        })
+      })
+
+      if (!updateRes.ok) {
+        const text = await updateRes.text().catch(() => '')
+        throw new Error(`Lỗi API (${updateRes.status}) ${text}`)
+      }
+
+      // Cập nhật user trong localStorage và context
+      const updatedUser = {
+        ...user,
+        avatarUrl: avatarUrl
+      }
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser))
+      if (login) {
+        login(updatedUser, token)
+      }
+
+      alert("✅ Cập nhật ảnh đại diện thành công!")
+      
+      // Giữ preview để người dùng thấy ngay
+      // Không reset preview
+      
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    } catch (err) {
+      console.error("Lỗi khi upload avatar:", err)
+      alert("❌ Lỗi khi upload avatar: " + err.message)
+    } finally {
+      setUploadingAvatar(false)
+    }
+  }
+
+  const handleRemoveAvatar = () => {
+    setAvatarPreview(null)
+    setAvatarUrl(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
   }
 
@@ -191,126 +254,92 @@ export default function CaiDatPage() {
     }
   }
 
-  if (loading) return <p className="p-6">Đang tải dữ liệu...</p>
   if (error) return <p className="text-red-500 p-6">Lỗi: {error}</p>
 
   return (
-    <>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Hồ sơ cá nhân</h1>
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Cài đặt tài khoản</h1>
 
-              <form onSubmit={handleProfileUpdate} className="max-w-2xl mb-12 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Full name */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Họ và tên</label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-                      <input
-                        type="text"
-                        className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                        value={formData.fullName}
-                        onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                        placeholder="Nhập họ và tên"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Email (disabled) */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-                      <input
-                        type="email"
-                        className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-100"
-                        value={formData.email}
-                        readOnly
-                        disabled
-                      />
-                    </div>
-                  </div>
-
-                  {/* Phone */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-                      <input
-                        type="tel"
-                        className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                        value={formData.phoneNumber}
-                        onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})}
-                        placeholder="Nhập số điện thoại"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Address */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ</label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-                      <input
-                        type="text"
-                        className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                        value={formData.address}
-                        onChange={(e) => setFormData({...formData, address: e.target.value})}
-                        placeholder="Nhập địa chỉ"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Date of birth */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Ngày sinh</label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-                      <input
-                        type="date"
-                        className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                        value={formData.dateOfBirth}
-                        onChange={(e) => setFormData({...formData, dateOfBirth: e.target.value})}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Gender */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Giới tính</label>
-                    <select
-                      className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                      value={formData.gender}
-                      onChange={(e) => setFormData({...formData, gender: e.target.value})}
-                    >
-                      <option value="">Chọn giới tính</option>
-                      <option value="male">Nam</option>
-                      <option value="female">Nữ</option>
-                      <option value="other">Khác</option>
-                    </select>
-                  </div>
+      {/* Thay đổi ảnh đại diện */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <ImageIcon className="w-5 h-5 text-indigo-600" />
+          Ảnh đại diện
+        </h2>
+        
+        <div className="flex items-start gap-6">
+          {/* Avatar Preview */}
+          <div className="flex-shrink-0">
+            <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 bg-gray-100">
+              {avatarPreview ? (
+                <Image
+                  src={avatarPreview}
+                  alt="Avatar preview"
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-indigo-100 text-indigo-600 text-4xl font-bold">
+                  {(user?.name || user?.fullName || "U")[0]?.toUpperCase()}
                 </div>
+              )}
+            </div>
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Giới thiệu bản thân</label>
-                  <textarea
-                    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                    rows="4"
-                    value={formData.bio}
-                    onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                    placeholder="Viết một vài điều về bản thân..."
-                  />
-                </div>
+          {/* Upload Controls */}
+          <div className="flex-1 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Chọn ảnh đại diện (PNG, JPG)
+              </label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".png,.jpg,.jpeg"
+                onChange={handleAvatarSelect}
+                className="hidden"
+                id="avatar-upload"
+              />
+              <label
+                htmlFor="avatar-upload"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer transition-colors"
+              >
+                <Upload className="w-4 h-4" />
+                Chọn ảnh
+              </label>
+              <p className="text-xs text-gray-500 mt-2">
+                Chỉ chấp nhận file .png, .jpg, .jpeg (tối đa 5MB)
+              </p>
+            </div>
 
+            {avatarPreview && (
+              <div className="flex items-center gap-3">
                 <button
-                  type="submit"
-                  disabled={saving}
-                  className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+                  onClick={handleAvatarUpload}
+                  disabled={uploadingAvatar}
+                  className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {saving ? "Đang lưu..." : "Cập nhật thông tin"}
+                  {uploadingAvatar ? "Đang tải lên..." : "Lưu ảnh đại diện"}
                 </button>
-              </form>
+                <button
+                  onClick={handleRemoveAvatar}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center gap-2"
+                >
+                  <X className="w-4 h-4" />
+                  Hủy
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Đổi mật khẩu</h2>
+      {/* Đổi mật khẩu */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <Lock className="w-5 h-5 text-indigo-600" />
+          Đổi mật khẩu
+        </h2>
 
               <form onSubmit={handlePasswordChange} className="max-w-lg space-y-6">
                 <div>
@@ -366,20 +395,26 @@ export default function CaiDatPage() {
                   {saving ? "Đang đổi..." : "Đổi mật khẩu"}
                 </button>
               </form>
+      </div>
 
-              <div className="mt-12 border border-red-200 bg-red-50 rounded-lg p-6">
-                <Trash2 className="text-red-500 w-6 h-6 mb-3" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Xóa tài khoản</h3>
-                <p className="text-gray-600 mb-4">
-                  Xóa tài khoản và tất cả dữ liệu. Hành động này không thể hoàn tác.
-                </p>
-                <button 
-                  onClick={handleDeleteAccount}
-                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  Xóa tài khoản
-                </button>
-              </div>
-    </>
+      {/* Xóa tài khoản */}
+      <div className="bg-white rounded-lg shadow-sm border border-red-200 bg-red-50 p-6">
+        <div className="flex items-start gap-4">
+          <Trash2 className="text-red-500 w-6 h-6 flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Xóa tài khoản</h3>
+            <p className="text-gray-600 mb-4">
+              Xóa tài khoản và tất cả dữ liệu. Hành động này không thể hoàn tác.
+            </p>
+            <button 
+              onClick={handleDeleteAccount}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Xóa tài khoản
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

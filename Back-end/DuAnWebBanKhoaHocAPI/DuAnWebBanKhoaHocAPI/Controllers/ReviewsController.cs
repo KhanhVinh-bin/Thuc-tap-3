@@ -250,15 +250,7 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                 return BadRequest(new { message = "User is not enrolled in this course" });
             }
 
-            // Check if user already reviewed this course
-            var existingReview = await _context.Reviews
-                .FirstOrDefaultAsync(r => r.UserId == reviewCreateDTO.UserId &&
-                                         r.CourseId == reviewCreateDTO.CourseId);
-            if (existingReview != null)
-            {
-                return BadRequest(new { message = "User has already reviewed this course" });
-            }
-
+            // Allow users to submit multiple reviews for the same course
             var review = new Review
             {
                 CourseId = reviewCreateDTO.CourseId,

@@ -26,23 +26,60 @@ export default function GiangVienKhoaHocPage() {
   const loadCourses = async () => {
     if (!user || !token) {
       setLoading(false)
+      setError("Chưa đăng nhập hoặc không có token")
+      return
+    }
+
+    // Kiểm tra token không phải demo token
+    if (typeof token === 'string' && token.startsWith('demo_token_')) {
+      setError("Vui lòng đăng nhập qua trang login chính thức để lấy token hợp lệ")
+      setLoading(false)
       return
     }
 
     try {
       setLoading(true)
       setError(null)
+      console.log("📤 Fetching courses from API...")
       const apiCourses = await getInstructorCourses(token)
       
-      // Format the courses for display
+      console.log("📦 Raw API response:", apiCourses)
+      console.log(`📊 Total courses from API: ${apiCourses?.length || 0}`)
+      
+      // ✅ Format và log từng course để debug
       const formattedCourses = Array.isArray(apiCourses) 
-        ? apiCourses.map(formatCourseData)
+        ? apiCourses
+            .map(c => {
+              // Log từng course để debug
+              const status = (c.Status || c.status || "").toLowerCase().trim()
+              const courseId = c.CourseId || c.courseId
+              const title = c.Title || c.title
+              
+              console.log(`🔍 Course ${courseId}:`, {
+                title,
+                status,
+                rawStatus: c.Status || c.status,
+                isPublished: status === "published"
+              })
+              
+              return c
+            })
+            // ✅ Hiển thị TẤT CẢ courses (không filter) để giảng viên thấy được tất cả khóa học của mình
+            .map(formatCourseData)
         : []
       
+      console.log(`📊 Formatted courses (display): ${formattedCourses.length}`)
+      console.log("📦 Course IDs:", formattedCourses.map(c => c.id))
       setCourses(formattedCourses)
     } catch (err) {
       console.error('Error loading courses:', err)
-      setError(err.message)
+      const errorMessage = err.message || "Có lỗi xảy ra khi tải khóa học"
+      setError(errorMessage)
+      
+      // Nếu lỗi 401, có thể cần đăng nhập lại
+      if (errorMessage.includes("401") || errorMessage.includes("không hợp lệ") || errorMessage.includes("hết hạn")) {
+        console.warn("⚠️ Token không hợp lệ, người dùng cần đăng nhập lại")
+      }
     } finally {
       setLoading(false)
     }
@@ -60,18 +97,46 @@ export default function GiangVienKhoaHocPage() {
     }
 
     try {
+      setLoading(true)
+      setError(null)
       await deleteCourse(courseId, token)
       // Reload courses after deletion
       await loadCourses()
       alert('Xóa khóa học thành công!')
     } catch (err) {
       console.error('Error deleting course:', err)
-      alert('Có lỗi xảy ra khi xóa khóa học: ' + err.message)
+      const errorMessage = err.message || "Có lỗi xảy ra khi xóa khóa học"
+      
+      // Hiển thị thông báo lỗi chi tiết
+      if (errorMessage.includes('kết nối') || errorMessage.includes('ERR_CONNECTION_REFUSED') || errorMessage.includes('Failed to fetch')) {
+        alert('❌ Lỗi: Không thể kết nối tới server backend.\n\nVui lòng:\n1. Kiểm tra backend đã chạy chưa (port 3001)\n2. Kiểm tra kết nối mạng\n3. Thử lại sau')
+      } else if (errorMessage.includes('401') || errorMessage.includes('không hợp lệ') || errorMessage.includes('hết hạn')) {
+        alert('❌ Lỗi: Token không hợp lệ.\n\nVui lòng đăng nhập lại.')
+        router.push('/login')
+      } else if (errorMessage.includes('404') || errorMessage.includes('Không tìm thấy')) {
+        alert('❌ Không tìm thấy khóa học hoặc bạn không có quyền xóa khóa học này.')
+      } else {
+        alert('❌ Có lỗi xảy ra khi xóa khóa học:\n\n' + errorMessage)
+      }
+      
+      setError(errorMessage)
+    } finally {
+      setLoading(false)
     }
   }
 
   // Load courses when user/token changes
   useEffect(() => {
+    // Debug: Log token status
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem("authToken")
+      console.log("🔍 Token Debug:", {
+        fromContext: token ? `${token.substring(0, 20)}...` : "null",
+        fromLocalStorage: storedToken ? `${storedToken.substring(0, 20)}...` : "null",
+        user: user?.email || "null",
+        role: user?.role || "null"
+      })
+    }
     loadCourses()
   }, [user, token])
 
@@ -180,20 +245,65 @@ export default function GiangVienKhoaHocPage() {
               </div>
             ) : error ? (
               <div style={{ textAlign: 'center', padding: '2rem' }}>
-                <p style={{ color: 'red', marginBottom: '1rem' }}>Lỗi: {error}</p>
-                <button 
-                  onClick={loadCourses}
-                  style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#007bff',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Thử lại
-                </button>
+                <div style={{ 
+                  background: '#fee2e2', 
+                  border: '1px solid #fecaca', 
+                  borderRadius: '8px', 
+                  padding: '1.5rem',
+                  marginBottom: '1rem',
+                  maxWidth: '600px',
+                  margin: '0 auto 1rem'
+                }}>
+                  <h3 style={{ color: '#dc2626', marginBottom: '0.5rem' }}>⚠️ Lỗi xác thực</h3>
+                  <p style={{ color: '#991b1b', marginBottom: '1rem' }}>{error}</p>
+                  {(error.includes("401") || error.includes("không hợp lệ") || error.includes("hết hạn") || error.includes("demo_token")) && (
+                    <div style={{ 
+                      background: '#dbeafe', 
+                      border: '1px solid #93c5fd', 
+                      borderRadius: '6px', 
+                      padding: '1rem',
+                      marginTop: '1rem'
+                    }}>
+                      <p style={{ color: '#1e40af', marginBottom: '0.5rem', fontWeight: '600' }}>
+                        💡 Giải pháp:
+                      </p>
+                      <ol style={{ color: '#1e40af', textAlign: 'left', paddingLeft: '1.5rem' }}>
+                        <li>Đăng xuất khỏi tài khoản hiện tại</li>
+                        <li>Đăng nhập lại qua trang <strong>/login</strong> (không phải /giangvien/login)</li>
+                        <li>Chọn role <strong>"Giảng viên"</strong></li>
+                        <li>Nhập email/password của tài khoản instructor thật</li>
+                      </ol>
+                    </div>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                  <button 
+                    onClick={loadCourses}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#007bff',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Thử lại
+                  </button>
+                  <Link
+                    href="/login"
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#28a745',
+                      color: 'white',
+                      textDecoration: 'none',
+                      borderRadius: '4px',
+                      display: 'inline-block'
+                    }}
+                  >
+                    Đăng nhập lại
+                  </Link>
+                </div>
               </div>
             ) : courses.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '2rem' }}>
@@ -215,7 +325,20 @@ export default function GiangVienKhoaHocPage() {
             ) : (
               courses.map((c, i) => (
               <div key={i} className="gvc-card">
-                <img src={c.thumb} alt="thumb" className="gvc-thumb" />
+                <img 
+                  src={c.thumb} 
+                  alt="thumb" 
+                  className="gvc-thumb"
+                  onError={(e) => {
+                    // Nếu ảnh không load được, thay bằng placeholder
+                    if (!e.target.src.includes("/react-course") && !e.target.src.includes("/placeholder")) {
+                      e.target.src = "/react-course.png"
+                    }
+                  }}
+                  onLoad={() => {
+                    console.log("✅ Course thumbnail loaded:", c.id, c.thumb)
+                  }}
+                />
                 <div className="gvc-main">
                   <div className="gvc-top">
                     <div className="gvc-title">{c.title}</div>
@@ -229,7 +352,15 @@ export default function GiangVienKhoaHocPage() {
                         </svg>
                       </button>
                       <div className="gvc-dropdown-menu">
-                        <Link href="/giangvien/khoahoc/chinhsua" className="gvc-dropdown-item edit">
+                        <Link href={`/bai-hoc/${c.id}`} className="gvc-dropdown-item" style={{ color: '#06b6d4' }}>
+                          <span className="gvc-dropdown-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                              <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                          </span>
+                          Xem khóa học
+                        </Link>
+                        <Link href={`/giangvien/khoahoc/chinhsua?courseId=${c.id}`} className="gvc-dropdown-item edit">
                           <span className="gvc-dropdown-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                               <path d="M4 17v3h3l10-10-3-3L4 17Z" />
@@ -321,7 +452,7 @@ export default function GiangVienKhoaHocPage() {
                     <div className="gvc-stat green">
                       <div className="gvc-stat-icon" aria-hidden="true">
                         <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 14 14" fill="none">
-                          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                          <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M7 4.5V3M5.5 8.5c0 .75.67 1 1.5 1s1.5 0 1.5-1c0-1.5-3-1.5-3-3c0-1 .67-1 1.5-1s1.5.38 1.5 1M7 9.5V11"/>
                             <circle cx="7" cy="7" r="6.5"/>
                           </g>
@@ -339,21 +470,9 @@ export default function GiangVienKhoaHocPage() {
             )}
           </section>
 
-          {/* Footer bar: create button + pagination */}
+          {/* Footer bar: create button */}
           <div className="gvc-footerbar">
             <Link href="/giangvien/khoahoc/tao" className="gvc-create-btn">➕ Tạo khóa học</Link>
-            <div className="gvc-pagination">
-              <span className="gvc-page arrow">«</span>
-              <span className="gvc-page arrow">‹</span>
-              <span className="gvc-page active">1</span>
-              <span className="gvc-page">2</span>
-              <span className="gvc-page">3</span>
-              <span className="gvc-page">4</span>
-              <span className="gvc-page">5</span>
-              <span className="gvc-page arrow">…</span>
-              <span className="gvc-page arrow">›</span>
-              <span className="gvc-page arrow">»</span>
-            </div>
           </div>
         </main>
       </div>

@@ -133,10 +133,13 @@ export default function HeroSection() {
               >
                 Khám phá khóa học
               </Link>
-              <button className="px-6 py-3 bg-white/10 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-white/20 transition-all flex items-center gap-2">
+              <Link
+                href="/register"
+                className="px-6 py-3 bg-white/10 backdrop-blur-sm text-white rounded-lg font-semibold hover:bg-white/20 transition-all flex items-center gap-2"
+              >
                 <Play className="w-5 h-5" />
-                Xem Video
-              </button>
+                Đăng ký ngay
+              </Link>
             </div>
           </div>
 

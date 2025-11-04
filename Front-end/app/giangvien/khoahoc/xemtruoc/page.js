@@ -1,10 +1,53 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/lib/auth-context"
+import { useCourse } from "../context/CourseContext"
+import { createOrUpdateCourseStep, getInstructorCourses } from "../../lib/instructorApi"
+import { generateSlug } from "@/lib/slug-helper"
 import "./page.css"
 
 export default function XemTruocKhoaHocPage(){
   const router = useRouter()
+  const { token } = useAuth()
+  const { courseData, updateCourseData, resetCourseData } = useCourse()
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState("")
+  
+  // ✅ Load thumbnail từ API nếu courseId có nhưng thumbnailUrl chưa có hoặc là blob URL
+  useEffect(() => {
+    const loadThumbnailFromApi = async () => {
+      // Chỉ load nếu có courseId và không có thumbnailUrl hợp lệ (không phải blob)
+      if (courseData.courseId && 
+          (!courseData.thumbnailUrl || courseData.thumbnailUrl.startsWith('blob:'))) {
+        try {
+          console.log("📤 Loading course thumbnail from API for courseId:", courseData.courseId)
+          const courses = await getInstructorCourses(token)
+          const currentCourse = Array.isArray(courses) 
+            ? courses.find(c => (c.CourseId || c.courseId) === courseData.courseId)
+            : null
+          
+          if (currentCourse) {
+            const thumbnailUrl = currentCourse.ThumbnailUrl || currentCourse.thumbnailUrl
+            if (thumbnailUrl && !thumbnailUrl.startsWith('blob:')) {
+              console.log("✅ Found thumbnail from API:", thumbnailUrl)
+              updateCourseData({ thumbnailUrl })
+            }
+          }
+        } catch (err) {
+          console.warn("⚠️ Could not load thumbnail from API:", err)
+        }
+      }
+    }
+    
+    if (token && courseData.courseId) {
+      loadThumbnailFromApi()
+    }
+  }, [courseData.courseId, token])
+
+  const slug = generateSlug(courseData.title || "")
+  const previewUrl = `${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/courses/${slug}`
 
   return (
     <div className="gvc-create-root">
@@ -62,16 +105,52 @@ export default function XemTruocKhoaHocPage(){
           {/* Thẻ preview chính */}
           <div className="gvc-preview-main">
             <div className="gvc-thumb-large" aria-label="Thumbnail">
-              <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#6b7280">
-                <rect x="4" y="5" width="16" height="14" rx="2" strokeWidth="2" />
-                <circle cx="9.5" cy="10" r="2.2" strokeWidth="2" />
-                <path d="M6 16l4-4 3 3 4-4 3 5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <div className="gvc-thumb-label">Chưa có ảnh</div>
+              {courseData.thumbnailUrl ? (() => {
+                // ✅ Build full URL từ thumbnailUrl
+                let imageUrl = courseData.thumbnailUrl
+                
+                // Nếu là relative path, thêm base URL
+                if (imageUrl.startsWith('/uploads/')) {
+                  imageUrl = `https://localhost:3001${imageUrl}`
+                } else if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('blob:')) {
+                  // Nếu không phải absolute URL và không phải blob, thêm base URL
+                  imageUrl = `https://localhost:3001${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
+                }
+                
+                return (
+                  <img 
+                    src={imageUrl}
+                  alt="Course thumbnail"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '10px'
+                  }}
+                  onError={(e) => {
+                      console.warn("⚠️ Failed to load thumbnail:", imageUrl)
+                      // ✅ Nếu ảnh không load được, ẩn image và giữ placeholder từ parent
+                    e.target.style.display = 'none'
+                    }}
+                    onLoad={() => {
+                      console.log("✅ Thumbnail loaded successfully:", imageUrl)
+                  }}
+                />
+                )
+              })() : (
+                <>
+                  <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#6b7280">
+                    <rect x="4" y="5" width="16" height="14" rx="2" strokeWidth="2" />
+                    <circle cx="9.5" cy="10" r="2.2" strokeWidth="2" />
+                    <path d="M6 16l4-4 3 3 4-4 3 5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <div className="gvc-thumb-label">Chưa có ảnh</div>
+                </>
+              )}
             </div>
             <div className="gvc-preview-info">
-              <div className="gvc-course-title">d</div>
-              <div className="gvc-course-desc">d</div>
+              <div className="gvc-course-title">{courseData.title || "Chưa có tiêu đề"}</div>
+              <div className="gvc-course-desc">{courseData.description || "Chưa có mô tả"}</div>
               <div className="gvc-pillbar">
                 <span className="gvc-pill gray">
                   {/* Icon sách mở (design) */}
@@ -206,7 +285,102 @@ export default function XemTruocKhoaHocPage(){
         <div className="gvc-footer-inner">
           <button className="gvc-btn ghost" onClick={() => router.push("/giangvien/khoahoc/noidung")}>Quay lại</button>
           <div className="gvc-step-info">Bước 4 / 4</div>
-          <button className="gvc-btn primary" onClick={() => router.push("/giangvien/khoahoc?created=1")}>Tạo khóa học</button>
+          {error && (
+            <div className="gvc-error" style={{marginBottom: "8px", textAlign: "center", padding: "8px", background: "#fee2e2", borderRadius: "8px"}}>
+              {error}
+            </div>
+          )}
+          <button 
+            className="gvc-btn primary" 
+            disabled={isSaving}
+            onClick={async () => {
+              if (!token) {
+                setError("Vui lòng đăng nhập lại")
+                return
+              }
+
+              // Kiểm tra token có hợp lệ không (không phải demo token)
+              if (typeof token === 'string' && token.startsWith('demo_token_')) {
+                setError("Vui lòng đăng nhập qua trang login chính thức để lấy token hợp lệ")
+                return
+              }
+
+              setIsSaving(true)
+              setError("")
+
+              try {
+                // Final save with all data
+                const coursePayload = {
+                  courseId: courseData.courseId || 0,
+                  title: courseData.title || "",
+                  description: courseData.description || "",
+                  categoryId: courseData.categoryId || null,
+                  thumbnailUrl: courseData.thumbnailUrl || "",
+                  price: courseData.price || 0,
+                  duration: courseData.duration || "",
+                  level: courseData.level || "",
+                  prerequisites: courseData.prerequisites || "",
+                  learningOutcomes: courseData.learningOutcomes || "",
+                  tagName: courseData.tagName || "",
+                  tagIds: courseData.tagIds || [],
+                  slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course", // ✅ Thêm slug
+                  lessons: courseData.lessons || [],
+                  status: "published", // ✅ Mặc định là published
+                }
+
+                console.log("📤 Sending final course payload:", {
+                  courseId: coursePayload.courseId,
+                  title: coursePayload.title,
+                  status: coursePayload.status,
+                  lessonsCount: coursePayload.lessons?.length || 0
+                })
+
+                const result = await createOrUpdateCourseStep(coursePayload, token)
+                
+                console.log("✅ Course created/updated successfully:", {
+                  courseId: result.CourseId || result.courseId,
+                  title: result.Title || result.title,
+                  status: result.Status || result.status,
+                  lessonsCount: result.Lessons?.length || 0
+                })
+
+                // ✅ Update courseId vào context trước khi reset (để đảm bảo có courseId mới nhất)
+                const finalCourseId = result.CourseId || result.courseId
+                if (finalCourseId) {
+                  updateCourseData({ courseId: finalCourseId })
+                }
+
+                // Reset course data after successful creation
+                resetCourseData()
+
+                // ✅ Hiển thị thông báo thành công với option xem khóa học
+                const courseTitle = result.Title || result.title || coursePayload.title
+                const viewCourse = window.confirm(
+                  `✅ Tạo khóa học thành công!\n\n` +
+                  `Khóa học "${courseTitle}" đã được tạo và xuất bản.\n\n` +
+                  `Bạn có muốn xem khóa học này ngay bây giờ?`
+                )
+
+                if (viewCourse && finalCourseId) {
+                  // Navigate to view course page
+                  router.push(`/bai-hoc/${finalCourseId}`)
+                } else {
+                router.push("/giangvien/khoahoc?created=1")
+                }
+              } catch (err) {
+                console.error("❌ Error saving course:", err)
+                const errorMessage = err.message || "Có lỗi xảy ra khi tạo khóa học"
+                setError(errorMessage)
+                
+                // ✅ Hiển thị lỗi chi tiết
+                alert(`❌ Lỗi khi tạo khóa học:\n\n${errorMessage}\n\nVui lòng kiểm tra console để biết thêm chi tiết.`)
+              } finally {
+                setIsSaving(false)
+              }
+            }}
+          >
+            {isSaving ? "Đang tạo..." : "Tạo khóa học"}
+          </button>
         </div>
       </div>
     </div>

@@ -339,14 +339,17 @@ export const formatCourseData = (courseData) => {
   if (thumbnailUrlRaw) {
     if (thumbnailUrlRaw.startsWith("http://") || thumbnailUrlRaw.startsWith("https://")) {
       thumbnailUrl = thumbnailUrlRaw
-    } else {
-      // Nếu là đường dẫn file, đảm bảo có / ở đầu
+    } 
+    // Nếu là đường dẫn file tương đối từ backend (uploads/...), thêm base URL của backend
+    else if (thumbnailUrlRaw.includes('/uploads/')) {
+      // Backend API đang chạy trên port 3001 (instructor API - nơi upload file)
+      thumbnailUrl = `https://localhost:3001${thumbnailUrlRaw.startsWith('/') ? '' : '/'}${thumbnailUrlRaw}`
+    }
+    // Nếu là đường dẫn file tương đối khác, đảm bảo có / ở đầu
+    else {
       thumbnailUrl = thumbnailUrlRaw.startsWith("/") 
         ? thumbnailUrlRaw 
         : `/${thumbnailUrlRaw.replace(/^\/+/, "")}`
-      
-      // Kiểm tra xem file có tồn tại không, nếu không thì dùng placeholder
-      // Trong production, có thể validate file existence ở đây
     }
   }
 

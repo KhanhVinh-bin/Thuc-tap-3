@@ -12,11 +12,17 @@ export function cn(...inputs: ClassValue[]) {
  * @returns Properly formatted image URL
  */
 export function formatImageUrl(imageUrl: string | null | undefined, fallback: string = "/placeholder.jpg"): string {
-  if (!imageUrl) return fallback
+  if (!imageUrl || imageUrl === "/" || imageUrl === "") return fallback
   
   // If it's already an absolute URL, return as is
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
     return imageUrl
+  }
+  
+  // Nếu là đường dẫn file từ backend upload (/uploads/...), thêm base URL của backend
+  if (imageUrl.includes('/uploads/')) {
+    // Backend API đang chạy trên port 3001 (instructor API - nơi upload file)
+    return `https://localhost:3001${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
   }
   
   // If it's a relative path, ensure it starts with /

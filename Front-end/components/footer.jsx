@@ -72,11 +72,12 @@ export default function Footer() {
                   Blog & Tin tức
                 </Link>
               </li>
-              <li>  
+              {/* Tạm thời ẩn trang Liên hệ */}
+              {/* <li>  
                 <Link href="/contact" className="text-white-300 hover:text-[#06b6d4] transition-colors">
                   Liên hệ
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link href="/faq" className="text-white-300 hover:text-[#06b6d4] transition-colors">
                   Câu hỏi thường gặp

@@ -2,6 +2,7 @@
 using DuAnWebBanKhoaHocAPI.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace DuAnWebBanKhoaHocAPI.Controllers
 {
@@ -10,10 +11,12 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly DuAnDbContext _context;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public UsersController(DuAnDbContext context)
+        public UsersController(DuAnDbContext context, IPasswordHasher<User> passwordHasher)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
         }
 
         // GET: api/Users
@@ -196,18 +199,44 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                 return Unauthorized(new { message = "Invalid email or password" });
             }
 
-            // Verify password using BCrypt
-            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDTO.Password, user.PasswordHash);
+            // Verify password - hỗ trợ cả BCrypt và Identity PasswordHasher
+            bool isPasswordValid = false;
+            
+            try
+            {
+                // Thử verify bằng BCrypt trước (cho student đăng ký qua UsersController)
+                isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDTO.Password, user.PasswordHash);
+            }
+            catch (BCrypt.Net.SaltParseException)
+            {
+                // Nếu lỗi SaltParseException, có nghĩa là password được hash bằng Identity PasswordHasher
+                // (thường xảy ra khi user đăng ký qua instructor register endpoint)
+                var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginDTO.Password);
+                isPasswordValid = result == PasswordVerificationResult.Success || 
+                                  result == PasswordVerificationResult.SuccessRehashNeeded;
+            }
+            catch
+            {
+                // Nếu có lỗi khác, thử Identity PasswordHasher như fallback
+                var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginDTO.Password);
+                isPasswordValid = result == PasswordVerificationResult.Success || 
+                                  result == PasswordVerificationResult.SuccessRehashNeeded;
+            }
+            
             if (!isPasswordValid)
             {
                 return Unauthorized(new { message = "Invalid email or password" });
             }
 
-            // Check if user is active
-            if (user.Status != "active")
+            // Check if user is active or pending
+            // Cho phép cả "pending" và "active" để user có thể login sau khi đăng ký
+            if (user.Status != "active" && user.Status != "pending")
             {
                 return Unauthorized(new { message = "Account is not active. Please contact administrator." });
             }
+            
+            // Nếu status là "pending", thêm cảnh báo (nhưng vẫn cho phép login)
+            bool isPending = user.Status == "pending";
 
             // Update last active for student
             var student = await _context.Students.FindAsync(user.UserId);
@@ -226,6 +255,20 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                 Roles = user.UserRoles.Select(ur => ur.Role.RoleName).ToList(),
                 ExpiresAt = DateTime.UtcNow.AddHours(24) // 24 hours session
             };
+
+            // Nếu là pending, trả về response với thông báo (nhưng vẫn cho phép login)
+            if (isPending)
+            {
+                return Ok(new { 
+                    userId = response.UserId,
+                    email = response.Email,
+                    fullName = response.FullName,
+                    roles = response.Roles,
+                    expiresAt = response.ExpiresAt,
+                    message = "Tài khoản đang chờ được phê duyệt. Bạn vẫn có thể đăng nhập nhưng một số tính năng có thể bị hạn chế.",
+                    status = "pending"
+                });
+            }
 
             return Ok(response);
         }

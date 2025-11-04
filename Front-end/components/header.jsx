@@ -57,6 +57,8 @@ export default function Header() {
     "Người dùng";
   const userInitial = userName?.charAt(0)?.toUpperCase() || "U";
   const userEmail = currentUser?.email || currentUser?.Email || "";
+  // Lấy avatar URL từ user
+  const userAvatar = currentUser?.avatarUrl || currentUser?.AvatarUrl || null;
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -100,13 +102,14 @@ export default function Header() {
             >
               Blog
             </Link>
-            <Link
+            {/* Tạm thời ẩn trang Liên hệ */}
+            {/* <Link
               href="/contact"
               className="text-gray-800 hover:text-[#6B5EDB] px-3 py-2 rounded-lg hover:bg-[#F6F4FF] transition-all duration-200 font-medium"
               style={{ lineHeight: '1.6' }}
             >
               Liên hệ
-            </Link>
+            </Link> */}
           </nav>
 
           {/* Search Bar */}
@@ -166,8 +169,17 @@ export default function Header() {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center gap-2 p-1 rounded-lg hover:bg-[#F6F4FF] transition-all duration-200 group"
                 >
-                  <div className="w-9 h-9 rounded-full bg-[#6B5EDB] flex items-center justify-center text-white font-medium group-hover:ring-2 group-hover:ring-[#6B5EDB] group-hover:ring-offset-2 transition-all duration-200">
-                    {userInitial}
+                  <div className="w-9 h-9 rounded-full bg-[#6B5EDB] flex items-center justify-center text-white font-medium group-hover:ring-2 group-hover:ring-[#6B5EDB] group-hover:ring-offset-2 transition-all duration-200 overflow-hidden relative">
+                    {userAvatar ? (
+                      <Image
+                        src={userAvatar}
+                        alt={userName}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span>{userInitial}</span>
+                    )}
                   </div>
                 </button>
 

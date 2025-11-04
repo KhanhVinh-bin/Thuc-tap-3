@@ -117,7 +117,7 @@ export default function CourseReviews() {
       return;
     }
 
-    if (content.trim().length < 10) {
+    if (content.trim().length < 0) {
       alert("Nội dung đánh giá phải có ít nhất 10 ký tự!");
       return;
     }
@@ -185,6 +185,9 @@ export default function CourseReviews() {
         // Hiển thị thông báo lỗi cụ thể
         if (errorMessage.includes("not enrolled") || errorMessage.includes("chưa ghi danh")) {
           alert("Bạn cần ghi danh vào khóa học này trước khi có thể đánh giá. Vui lòng mua khóa học để tiếp tục.");
+        } else if (errorMessage.includes("already reviewed") || errorMessage.includes("đã đánh giá")) {
+          // Không nên xảy ra nữa vì đã cho phép nhiều reviews, nhưng giữ để xử lý trường hợp backend chưa update
+          alert("⚠️ " + errorMessage + "\n\nLưu ý: Hệ thống đang được cập nhật để cho phép đánh giá nhiều lần.");
         } else {
           alert("Gửi đánh giá thất bại: " + errorMessage);
         }

@@ -3,27 +3,45 @@
 import Footer from "@/components/footer"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import AvatarMenu from "@/app/giangvien/components/AvatarMenu.js"
 import "../tongquan/page.css"
 import "./page.css"
+import { getInstructorProfile, patchInstructorProfile } from "../lib/instructorApi"
 
 export default function GiangVienHoSoPage() {
   const router = useRouter()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [editMode, setEditMode] = useState(false)
-  const [bio, setBio] = useState("Tôi là một full-stack developer với hơn 8 năm kinh nghiệm trong phát triển web. Đam mê chia sẻ kiến thức và giúp đỡ học viên phát triển kỹ năng lập trình.")
-  const [experience, setExperience] = useState("8+ năm kinh nghiệm phát triển web")
-  const [education, setEducation] = useState("Cử nhân Khoa học Máy tính - ĐH Harvard")
+  const [bio, setBio] = useState("")
+  const [experience, setExperience] = useState("")
+  const [education, setEducation] = useState("")
   const [backup, setBackup] = useState(null)
   // Liên hệ và kỹ năng
-  const [contactEmail, setContactEmail] = useState("ngtruong0404@gmail.com")
-  const [contactPhone, setContactPhone] = useState("(+84)343822367")
-  const [contactAddress, setContactAddress] = useState("HCM,Việt Nam")
-  const [skills, setSkills] = useState(["React.js", "Node.js", "JavaScript"])
+  const [contactEmail, setContactEmail] = useState("")
+  const [contactPhone, setContactPhone] = useState("")
+  const [contactAddress, setContactAddress] = useState("")
+  const [skills, setSkills] = useState([])
   const [newSkill, setNewSkill] = useState("")
 
+  // Social links
+  const [facebook, setFacebook] = useState("")
+  const [youtube, setYoutube] = useState("")
+  const [linkedIn, setLinkedIn] = useState("")
+  const [xUrl, setXUrl] = useState("")
+
+  // Basic profile info
+  const [fullName, setFullName] = useState("")
+  const [avatarUrl, setAvatarUrl] = useState("/placeholder-user.jpg")
+  const [ratingAvg, setRatingAvg] = useState(0)
+  const [totalReviews, setTotalReviews] = useState(0)
+  const [totalStudents, setTotalStudents] = useState(0)
+  const [totalCourses, setTotalCourses] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
   const onEdit = () => {
-    setBackup({ bio, experience, education, contactEmail, contactPhone, contactAddress, skills })
+    setBackup({ bio, experience, education, contactEmail, contactPhone, contactAddress, skills, fullName, avatarUrl })
     setEditMode(true)
   }
   const onCancel = () => {
@@ -35,12 +53,65 @@ export default function GiangVienHoSoPage() {
       setContactPhone(backup.contactPhone)
       setContactAddress(backup.contactAddress)
       setSkills(backup.skills)
+      setFullName(backup.fullName)
+      setAvatarUrl(backup.avatarUrl)
     }
     setEditMode(false)
   }
   const onSave = () => {
-    // TODO: gọi API lưu dữ liệu nếu cần
-    setEditMode(false)
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null
+      if (!token) {
+        alert("Bạn chưa đăng nhập")
+        return
+      }
+
+      const expMatch = experience && experience.match(/\d+/)
+      const expYears = expMatch ? parseInt(expMatch[0], 10) : undefined
+
+      const dto = {
+        Biography: bio || undefined,
+        ExperienceYears: expYears || undefined,
+        Education: education || undefined,
+        FullName: fullName || undefined,
+        Email: contactEmail || undefined,
+        PhoneNumber: contactPhone || undefined,
+        Address: contactAddress || undefined,
+        AvatarUrl: avatarUrl || undefined,
+        FacebookUrl: facebook || undefined,
+        YouTubeUrl: youtube || undefined,
+        LinkedInUrl: linkedIn || undefined,
+        Xurl: xUrl || undefined,
+      }
+
+      patchInstructorProfile(dto, token)
+        .then((updated) => {
+          // Đồng bộ lại state từ phản hồi server nếu có
+          if (updated) {
+            setFullName(updated.fullName ?? updated.FullName ?? fullName)
+            setAvatarUrl(updated.avatarUrl ?? updated.AvatarUrl ?? avatarUrl)
+            setBio(updated.biography ?? updated.Biography ?? bio)
+            const exp = updated.experienceYears ?? updated.ExperienceYears
+            setExperience(typeof exp === 'number' ? `${exp} năm kinh nghiệm` : experience)
+            setEducation(updated.education ?? updated.Education ?? education)
+            setContactEmail(updated.email ?? updated.Email ?? contactEmail)
+            setContactPhone(updated.phoneNumber ?? updated.PhoneNumber ?? contactPhone)
+            setContactAddress(updated.address ?? updated.Address ?? contactAddress)
+            setFacebook(updated.facebookUrl ?? updated.FacebookUrl ?? facebook)
+            setYoutube(updated.youTubeUrl ?? updated.YouTubeUrl ?? youtube)
+            setLinkedIn(updated.linkedInUrl ?? updated.LinkedInUrl ?? linkedIn)
+            setXUrl(updated.xurl ?? updated.Xurl ?? xUrl)
+          }
+          setEditMode(false)
+          alert("Cập nhật hồ sơ thành công")
+        })
+        .catch((err) => {
+          console.error(err)
+          alert("Cập nhật hồ sơ thất bại")
+        })
+    } catch (e) {
+      console.error(e)
+    }
   }
   // Kỹ năng: thêm/xóa
   const addSkill = () => {
@@ -54,12 +125,67 @@ export default function GiangVienHoSoPage() {
     setSkills(prev => prev.filter((_, i) => i !== index))
   }
 
+  // Fetch profile from API
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null
+        if (!token) {
+          setError('Vui lòng đăng nhập để xem hồ sơ giảng viên.')
+          setLoading(false)
+          return
+        }
+        const data = await getInstructorProfile(token)
+        // Ánh xạ theo cấu trúc response thực tế từ API
+        const inst = data?.instructor || {}
+
+        setFullName(data?.fullName || inst?.fullName || "")
+        setAvatarUrl(data?.avatar || inst?.avatarUrl || "/placeholder-user.jpg")
+        setRatingAvg(inst?.ratingAverage ?? 0)
+        setTotalStudents(inst?.totalStudents ?? 0)
+        setTotalCourses(inst?.totalCourses ?? 0)
+        setTotalReviews(inst?.totalReviews ?? 0)
+
+        setContactEmail(data?.email || inst?.email || "")
+        setContactPhone(inst?.phoneNumber || "")
+        setContactAddress(inst?.address || "")
+
+        setBio(inst?.biography || "")
+        setEducation(inst?.education || "")
+        setExperience(
+          inst?.experienceYears || inst?.experienceYears === 0
+            ? `${inst.experienceYears} năm kinh nghiệm`
+            : ""
+        )
+
+        setFacebook(inst?.socialLinks?.facebookUrl || "")
+        setYoutube(inst?.socialLinks?.youTubeUrl || "")
+        setLinkedIn(inst?.socialLinks?.linkedInUrl || "")
+        setXUrl(inst?.socialLinks?.xurl || "")
+      } catch (err) {
+        console.error('Load instructor profile failed:', err)
+        if (err.message.includes('404')) {
+          setError('Không tìm thấy hồ sơ giảng viên. Vui lòng đăng nhập lại.')
+        } else if (err.message.includes('401')) {
+          setError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.')
+        } else if (err.message.includes('Failed to fetch')) {
+          setError('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.')
+        } else {
+          setError(`Lỗi tải hồ sơ: ${err.message}`)
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadProfile()
+  }, [])
+
   return (
     <div className={`gv-dashboard-root ${sidebarCollapsed ? "collapsed" : ""}`}>
       {/* Header/topbar */}
       <header className="gv-topbar" role="banner">
         <div className="gv-topbar-left">
-          <div className="gv-brand-mini">
+          <Link href="/giangvien/tongquan" className="gv-brand-mini" aria-label="Về trang Tổng quan">
             <span className="gv-brand-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="#1e3a8a">
                 <path
@@ -71,7 +197,7 @@ export default function GiangVienHoSoPage() {
               </svg>
             </span>
             <span className="gv-brand-text">EduLearn</span>
-          </div>
+          </Link>
           <span className="gv-divider" aria-hidden="true" />
           <div className="gv-breadcrumb" aria-label="Breadcrumb"> 
             <button 
@@ -91,10 +217,7 @@ export default function GiangVienHoSoPage() {
           </div>
         </div>
         <div className="gv-topbar-right">
-
-          <div className="gv-avatar" title="Tài khoản">
-            <span className="gv-presence" />
-          </div>
+          <AvatarMenu />
         </div>
       </header>
 
@@ -139,6 +262,12 @@ export default function GiangVienHoSoPage() {
         {/* Main content */}
         <main className="gv-main">
           <div className="profile-container">
+            {loading && (
+              <div style={{padding:"12px"}}>Đang tải hồ sơ...</div>
+            )}
+            {error && (
+              <div style={{padding:"12px", color:"red"}}>{error}</div>
+            )}
             {/* Profile Header */}
             <div className="profile-header">
               <div className="profile-tabs">
@@ -160,29 +289,102 @@ export default function GiangVienHoSoPage() {
               <div className="profile-left">
                 <div className="avatar-section">
                   <div className="avatar-container">
-                    <img src="/placeholder-user.jpg" alt="Nguyễn Văn Văn" className="profile-avatar" />
+                    <img src={avatarUrl || "/placeholder-user.jpg"} alt={fullName || "Giảng viên"} className="profile-avatar" />
                   </div>
                   <div className="profile-basic-info">
-                    <h2 className="profile-name">Nguyễn Văn Văn</h2>
+                    {editMode ? (
+                      <input
+                        className="edit-input"
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Nhập họ và tên"
+                      />
+                    ) : (
+                      <h2 className="profile-name">{fullName || ""}</h2>
+                    )}
                     <div className="profile-rating">
-                      <span className="rating-stars">⭐ 4.5</span>
-                      <span className="rating-text">(2485 đánh giá)</span>
+                      <span className="rating-stars">⭐ {Number(ratingAvg || 0).toFixed(1)}</span>
+                      <span className="rating-text">({totalReviews?.toLocaleString?.('vi-VN') || 0} đánh giá)</span>
                     </div>
                     <div className="profile-stats">
                       <div className="stat-item">
-                        <span className="stat-icon">👥</span>
-                        <span className="stat-text">12,000 học viên</span>
+                        <span className="stat-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                            {/* Group chứa các phần tử */}
+                            <g>
+                              {/* Nền trong suốt để giữ kích thước */}
+                              <path fill="none" d="M0 0h24v24H0z" />
+                              {/* Hình vẽ chính: hai người (group/users) */}
+                              <path d="M2 22 a8 8 0 1 1 16 0 h-2 a6 6 0 1 0-12 0 H2 z m8-9 c-3.315 0-6-2.685-6-6 s2.685-6 6-6 6 2.685 6 6-2.685 6-6 6 z m0-2 c2.21 0 4-1.79 4-4 s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4 z m8.284 3.703 A8.002 8.002 0 0 1 23 22 h-2 a6.001 6.001 0 0 0-3.537-5.473 l.82-1.824 z m-.688-11.29 A5.5 5.5 0 0 1 21 8.5 a5.499 5.499 0 0 1-5 5.478 v-2.013 a3.5 3.5 0 0 0 1.041-6.609 l.555-1.943 z" />
+                            </g>
+                          </svg>
+                        </span>
+                        <span className="stat-text">{(totalStudents || 0).toLocaleString('vi-VN')} học viên</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-icon">📚</span>
-                        <span className="stat-text">8 khóa học</span>
+                        <span className="stat-icon">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 256 256"
+                            aria-hidden="true"
+                          >
+                            {/* Nền trong suốt */}
+                            <rect width="256" height="256" fill="none" />
+                            {/* Nửa bên phải (thiết bị hoặc phần thứ hai) */}
+                            <path
+                              d="M128,88 a32,32,0,0,1,32-32 h64 a8,8,0,0,1,8,8 V192 a8,8,0,0,1-8,8 H160 a32,32,0,0,0-32,32"
+                              fill="none"
+                              stroke="#000"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="12"
+                            />
+                            {/* Nửa bên trái */}
+                            <path
+                              d="M24,192 a8,8,0,0,0,8,8 H96 a32,32,0,0,1,32,32 V88 A32,32,0,0,0,96,56 H32 a8,8,0,0,0-8,8 Z"
+                              fill="none"
+                              stroke="#000"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="12"
+                            />
+                          </svg>
+                        </span>
+                        <span className="stat-text">{(totalCourses || 0).toLocaleString('vi-VN')} khóa học</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-icon">📅</span>
-                        <span className="stat-text">Tham gia từ 10/75</span>
+                        <span className="stat-icon">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            className="bi bi-calendar"
+                            viewBox="0 0 16 16"
+                            aria-hidden="true"
+                          >
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2  2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2  2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1  4v10a1 1 0 0 0 1 1h12a1  1 0 0 0 1-1V4H1z" />
+                          </svg>
+                        </span>
+                        <span className="stat-text">Tham gia từ {(new Date()).toLocaleDateString('vi-VN')}</span>
                       </div>
                     </div>
                   </div>
+                  {editMode && (
+                    <div style={{marginTop:"12px"}}>
+                      <label className="info-label" style={{display:"block", marginBottom:"6px"}}>Ảnh đại diện (URL)</label>
+                      <input
+                        className="edit-input"
+                        type="text"
+                        value={avatarUrl}
+                        onChange={(e)=>setAvatarUrl(e.target.value)}
+                        placeholder="Ví dụ: /placeholder-user.jpg hoặc https://..."
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -195,7 +397,22 @@ export default function GiangVienHoSoPage() {
                     <div className="info-item">
                       <label className="info-label">Email</label>
                       <div className="info-value">
-                        <span className="info-icon">📧</span>
+                        <span className="info-icon" aria-hidden="true">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            width="18"
+                            height="18"
+                          >
+                            <rect x="2" y="4" width="20" height="16" rx="2" ry="2" />
+                            <polyline points="22,6 12,13 2,6" />
+                          </svg>
+                        </span>
                         {editMode ? (
                           <input
                             className="edit-input"
@@ -212,7 +429,21 @@ export default function GiangVienHoSoPage() {
                     <div className="info-item">
                       <label className="info-label">Số điện thoại</label>
                       <div className="info-value">
-                        <span className="info-icon">📞</span>
+                        <span className="info-icon" aria-hidden="true">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            width="18"
+                            height="18"
+                          >
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2  19.79 19.79 0 0 1-8.63-3.07  19.5 19.5 0 0 1-6-6  19.79 19.79 0 0 1-3.07-8.63  A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72  12.84 12.84 0 0 0 .7 2.81  2 2 0 0 1-.45 2.11L8.09 9.91  a16 16 0 0 0 6 6l1.27-1.27  a2 2 0 0 1 2.11-.45  12.84 12.84 0 0 0 2.81.7  A2 2 0 0 1 22 16.92z" />
+                          </svg>
+                        </span>
                         {editMode ? (
                           <input
                             className="edit-input"
@@ -229,7 +460,22 @@ export default function GiangVienHoSoPage() {
                     <div className="info-item full-width">
                       <label className="info-label">Địa chỉ</label>
                       <div className="info-value">
-                        <span className="info-icon">📍</span>
+                        <span className="info-icon" aria-hidden="true">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            width="18"
+                            height="18"
+                          >
+                            <path d="M21 10c0 6-9 13-9 13S3 16 3 10a9 9 0 0 1 18 0z" />
+                            <circle cx="12" cy="10" r="3" />
+                          </svg>
+                        </span>
                         {editMode ? (
                           <input
                             className="edit-input"
@@ -338,19 +584,19 @@ export default function GiangVienHoSoPage() {
                   <div className="social-grid">
                     <div className="social-item">
                       <label className="social-label">Facebook</label>
-                      <input type="text" className="social-input" placeholder="https://Facebook.com" />
+                      <input type="text" className="social-input" placeholder="https://Facebook.com" value={facebook} onChange={(e)=>setFacebook(e.target.value)} />
                     </div>
                     <div className="social-item">
                       <label className="social-label">Youtube</label>
-                      <input type="text" className="social-input" placeholder="https://Youtube.com" />
+                      <input type="text" className="social-input" placeholder="https://Youtube.com" value={youtube} onChange={(e)=>setYoutube(e.target.value)} />
                     </div>
                     <div className="social-item">
                       <label className="social-label">LinkedIn</label>
-                      <input type="text" className="social-input" placeholder="https://LinkedIn.com" />
+                      <input type="text" className="social-input" placeholder="https://LinkedIn.com" value={linkedIn} onChange={(e)=>setLinkedIn(e.target.value)} />
                     </div>
                     <div className="social-item">
                       <label className="social-label">X</label>
-                      <input type="text" className="social-input" placeholder="https://X.com" />
+                      <input type="text" className="social-input" placeholder="https://X.com" value={xUrl} onChange={(e)=>setXUrl(e.target.value)} />
                     </div>
                   </div>
                 </div>

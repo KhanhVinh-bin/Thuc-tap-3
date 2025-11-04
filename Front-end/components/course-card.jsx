@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { Star } from "lucide-react"
 import { formatImageUrl } from "@/lib/utils"
@@ -8,22 +7,30 @@ import { formatImageUrl } from "@/lib/utils"
 export default function CourseCard({ course }) {
   if (!course) return null
 
+  const imageUrl = formatImageUrl(course.image || course.thumbnailUrl, "/placeholder-course.jpg")
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden h-full flex flex-col">
       {/* Ảnh khóa học */}
       <Link href={`/courses/${course.id}`}>
-        <div className="relative w-full h-48">
-          <Image
-            src={formatImageUrl(course.image, "/")}
-            alt={course.title}
-            fill
-            className="object-cover hover:scale-105 transition-transform duration-300"
+        <div className="relative w-full aspect-video overflow-hidden bg-gray-100">
+          <img
+            src={imageUrl}
+            alt={course.title || course.name || "Khóa học"}
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            onError={(e) => {
+              // Nếu ảnh không load được, thay bằng placeholder
+              if (!e.target.src.includes("/placeholder")) {
+                e.target.src = "/placeholder-course.jpg"
+              }
+            }}
+            loading="lazy"
           />
         </div>
       </Link>
 
       {/* Nội dung */}
-      <div className="p-4 space-y-2">
+      <div className="p-4 space-y-2 flex-1">
         {/* Tên khóa học */}
         <Link href={`/courses/${course.id}`}>
           <h3 className="text-lg font-semibold text-gray-900 hover:text-[#06b6d4] line-clamp-2">

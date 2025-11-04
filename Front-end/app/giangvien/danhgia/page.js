@@ -1,81 +1,119 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import Footer from "@/components/footer";
+import { useAuth } from "@/lib/auth-context";
+import { getReviewSummary, getRatingSummary, getAllReviews, autoReplyReview } from "../lib/instructorApi";
+import AvatarMenu from "@/app/giangvien/components/AvatarMenu.js";
 import "../tongquan/page.css";
 import "./page.css";
 
 export default function DanhGiaPage() {
+  const { token } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [loading, setLoading] = useState(true);
   
-  // Demo data theo thiết kế mới
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      name: "Nguyễn Văn A",
-      course: "Complete React Development Course",
-      rating: 5,
-      content: "Khóa học rất dễ hiểu và dễ thực hành. Giảng viên giải thích rõ ràng. Tôi đã học được rất nhiều điều hữu ích từ khóa học này.",
-      createdAt: "2 ngày trước",
-      reply: "Phản hồi của bạn",
-      replyContent: "Cảm ơn bạn đã đánh giá! Rất vui vì khóa học giúp bạn đạt được mục tiêu. Chúc bạn học tốt hơn nữa!",
-    },
-    {
-      id: 2,
-      name: "Nguyễn Th B",
-      course: "Complete React Development Course", 
-      rating: 4,
-      content: "Nội dung đầy đủ, dễ hiểu, bám sát thực hành. Khả năng giảng dạy của giảng viên rất tốt.",
-      createdAt: "5 ngày trước",
-      reply: null,
-    },
-    {
-      id: 3,
-      name: "Lê Văn C",
-      course: "Complete React Development Course",
-      rating: 5,
-      content: "Khóa học cung cấp nhiều trải nghiệm thực tế. Phần lý thuyết rõ ràng, dễ tiếp thu.",
-      createdAt: "1 tuần trước",
-      reply: "Phản hồi của bạn",
-      replyContent: "Cảm ơn góp ý của bạn! Chúng tôi sẽ cập nhật nội dung thực tế trong các bài học tiếp theo.",
-    },
-    {
-      id: 4,
-      name: "Phạm Th D",
-      course: "Complete React Development Course",
-      rating: 4,
-      content: "Xuất sắc về bố cục. Nội dung dễ hiểu và rõ ràng. Giảng viên rất chuyên nghiệp.",
-      createdAt: "2 tuần trước",
-      reply: null,
-    },
-    {
-      id: 5,
-      name: "Hoàng Văn E",
-      course: "Complete React Development Course",
-      rating: 5,
-      content: "Khóa học có lộ trình gọn gàng, người mới học cũng theo kịp.",
-      createdAt: "3 tuần trước",
-      reply: "Phản hồi của bạn",
-      replyContent: "Cảm ơn bạn đã phản hồi. Bọn mình sẽ bổ sung các video ví dụ và bài luyện thêm. Về demo UI, bọn mình sẽ dùng ngôn ngữ React cho dễ sử dụng.",
-    },
-  ]);
+  // Data từ API
+  const [reviews, setReviews] = useState([]);
+  const [summary, setSummary] = useState({
+    totalReviews: 0,
+    averageRating: 0,
+    totalReplied: 0,
+    totalPending: 0
+  });
+  const [ratingSummary, setRatingSummary] = useState({
+    ratingSummary: []
+  });
+  const [replies, setReplies] = useState({}); // Lưu phản hồi theo reviewId
 
-  // Thống kê theo thiết kế mới
-  const totalReviews = 2500; // Số liệu theo hình
-  const averageRating = 4.6;
-  const repliedCount = 3;
-  const unrepliedCount = 2;
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return "Hôm nay";
+    if (diffDays === 1) return "1 ngày trước";
+    if (diffDays < 7) return `${diffDays} ngày trước`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} tuần trước`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} tháng trước`;
+    return `${Math.floor(diffDays / 365)} năm trước`;
+  };
 
-  const distribution = useMemo(() => {
-    return {
-      5: { count: 1865, percent: 75 },
-      4: { count: 500, percent: 20 },
-      3: { count: 100, percent: 4 },
-      2: { count: 25, percent: 1 },
-      1: { count: 10, percent: 0 }
+  // Load data từ API
+  useEffect(() => {
+    if (!token) return;
+    
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        
+        // Load summary
+        const summaryData = await getReviewSummary(token);
+        setSummary({
+          totalReviews: summaryData.totalReviews || 0,
+          averageRating: summaryData.averageRating || 0,
+          totalReplied: summaryData.totalReplied || 0,
+          totalPending: summaryData.totalPending || 0
+        });
+
+        // Load rating summary
+        const ratingData = await getRatingSummary(token);
+        setRatingSummary(ratingData);
+
+        // Load all reviews
+        const reviewsData = await getAllReviews(token);
+        if (reviewsData && reviewsData.reviews && Array.isArray(reviewsData.reviews)) {
+          setReviews(reviewsData.reviews);
+        } else if (Array.isArray(reviewsData)) {
+          setReviews(reviewsData);
+        } else if (reviewsData && reviewsData.Message) {
+          // API trả về message khi chưa có đánh giá
+          setReviews([]);
+        }
+      } catch (error) {
+        console.error("Error loading review data:", error);
+        alert("Không thể tải dữ liệu đánh giá: " + error.message);
+      } finally {
+        setLoading(false);
+      }
     };
-  }, [reviews]);
+
+    loadData();
+  }, [token]);
+
+  // Tính distribution từ rating summary
+  const distribution = useMemo(() => {
+    if (!ratingSummary.ratingSummary || !Array.isArray(ratingSummary.ratingSummary)) {
+      return {
+        5: { count: 0, percent: 0 },
+        4: { count: 0, percent: 0 },
+        3: { count: 0, percent: 0 },
+        2: { count: 0, percent: 0 },
+        1: { count: 0, percent: 0 }
+      };
+    }
+
+    const dist = {};
+    ratingSummary.ratingSummary.forEach(item => {
+      dist[item.star] = {
+        count: item.count || 0,
+        percent: item.percentage || 0
+      };
+    });
+
+    // Đảm bảo có đủ 5 sao
+    for (let i = 1; i <= 5; i++) {
+      if (!dist[i]) {
+        dist[i] = { count: 0, percent: 0 };
+      }
+    }
+
+    return dist;
+  }, [ratingSummary]);
 
   return (
     <div className={`gv-dashboard-root ${sidebarCollapsed ? "collapsed" : ""}`}>
@@ -114,9 +152,7 @@ export default function DanhGiaPage() {
           </div>
         </div>
         <div className="gv-topbar-right">
-          <div className="gv-avatar" title="Tài khoản">
-            <span className="gv-presence" />
-          </div>
+          <AvatarMenu />
         </div>
       </header>
 
@@ -167,26 +203,30 @@ export default function DanhGiaPage() {
           </div>
 
           {/* Stats Cards */}
-          <div className="dg-stats">
-            <div className="dg-stat-card">
-              <div className="dg-stat-label">Tổng số đánh giá</div>
-              <div className="dg-stat-value">{totalReviews.toLocaleString()}</div>
-            </div>
-            <div className="dg-stat-card">
-              <div className="dg-stat-label">Điểm trung bình</div>
-              <div className="dg-stat-value">
-                {averageRating} <span className="dg-star">★</span>
+          {loading ? (
+            <div className="dg-loading">Đang tải dữ liệu...</div>
+          ) : (
+            <>
+              <div className="dg-stats">
+                <div className="dg-stat-card">
+                  <div className="dg-stat-label">Tổng số đánh giá</div>
+                  <div className="dg-stat-value">{summary.totalReviews.toLocaleString()}</div>
+                </div>
+                <div className="dg-stat-card">
+                  <div className="dg-stat-label">Điểm trung bình</div>
+                  <div className="dg-stat-value">
+                    {summary.averageRating.toFixed(1)} <span className="dg-star">★</span>
+                  </div>
+                </div>
+                <div className="dg-stat-card">
+                  <div className="dg-stat-label">Đã phản hồi</div>
+                  <div className="dg-stat-value">{summary.totalReplied}</div>
+                </div>
+                <div className="dg-stat-card">
+                  <div className="dg-stat-label">Chưa phản hồi</div>
+                  <div className="dg-stat-value">{summary.totalPending}</div>
+                </div>
               </div>
-            </div>
-            <div className="dg-stat-card">
-              <div className="dg-stat-label">Đã phản hồi</div>
-              <div className="dg-stat-value">{repliedCount}</div>
-            </div>
-            <div className="dg-stat-card">
-              <div className="dg-stat-label">Chưa phản hồi</div>
-              <div className="dg-stat-value">{unrepliedCount}</div>
-            </div>
-          </div>
 
           {/* Rating Distribution */}
           <div className="dg-distribution">
@@ -211,48 +251,74 @@ export default function DanhGiaPage() {
             </div>
           </div>
 
-          {/* Reviews List */}
-          <div className="dg-reviews">
-            <h3>Danh sách đánh giá ({reviews.length})</h3>
-            <div className="dg-review-list">
-              {reviews.map((review) => (
-                <div key={review.id} className="dg-review-item">
-                  <div className="dg-review-header">
-                    <div className="dg-avatar">
-                      {review.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="dg-review-meta">
-                      <div className="dg-review-name">{review.name}</div>
-                      <div className="dg-review-course">{review.course}</div>
-                      <div className="dg-review-rating">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <span 
-                            key={i} 
-                            className={`dg-star ${i < review.rating ? 'active' : ''}`}
-                          >
-                            ★
-                          </span>
-                        ))}
-                        <span className="dg-review-time">• {review.createdAt}</span>
-                      </div>
-                    </div>
-                    <div className="dg-review-actions">
-                      <button className="dg-reply-btn">Phản hồi</button>
-                    </div>
+              {/* Reviews List */}
+              <div className="dg-reviews">
+                <h3>Danh sách đánh giá ({reviews.length})</h3>
+                {reviews.length === 0 ? (
+                  <div className="dg-empty">Chưa có đánh giá nào.</div>
+                ) : (
+                  <div className="dg-review-list">
+                    {reviews.map((review) => {
+                      const hasReply = replies[review.reviewId];
+                      return (
+                        <div key={review.reviewId} className="dg-review-item">
+                          <div className="dg-review-header">
+                            <div className="dg-avatar">
+                              {(review.studentName || "U").charAt(0).toUpperCase()}
+                            </div>
+                            <div className="dg-review-meta">
+                              <div className="dg-review-name">{review.studentName || "Người dùng"}</div>
+                              <div className="dg-review-course">{review.courseTitle || review.course || ""}</div>
+                              <div className="dg-review-rating">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <span 
+                                    key={i} 
+                                    className={`dg-star ${i < (review.rating || 0) ? 'active' : ''}`}
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                                <span className="dg-review-time">• {formatDate(review.createdAt)}</span>
+                              </div>
+                            </div>
+                            <div className="dg-review-actions">
+                              <button 
+                                className={`dg-reply-btn ${hasReply ? 'dg-replied' : ''}`}
+                                onClick={async () => {
+                                  if (hasReply) return; // Đã phản hồi rồi
+                                  try {
+                                    const replyData = await autoReplyReview(review.reviewId, token);
+                                    setReplies(prev => ({
+                                      ...prev,
+                                      [review.reviewId]: replyData.autoReply
+                                    }));
+                                  } catch (error) {
+                                    alert("Không thể gửi phản hồi: " + error.message);
+                                  }
+                                }}
+                                disabled={hasReply}
+                              >
+                                {hasReply ? "Đã phản hồi" : "Phản hồi"}
+                              </button>
+                            </div>
+                          </div>
+                          <div className="dg-review-content">
+                            {review.comment || review.content || ""}
+                          </div>
+                          {hasReply && (
+                            <div className="dg-reply">
+                              <div className="dg-reply-header">Phản hồi của bạn</div>
+                              <div className="dg-reply-content">{hasReply}</div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                  <div className="dg-review-content">
-                    {review.content}
-                  </div>
-                  {review.reply && (
-                    <div className="dg-reply">
-                      <div className="dg-reply-header">{review.reply}</div>
-                      <div className="dg-reply-content">{review.replyContent}</div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+                )}
+              </div>
+            </>
+          )}
         </main>
       </div>
 

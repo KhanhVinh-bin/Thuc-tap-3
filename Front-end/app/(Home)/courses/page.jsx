@@ -19,14 +19,60 @@ export default function CoursesPage() {
       setLoading(true)
       setError(null)
 
-      const response = await fetch(`${API_BASE_URL}/courses`, {
+      const response = await fetch(`${API_BASE_URL}/Courses`, {
         headers: { "Content-Type": "application/json" },
       })
 
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
 
       const data = await response.json()
-      const formattedCourses = formatCourseData(data)
+      console.log("📦 API Response (raw data):", data)
+      console.log("📦 API Response (first course):", data?.[0])
+      console.log("📦 API Response (all courses count):", Array.isArray(data) ? data.length : "Not an array")
+      
+      // ✅ Filter chỉ lấy các khóa học đã published và có dữ liệu hợp lệ
+      // Hỗ trợ cả PascalCase (CourseId, Title, Status) và camelCase (courseId, title, status)
+      const validCourses = Array.isArray(data) ? data.filter(c => {
+        if (!c) return false
+        
+        const courseId = c.CourseId || c.courseId
+        const title = c.Title || c.title
+        const status = (c.Status || c.status || "").toLowerCase().trim()
+        
+        console.log(`🔍 Checking course:`, {
+          courseId,
+          title,
+          status,
+          rawStatus: c.Status || c.status,
+          hasId: !!courseId,
+          hasTitle: !!title,
+          isPublished: status === "published"
+        })
+        
+        // Chỉ lấy courses đã published và có đầy đủ thông tin
+        const isValid = courseId && title && status === "published"
+        
+        if (!isValid && courseId) {
+          console.log(`⚠️ Course ${courseId} filtered out:`, {
+            hasId: !!courseId,
+            hasTitle: !!title,
+            status,
+            expectedStatus: "published"
+          })
+        }
+        
+        return isValid
+      }) : []
+      
+      console.log(`📊 Valid courses after filter: ${validCourses.length}`)
+      console.log("📦 Valid courses IDs:", validCourses.map(c => c.CourseId || c.courseId))
+      console.log("📦 Valid courses titles:", validCourses.map(c => c.Title || c.title))
+      console.log("📦 Valid courses statuses:", validCourses.map(c => c.Status || c.status))
+      
+      const formattedCourses = formatCourseData(validCourses)
+      console.log("✅ Formatted courses (first course):", formattedCourses?.[0])
+      console.log(`📊 Total courses loaded: ${formattedCourses.length}`)
+      console.log("📦 Formatted courses IDs:", formattedCourses.map(c => c.id || c.courseId))
       setCourses(formattedCourses)
     } catch (err) {
       console.error("Error fetching courses:", err)
@@ -47,15 +93,27 @@ export default function CoursesPage() {
       const thumbnailUrl = course.ThumbnailUrl || course.thumbnailUrl || null
       let imageUrl = "/placeholder-course.jpg"
       
-      if (thumbnailUrl) {
+      console.log(`🖼️ Course ${course.CourseId || course.courseId} - thumbnailUrl:`, thumbnailUrl)
+      
+      if (thumbnailUrl && thumbnailUrl.trim() !== "") {
         // Nếu là URL tuyệt đối (http/https), dùng trực tiếp
         if (thumbnailUrl.startsWith('http://') || thumbnailUrl.startsWith('https://')) {
           imageUrl = thumbnailUrl
+          console.log(`✅ Using absolute URL: ${imageUrl}`)
         } 
-        // Nếu là đường dẫn file tương đối, đảm bảo bắt đầu bằng /
+        // Nếu là đường dẫn file tương đối từ backend (uploads/...), thêm base URL của backend
+        else if (thumbnailUrl.includes('/uploads/')) {
+          // ✅ Backend API đang chạy trên port 3001 (instructor API - nơi upload file)
+          imageUrl = `https://localhost:3001${thumbnailUrl.startsWith('/') ? '' : '/'}${thumbnailUrl}`
+          console.log(`✅ Built upload URL: ${imageUrl}`)
+        }
+        // Nếu là đường dẫn file tương đối khác, đảm bảo bắt đầu bằng /
         else {
           imageUrl = thumbnailUrl.startsWith('/') ? thumbnailUrl : `/${thumbnailUrl}`
+          console.log(`✅ Using relative path: ${imageUrl}`)
         }
+      } else {
+        console.warn(`⚠️ Course ${course.CourseId || course.courseId} has no thumbnailUrl`)
       }
 
       // Xử lý previewVideoUrl - hỗ trợ cả PascalCase và camelCase
@@ -81,13 +139,22 @@ export default function CoursesPage() {
         }
       }
 
+      // Hỗ trợ cả PascalCase và camelCase từ API
+      const courseId = course.CourseId || course.courseId
+      const title = course.Title || course.title || "Khóa học"
+      const description = course.Description || course.description || "Mô tả khóa học"
+      const priceRaw = course.Price || course.price || 0
+      const price = typeof priceRaw === 'number' 
+        ? priceRaw
+        : parseFloat((priceRaw.toString().replace(/[^\d.]/g, ''))) || 0
+
       return {
-        id: course.CourseId || course.courseId,
-        courseId: course.CourseId || course.courseId, // Thêm để filter theo categoryId
-        name: course.Title || course.title || "Khóa học",
-        title: course.Title || course.title || "Khóa học",
-        description: course.Description || course.description || "Mô tả khóa học",
-        price: course.Price || course.price || 0,
+        id: courseId,
+        courseId: courseId, // Thêm để filter theo categoryId
+        name: title,
+        title: title,
+        description: description,
+        price: price,
         priceFormatted: formatVND(course.Price || course.price),
         oldPrice: (course.Price || course.price) ? formatVND((course.Price || course.price) * 1.5) : "",
         discount: (course.Price || course.price) ? "33" : "0",

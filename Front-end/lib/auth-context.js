@@ -40,9 +40,16 @@ export function AuthProvider({ children }) {
   // 🔹 Khi login thành công
   const login = (userData, authToken) => {
     setUser(userData)
-    setToken(authToken)
+    // Chỉ set token nếu có (có thể null cho student login)
+    if (authToken) {
+      setToken(authToken)
+      localStorage.setItem("authToken", authToken)
+    } else {
+      // Nếu không có token mới, giữ nguyên token cũ hoặc null
+      const existingToken = localStorage.getItem("authToken")
+      setToken(existingToken)
+    }
     localStorage.setItem("currentUser", JSON.stringify(userData))
-    localStorage.setItem("authToken", authToken)
   }
 
   // 🔹 Khi logout

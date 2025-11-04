@@ -1,25 +1,114 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/lib/auth-context"
+import { useCourse } from "../context/CourseContext"
+import { createOrUpdateCourseStep } from "../../lib/instructorApi"
+import { generateSlug } from "@/lib/slug-helper"
 import "./page.css"
 
 export default function ChiTietKhoaHocPage() {
   const router = useRouter()
-  const [price, setPrice] = useState(0)
-  const [duration, setDuration] = useState("")
-  const [level, setLevel] = useState("")
+  const { token } = useAuth()
+  const { courseData, updateCourseData } = useCourse()
+  const [price, setPrice] = useState(courseData.price || 0)
+  const [duration, setDuration] = useState(courseData.duration || "")
+  const [level, setLevel] = useState(courseData.level || "")
+  const [prerequisites, setPrerequisites] = useState(courseData.prerequisites || "")
+  const [learningOutcomes, setLearningOutcomes] = useState(courseData.learningOutcomes || "")
+  const [tagName, setTagName] = useState(courseData.tagName || "")
+  const [tags, setTags] = useState(courseData.tagIds || [])
   const [attempted, setAttempted] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    if (courseData.price) setPrice(courseData.price)
+    if (courseData.duration) setDuration(courseData.duration)
+    if (courseData.level) setLevel(courseData.level)
+    if (courseData.prerequisites) setPrerequisites(courseData.prerequisites)
+    if (courseData.learningOutcomes) setLearningOutcomes(courseData.learningOutcomes)
+    if (courseData.tagName) setTagName(courseData.tagName)
+  }, [])
 
   // Validation logic
   const isValid = useMemo(() => {
     return price > 0 && level !== ""
   }, [price, level])
 
-  const handleContinue = () => {
+  const addTag = () => {
+    if (tagName.trim()) {
+      const newTags = [...tags, tagName.trim()]
+      setTags(newTags)
+      updateCourseData({ tagName: tagName.trim(), tagIds: newTags })
+      setTagName("")
+    }
+  }
+
+  const removeTag = (index) => {
+    const newTags = tags.filter((_, i) => i !== index)
+    setTags(newTags)
+    updateCourseData({ tagIds: newTags })
+  }
+
+  const handleContinue = async () => {
     setAttempted(true)
-    if (isValid) {
+    if (!isValid) return
+
+    if (!token) {
+      setError("Vui lòng đăng nhập lại")
+      return
+    }
+
+    // Kiểm tra token có hợp lệ không (không phải demo token)
+    if (typeof token === 'string' && token.startsWith('demo_token_')) {
+      setError("Vui lòng đăng nhập qua trang login chính thức để lấy token hợp lệ")
+      return
+    }
+
+    setIsSaving(true)
+    setError("")
+
+    try {
+      const coursePayload = {
+        courseId: courseData.courseId || 0,
+        title: courseData.title || "",
+        description: courseData.description || "",
+        categoryId: courseData.categoryId || null,
+        thumbnailUrl: courseData.thumbnailUrl || "",
+        price: price,
+        duration: duration.trim(),
+        level: level,
+        prerequisites: prerequisites.trim(),
+        learningOutcomes: learningOutcomes.trim(),
+        tagName: tags.length > 0 ? tags[0] : "",
+        tagIds: tags,
+        slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course", // ✅ Thêm slug
+        lessons: courseData.lessons || [],
+        status: "published", // ✅ Tự động publish, không cần duyệt
+      }
+
+      const result = await createOrUpdateCourseStep(coursePayload, token)
+
+      updateCourseData({
+        price: result.Price || result.price || price,
+        duration: result.Duration || result.duration || duration,
+        level: result.Level || result.level || level,
+        prerequisites: result.Prerequisites || result.prerequisites || prerequisites,
+        learningOutcomes: result.LearningOutcomes || result.learningOutcomes || learningOutcomes,
+        thumbnailUrl: result.ThumbnailUrl || result.thumbnailUrl || courseData.thumbnailUrl || "", // ✅ Giữ thumbnailUrl từ step trước
+        tagName: tags.length > 0 ? tags[0] : "",
+        tagIds: tags,
+        courseId: result.courseId || courseData.courseId,
+      })
+
       router.push("/giangvien/khoahoc/noidung")
+    } catch (err) {
+      console.error("Error saving course step 2:", err)
+      setError(err.message || "Có lỗi xảy ra khi lưu khóa học")
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -117,9 +206,19 @@ export default function ChiTietKhoaHocPage() {
           </label>
 
           <div className="gvc-row two">
-            <input className="gvc-input" placeholder="VD: React, JavaScript, Frontend..." />
-            <button type="button" className="gvc-btn add">+</button>
+            <input className="gvc-input" value={tagName} onChange={(e) => setTagName(e.target.value)} onKeyPress={(e) => e.key === "Enter" && addTag()} placeholder="VD: React, JavaScript, Frontend..." />
+            <button type="button" className="gvc-btn add" onClick={addTag}>+</button>
           </div>
+          {tags.length > 0 && (
+            <div style={{display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "8px"}}>
+              {tags.map((tag, idx) => (
+                <span key={idx} style={{background: "#e0e7ff", color: "#4338ca", padding: "4px 12px", borderRadius: "16px", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px"}}>
+                  {tag}
+                  <button type="button" onClick={() => removeTag(idx)} style={{background: "none", border: "none", color: "#4338ca", cursor: "pointer", fontSize: "16px", padding: 0}}>×</button>
+                </span>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Yêu cầu tiên quyết & Kết quả học tập */}
@@ -128,22 +227,14 @@ export default function ChiTietKhoaHocPage() {
             <div className="gvc-card-header">
               <h1 className="gvc-card-title">Yêu cầu tiên quyết</h1>
             </div>
-            <div className="gvc-hint" style={{textAlign:"center"}}>Chưa có yêu cầu nào</div>
-            <div className="gvc-row two">
-              <input className="gvc-input" placeholder="VD: Biết HTML/CSS cơ bản" />
-              <button type="button" className="gvc-btn add">+</button>
-            </div>
+            <textarea className="gvc-textarea" value={prerequisites} onChange={(e)=>{setPrerequisites(e.target.value); updateCourseData({prerequisites: e.target.value})}} placeholder="VD: Biết HTML/CSS cơ bản, Có kiến thức JavaScript..." rows="3" />
           </section>
 
           <section className="gvc-card">
             <div className="gvc-card-header">
               <h1 className="gvc-card-title">Kết quả học tập</h1>
             </div>
-            <div className="gvc-hint" style={{textAlign:"center"}}>Chưa có kết quả nào</div>
-            <div className="gvc-row two">
-              <input className="gvc-input" placeholder="VD: Xây dựng ứng dụng React hoàn chỉnh" />
-              <button type="button" className="gvc-btn add">+</button>
-            </div>
+            <textarea className="gvc-textarea" value={learningOutcomes} onChange={(e)=>{setLearningOutcomes(e.target.value); updateCourseData({learningOutcomes: e.target.value})}} placeholder="VD: Xây dựng ứng dụng React hoàn chỉnh, Hiểu về hooks và state management..." rows="3" />
           </section>
         </div>
       </div>
@@ -153,12 +244,17 @@ export default function ChiTietKhoaHocPage() {
         <div className="gvc-footer-inner">
           <button className="gvc-btn ghost" onClick={() => router.push("/giangvien/khoahoc/tao")}>Quay lại</button>
           <div className="gvc-step-info">Bước 2 / 4</div>
+          {error && (
+            <div className="gvc-error" style={{marginBottom: "8px", textAlign: "center", padding: "8px", background: "#fee2e2", borderRadius: "8px"}}>
+              {error}
+            </div>
+          )}
           <button 
-            className={`gvc-btn primary ${!isValid ? "disabled" : ""}`} 
+            className={`gvc-btn primary ${!isValid || isSaving ? "disabled" : ""}`} 
             onClick={handleContinue}
-            disabled={!isValid}
+            disabled={!isValid || isSaving}
           >
-            Tiếp tục →
+            {isSaving ? "Đang lưu..." : "Tiếp tục →"}
           </button>
         </div>
       </div>
