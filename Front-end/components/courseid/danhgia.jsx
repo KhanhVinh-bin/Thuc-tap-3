@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { getReviewsByCourse, createReview } from "@/lib/api"
+import { getAllFeedbacks, createFeedback, getFeedbacksByUser, getReviewsByCourse, createReview } from "@/lib/api"
 import { getEnrollmentsByUser } from "@/lib/enrollmentApi"
 import { useAuth } from "@/lib/auth-context"
 import { useParams, useRouter } from "next/navigation"
@@ -10,18 +10,26 @@ export default function CourseReviews() {
   const params = useParams()
   const router = useRouter()
 
-  const [reviews, setReviews] = useState([])
+  const [reviews, setReviews] = useState([]) // Đánh giá chính (parent comments)
+  const [feedbacks, setFeedbacks] = useState([]) // Replies (phản hồi)
   const [loading, setLoading] = useState(true)
   const [rating, setRating] = useState(0)
   const [content, setContent] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [isEnrolled, setIsEnrolled] = useState(false)
   const [checkingEnrollment, setCheckingEnrollment] = useState(false)
+  // State để quản lý reply
+  const [replyingTo, setReplyingTo] = useState(null) // reviewId hoặc feedbackId của comment cha
+  const [replyContent, setReplyContent] = useState("")
+  const [isInstructor, setIsInstructor] = useState(false)
 
   useEffect(() => {
-    loadReviews()
+    loadReviewsAndFeedbacks()
     if (isAuthenticated && user) {
       checkEnrollment()
+      // Kiểm tra xem user có phải instructor không
+      const userRole = user.role || user.Role || user.userRole || ""
+      setIsInstructor(userRole.toLowerCase() === "instructor")
     }
   }, [params.id, isAuthenticated, user])
 
@@ -55,41 +63,115 @@ export default function CourseReviews() {
     }
   }
 
-  const loadReviews = async () => {
+  // ✅ Load cả Reviews (đánh giá chính) và Feedbacks (replies)
+  const loadReviewsAndFeedbacks = async () => {
     try {
       setLoading(true)
       
-      // Gọi API trực tiếp để lấy reviews
-      const response = await fetch(`https://localhost:7025/api/Reviews/ByCourse/${params.id}`)
+      const courseId = parseInt(params.id)
       
-      if (!response.ok) {
-        throw new Error('Không thể tải đánh giá')
+      // 1. Load Reviews từ Reviews API (đánh giá chính của học viên)
+      let reviewsData = []
+      try {
+        const reviewsResponse = await getReviewsByCourse(courseId)
+        console.log('📦 Reviews API Response:', reviewsResponse)
+        
+        // Xử lý các cấu trúc response khác nhau
+        if (reviewsResponse && reviewsResponse.reviews && Array.isArray(reviewsResponse.reviews)) {
+          reviewsData = reviewsResponse.reviews
+        } else if (reviewsResponse && reviewsResponse.Reviews && Array.isArray(reviewsResponse.Reviews)) {
+          reviewsData = reviewsResponse.Reviews
+        } else if (Array.isArray(reviewsResponse)) {
+          reviewsData = reviewsResponse
+        }
+        
+        console.log('✅ Processed reviewsData:', reviewsData)
+      } catch (err) {
+        console.error('❌ Error loading reviews:', err)
       }
       
-      const data = await response.json()
-      
-      if (data && data.reviews) {
-        // Format reviews data để phù hợp với UI
-        const formattedReviews = data.reviews.map(review => ({
-          reviewId: review.reviewId,
-          user: {
-            fullName: review.user.fullName || 'Người dùng',
-            avatar: review.user.avatarUrl || '/placeholder-user.jpg'
-          },
-          rating: review.rating,
-          comment: review.comment,
-          createdAt: new Date(review.createdAt).toLocaleDateString('vi-VN')
-        }))
-        setReviews(formattedReviews)
-        
-        // Lưu thông tin thống kê đánh giá
-        
-      } else {
-        setReviews([])
+      // 2. Load Feedbacks từ Feedbacks API (replies)
+      let feedbacksData = []
+      try {
+        const feedbacksResponse = await getAllFeedbacks()
+        if (Array.isArray(feedbacksResponse)) {
+          feedbacksData = feedbacksResponse
+        }
+      } catch (err) {
+        console.error('Error loading feedbacks:', err)
       }
+      
+      // Format reviews data
+      const formattedReviews = reviewsData.map(review => {
+        // Xử lý User object một cách an toàn
+        const userObj = review.User || review.user
+        const userData = userObj ? {
+          userId: userObj.UserId || userObj.userId || null,
+          fullName: userObj.FullName || userObj.fullName || 'Người dùng',
+          email: userObj.Email || userObj.email || "",
+          avatar: userObj.AvatarUrl || userObj.avatarUrl || '/placeholder-user.jpg'
+        } : {
+          userId: review.UserId || review.userId || null,
+          fullName: 'Người dùng',
+          email: "",
+          avatar: '/placeholder-user.jpg'
+        }
+        
+        return {
+          reviewId: review.ReviewId || review.reviewId,
+          courseId: review.CourseId || review.courseId,
+          userId: review.UserId || review.userId,
+          rating: review.Rating || review.rating,
+          comment: review.Comment || review.comment || "",
+          createdAt: review.CreatedAt || review.createdAt,
+          user: userData,
+          replies: [] // Sẽ được populate sau
+        }
+      })
+      
+      // Format feedbacks data và map vào replies của reviews
+      const formattedFeedbacks = feedbacksData.map(feedback => {
+        const content = feedback.Content || feedback.content || ""
+        // Kiểm tra xem feedback này có phải là reply không (có format [ReplyTo:reviewId])
+        const replyMatch = content.match(/\[ReplyTo:(\d+)\]/)
+        const parentReviewId = replyMatch ? parseInt(replyMatch[1]) : null
+        
+        // Xử lý User object một cách an toàn
+        const userObj = feedback.User || feedback.user
+        const userData = userObj ? {
+          userId: userObj.UserId || userObj.userId || null,
+          fullName: userObj.FullName || userObj.fullName || 'Người dùng',
+          email: userObj.Email || userObj.email || "",
+          avatar: userObj.AvatarUrl || userObj.avatarUrl || '/placeholder-user.jpg'
+        } : {
+          userId: feedback.UserId || feedback.userId || null,
+          fullName: 'Người dùng',
+          email: "",
+          avatar: '/placeholder-user.jpg'
+        }
+        
+        return {
+          feedbackId: feedback.FeedbackId || feedback.feedbackId,
+          userId: feedback.UserId || feedback.userId,
+          content: content.replace(/\[ReplyTo:\d+\]\s*/, ''), // Remove prefix
+          rating: feedback.Rating || feedback.rating || null,
+          createdAt: feedback.CreatedAt || feedback.createdAt,
+          parentReviewId: parentReviewId, // Link đến review cha
+          user: userData
+        }
+      })
+      
+      // Map replies vào reviews (nested structure)
+      formattedReviews.forEach(review => {
+        review.replies = formattedFeedbacks.filter(fb => fb.parentReviewId === review.reviewId)
+      })
+      
+      setReviews(formattedReviews)
+      setFeedbacks(formattedFeedbacks)
     } catch (err) {
-      console.error('Error loading reviews:', err)
+      console.error('Error loading reviews and feedbacks:', err)
       setReviews([])
+      setFeedbacks([])
     } finally {
       setLoading(false)
     }
@@ -117,13 +199,8 @@ export default function CourseReviews() {
       return;
     }
 
-    if (content.trim().length < 0) {
-      alert("Nội dung đánh giá phải có ít nhất 10 ký tự!");
-      return;
-    }
-
-    // Kiểm tra enrollment trước khi submit
-    if (!isEnrolled) {
+    // Kiểm tra enrollment trước khi submit (chỉ cho học viên)
+    if (!isInstructor && !isEnrolled) {
       alert("Bạn cần ghi danh vào khóa học này trước khi có thể đánh giá. Vui lòng mua khóa học để tiếp tục.");
       return;
     }
@@ -150,6 +227,7 @@ export default function CourseReviews() {
     try {
       setSubmitting(true);
 
+      // ✅ Sử dụng Reviews API để tạo đánh giá chính
       const reviewData = {
         CourseId: parseInt(params.id),
         UserId: userId,
@@ -157,44 +235,69 @@ export default function CourseReviews() {
         Comment: content.trim()
       };
 
-      const response = await fetch("https://localhost:7025/api/Reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(reviewData)
-      });
+      const createdReview = await createReview(reviewData);
 
-      const resText = await response.text();
-
-      if (response.ok) {
+      if (createdReview) {
         alert("✅ Đánh giá đã được gửi thành công!");
         setRating(0);
         setContent("");
-        // Reload reviews to show the new one
-        await loadReviews();
-      } else {
-        // Parse error message từ JSON response
-        let errorMessage = "Không thể gửi đánh giá";
-        try {
-          const errorData = JSON.parse(resText);
-          errorMessage = errorData.message || errorData.Message || errorMessage;
-        } catch (e) {
-          // Nếu không parse được JSON, dùng text nguyên
-          errorMessage = resText || `HTTP ${response.status}`;
-        }
-
-        // Hiển thị thông báo lỗi cụ thể
-        if (errorMessage.includes("not enrolled") || errorMessage.includes("chưa ghi danh")) {
-          alert("Bạn cần ghi danh vào khóa học này trước khi có thể đánh giá. Vui lòng mua khóa học để tiếp tục.");
-        } else if (errorMessage.includes("already reviewed") || errorMessage.includes("đã đánh giá")) {
-          // Không nên xảy ra nữa vì đã cho phép nhiều reviews, nhưng giữ để xử lý trường hợp backend chưa update
-          alert("⚠️ " + errorMessage + "\n\nLưu ý: Hệ thống đang được cập nhật để cho phép đánh giá nhiều lần.");
-        } else {
-          alert("Gửi đánh giá thất bại: " + errorMessage);
-        }
+        // Reload reviews và feedbacks
+        await loadReviewsAndFeedbacks();
       }
     } catch (error) {
       console.error("❌ Lỗi khi gửi đánh giá:", error);
-      alert("Gửi đánh giá thất bại. Vui lòng thử lại sau.");
+      alert("Gửi đánh giá thất bại: " + (error.message || "Vui lòng thử lại sau."));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // ✅ Handler để reply (học viên và giảng viên đều có thể reply)
+  const handleReply = async (parentReviewId) => {
+    if (!replyContent.trim()) {
+      alert("Vui lòng nhập nội dung phản hồi!");
+      return;
+    }
+
+    if (!isAuthenticated || !user) {
+      alert("Vui lòng đăng nhập để phản hồi!");
+      router.push(`/login?redirect=/courses/${params.id}`);
+      return;
+    }
+
+    // Nếu là học viên và reply vào review của học viên khác, cần enrollment
+    const parentReview = reviews.find(r => r.reviewId === parentReviewId)
+    if (!isInstructor && parentReview && !isEnrolled) {
+      alert("Bạn cần ghi danh vào khóa học này trước khi có thể phản hồi.");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      // Extract userId
+      const userId = user.UserId || user.userId || user.id || user.ID;
+      if (!userId) {
+        alert("Không tìm thấy ID người dùng!");
+        return;
+      }
+
+      // ✅ Tạo feedback mới như một reply với format [ReplyTo:reviewId]
+      const replyData = {
+        userId: parseInt(userId),
+        content: `[ReplyTo:${parentReviewId}] ${replyContent.trim()}`,
+        rating: null // Reply không có rating
+      };
+
+      await createFeedback(replyData);
+      
+      alert("✅ Phản hồi đã được gửi thành công!");
+      setReplyContent("");
+      setReplyingTo(null);
+      await loadReviewsAndFeedbacks();
+    } catch (error) {
+      console.error("❌ Lỗi khi gửi phản hồi:", error);
+      alert("Gửi phản hồi thất bại: " + (error.message || "Vui lòng thử lại sau."));
     } finally {
       setSubmitting(false);
     }
@@ -259,7 +362,7 @@ export default function CourseReviews() {
                 onChange={(e) => setContent(e.target.value)}
                 className="w-full p-4 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
                 rows="6"
-                placeholder="Chia sẻ về trải nghiệm của bạn về khóa học này..."
+                placeholder={isInstructor ? "Chia sẻ phản hồi của bạn về khóa học này..." : "Chia sẻ về trải nghiệm của bạn về khóa học này..."}
                 maxLength={500}
               />
               <div className="flex justify-between items-center mt-2">
@@ -273,9 +376,9 @@ export default function CourseReviews() {
             <div className="flex justify-end">
               <button
                 type="submit"
-                disabled={submitting || !rating || !content.trim() || checkingEnrollment || !isEnrolled}
+                disabled={submitting || !rating || !content.trim() || checkingEnrollment || (!isEnrolled && !isInstructor)}
                 className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                  submitting || !rating || !content.trim() || checkingEnrollment || !isEnrolled
+                  submitting || !rating || !content.trim() || checkingEnrollment || (!isEnrolled && !isInstructor)
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-gray-600 text-white hover:bg-gray-700"
                 }`}
@@ -284,14 +387,19 @@ export default function CourseReviews() {
                   ? "Đang kiểm tra..." 
                   : submitting 
                   ? "Đang gửi..." 
-                  : !isEnrolled 
+                  : (!isEnrolled && !isInstructor)
                   ? "Cần ghi danh để đánh giá"
                   : "Gửi đánh giá"}
               </button>
             </div>
-            {!checkingEnrollment && !isEnrolled && isAuthenticated && (
+            {!checkingEnrollment && !isEnrolled && !isInstructor && isAuthenticated && (
               <p className="text-sm text-red-600 mt-2">
                 Bạn cần ghi danh vào khóa học này trước khi có thể đánh giá.
+              </p>
+            )}
+            {isInstructor && (
+              <p className="text-sm text-blue-600 mt-2">
+                Bạn đang đăng nhập với tư cách giảng viên. Bạn có thể đánh giá và phản hồi các đánh giá của học viên.
               </p>
             )}
           </form>
@@ -308,9 +416,9 @@ export default function CourseReviews() {
         )}
       </div>
 
-      {/* Danh sách đánh giá */}
+      {/* Danh sách đánh giá và phản hồi (kiểu Facebook comment) */}
       <div>
-        <h2 className="text-xl font-bold mb-6 text-gray-900">Đánh giá từ học viên</h2>
+        <h2 className="text-xl font-bold mb-6 text-gray-900">Đánh giá và phản hồi</h2>
         
         {reviews.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-lg">
@@ -318,24 +426,25 @@ export default function CourseReviews() {
           </div>
         ) : (
           <div className="space-y-6">
-            {reviews.map((r) => (
+            {reviews.map((review) => (
               <div 
-                key={r.reviewId} 
+                key={review.reviewId} 
                 className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
               >
+                {/* Đánh giá chính (parent comment) */}
                 <div className="flex items-start gap-4">
                   {/* Avatar */}
                   <div className="flex-shrink-0">
                     <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                      {r.user.avatar && r.user.avatar !== '/placeholder-user.jpg' ? (
+                      {review.user?.avatar && review.user.avatar !== '/placeholder-user.jpg' ? (
                         <img 
-                          src={r.user.avatar} 
-                          alt={r.user.fullName}
+                          src={review.user.avatar} 
+                          alt={review.user.fullName}
                           className="w-full h-full object-cover"
                         />
                       ) : (
                         <span className="text-gray-500 font-semibold text-lg">
-                          {r.user.fullName?.[0]?.toUpperCase() || 'U'}
+                          {review.user?.fullName?.[0]?.toUpperCase() || 'U'}
                         </span>
                       )}
                     </div>
@@ -344,13 +453,13 @@ export default function CourseReviews() {
                   {/* Review Content */}
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="font-semibold text-gray-900">{r.user.fullName}</span>
+                      <span className="font-semibold text-gray-900">{review.user?.fullName || 'Người dùng'}</span>
                       <div className="flex gap-0.5">
                         {[1, 2, 3, 4, 5].map(star => (
                           <span
                             key={star}
                             className={`text-lg ${
-                              star <= r.rating ? "text-yellow-400" : "text-gray-300"
+                              star <= review.rating ? "text-yellow-400" : "text-gray-300"
                             }`}
                           >
                             ★
@@ -358,10 +467,173 @@ export default function CourseReviews() {
                         ))}
                       </div>
                     </div>
-                    <p className="text-gray-700 leading-relaxed">{r.comment}</p>
-                    <p className="text-sm text-gray-500 mt-2">{r.createdAt}</p>
+                    <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      {new Date(review.createdAt).toLocaleDateString('vi-VN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                    
+                    {/* ✅ Nút Reply (cho tất cả mọi người đã đăng nhập) */}
+                    {isAuthenticated && (
+                      <div className="mt-3">
+                        {replyingTo === review.reviewId ? (
+                          <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
+                            <textarea
+                              value={replyContent}
+                              onChange={(e) => setReplyContent(e.target.value)}
+                              className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                              rows="3"
+                              placeholder="Nhập phản hồi của bạn..."
+                              maxLength={500}
+                            />
+                            <div className="flex justify-end gap-2">
+                              <button
+                                onClick={() => {
+                                  setReplyingTo(null)
+                                  setReplyContent("")
+                                }}
+                                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                              >
+                                Hủy
+                              </button>
+                              <button
+                                onClick={() => handleReply(review.reviewId)}
+                                disabled={!replyContent.trim() || submitting}
+                                className={`px-4 py-2 rounded-lg font-medium ${
+                                  !replyContent.trim() || submitting
+                                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                    : "bg-indigo-600 text-white hover:bg-indigo-700"
+                                }`}
+                              >
+                                {submitting ? "Đang gửi..." : "Gửi phản hồi"}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setReplyingTo(review.reviewId)}
+                            className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                          >
+                            Phản hồi
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {/* ✅ Replies (nested comments) */}
+                {review.replies && review.replies.length > 0 && (
+                  <div className="mt-4 ml-16 pl-4 border-l-2 border-gray-200 space-y-4">
+                    {review.replies.map((reply) => {
+                      // Kiểm tra xem reply này có phải của giảng viên không
+                      const replyUserId = reply.user?.userId || reply.userId
+                      const currentUserId = user?.userId || user?.id || user?.UserId || user?.ID
+                      const isInstructorReply = isInstructor && replyUserId && currentUserId && replyUserId === currentUserId
+                      
+                      return (
+                        <div key={reply.feedbackId} className="flex items-start gap-3">
+                          {/* Avatar nhỏ hơn cho reply */}
+                          <div className="flex-shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                              {reply.user?.avatar && reply.user.avatar !== '/placeholder-user.jpg' ? (
+                                <img 
+                                  src={reply.user.avatar} 
+                                  alt={reply.user.fullName}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-gray-500 font-semibold text-sm">
+                                  {reply.user?.fullName?.[0]?.toUpperCase() || 'U'}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {/* Reply Content */}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`font-semibold text-sm ${
+                                isInstructorReply ? 'text-blue-700' : 'text-gray-900'
+                              }`}>
+                                {reply.user?.fullName || 'Người dùng'}
+                              </span>
+                              {isInstructorReply && (
+                                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Giảng viên</span>
+                              )}
+                            </div>
+                            <p className={`text-sm leading-relaxed ${
+                              isInstructorReply ? 'text-blue-900' : 'text-gray-700'
+                            }`}>
+                              {reply.content}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {new Date(reply.createdAt).toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </p>
+                            
+                            {/* ✅ Nút Reply cho reply (nested reply) */}
+                            {isAuthenticated && (
+                              <div className="mt-2">
+                                {replyingTo === `reply-${reply.feedbackId}` ? (
+                                  <div className="mt-2 space-y-2">
+                                    <textarea
+                                      value={replyContent}
+                                      onChange={(e) => setReplyContent(e.target.value)}
+                                      className="w-full p-2 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                                      rows="2"
+                                      placeholder="Nhập phản hồi..."
+                                      maxLength={500}
+                                    />
+                                    <div className="flex justify-end gap-2">
+                                      <button
+                                        onClick={() => {
+                                          setReplyingTo(null)
+                                          setReplyContent("")
+                                        }}
+                                        className="px-3 py-1 text-xs text-gray-700 bg-gray-100 rounded hover:bg-gray-200"
+                                      >
+                                        Hủy
+                                      </button>
+                                      <button
+                                        onClick={() => handleReply(review.reviewId)}
+                                        disabled={!replyContent.trim() || submitting}
+                                        className={`px-3 py-1 text-xs rounded font-medium ${
+                                          !replyContent.trim() || submitting
+                                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                            : "bg-indigo-600 text-white hover:bg-indigo-700"
+                                        }`}
+                                      >
+                                        {submitting ? "Đang gửi..." : "Gửi"}
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={() => setReplyingTo(`reply-${reply.feedbackId}`)}
+                                    className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                                  >
+                                    Phản hồi
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
             ))}
           </div>

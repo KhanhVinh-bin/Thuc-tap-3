@@ -5,22 +5,135 @@ import Footer from "@/components/footer"
 import "../../tongquan/page.css"
 import "../page.css"
 import "./page.css"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/lib/auth-context"
+import { patchCourseSettings, getLessonsByCourse } from "../../lib/instructorApi"
 
 export default function GiangVienKhoaHocCaiDatPage() {
+  const searchParams = useSearchParams()
+  const { token } = useAuth()
+  const { toast } = useToast()
+  
+  // Lấy courseId từ URL params hoặc từ localStorage như fallback
+  const courseIdFromUrl = searchParams?.get('courseId') || searchParams?.get('id')
+  const courseIdFromStorage = typeof window !== 'undefined' ? localStorage.getItem('currentCourseId') : null
+  const courseId = courseIdFromUrl || courseIdFromStorage || null
+  
+  // Lưu courseId vào localStorage nếu có
+  useEffect(() => {
+    if (courseId && typeof window !== 'undefined') {
+      localStorage.setItem('currentCourseId', courseId.toString())
+    }
+  }, [courseId])
+  
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [category, setCategory] = useState("")
   const [level, setLevel] = useState("")
-  const { toast } = useToast()
+  const [categoryId, setCategoryId] = useState(null)
+  const [courseStats, setCourseStats] = useState({
+    totalLessons: 0,
+    publishedLessons: 0,
+    totalDuration: 0,
+    completionRate: 0
+  })
 
-  const saveSettings = () => {
-    toast({
-      title: "Đã lưu cài đặt",
-      description: "Cài đặt đã được lưu.",
-    })
+  // Load course settings từ API
+  useEffect(() => {
+    const loadCourseSettings = async () => {
+      if (!courseId || !token) {
+        setLoading(false)
+        return
+      }
+
+      try {
+        setLoading(true)
+        const courseData = await getLessonsByCourse(courseId, token)
+        
+        if (courseData) {
+          setTitle(courseData.CourseTitle || courseData.courseTitle || "")
+          setDescription(courseData.CourseDescription || courseData.courseDescription || "")
+          
+          // Load real statistics
+          const lessons = courseData.Lessons || courseData.lessons || []
+          const totalLessons = lessons.length
+          const totalDurationSec = lessons.reduce((sum, lesson) => sum + (lesson.DurationSec || lesson.durationSec || 0), 0)
+          const totalDurationMinutes = Math.floor(totalDurationSec / 60)
+          
+          setCourseStats({
+            totalLessons: totalLessons,
+            publishedLessons: totalLessons, // All lessons are published since course is published
+            totalDuration: totalDurationMinutes,
+            completionRate: 0 // Not available from API
+          })
+        }
+      } catch (err) {
+        console.error("Error loading course settings:", err)
+        toast({
+          title: "Lỗi",
+          description: err.message || "Không thể tải cài đặt khóa học",
+          variant: "destructive",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadCourseSettings()
+  }, [courseId, token, toast])
+
+  const saveSettings = async () => {
+    if (!courseId || !token) {
+      toast({
+        title: "Lỗi",
+        description: "Không có Course ID hoặc token",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      const settingsData = {}
+      if (title.trim()) settingsData.title = title.trim()
+      if (description.trim()) settingsData.description = description.trim()
+      if (level.trim()) {
+        // Map level từ tiếng Việt sang tiếng Anh
+        const levelMap = {
+          "Cơ bản": "beginner",
+          "Trung cấp": "intermediate",
+          "Nâng cao": "advanced"
+        }
+        settingsData.level = levelMap[level] || level.toLowerCase()
+      }
+      if (categoryId) settingsData.categoryId = categoryId
+
+      if (Object.keys(settingsData).length === 0) {
+        toast({
+          title: "Cảnh báo",
+          description: "Vui lòng nhập ít nhất một trường để cập nhật",
+          variant: "destructive",
+        })
+        return
+      }
+
+      await patchCourseSettings(courseId, settingsData, token)
+      
+      toast({
+        title: "Đã lưu thành công",
+        description: "Cài đặt khóa học đã được cập nhật.",
+      })
+    } catch (err) {
+      console.error("Error saving settings:", err)
+      toast({
+        title: "Lỗi",
+        description: err.message || "Không thể lưu cài đặt",
+        variant: "destructive",
+      })
+    }
   }
 
   return (
@@ -103,7 +216,10 @@ export default function GiangVienKhoaHocCaiDatPage() {
               <Link href="/giangvien/khoahoc" className="gvc-back">Quay lại</Link>
               <div className="gvc-editor-title">
                 <h2>Quản lý nội dung khóa học</h2>
-                <span className="gvc-course-id">ID: 1</span>
+                {courseId && <span className="gvc-course-id">ID: {courseId}</span>}
+                {!courseId && (
+                  <span className="gvc-course-id" style={{color: 'red'}}>Không có Course ID</span>
+                )}
               </div>
             </div>
 
@@ -132,7 +248,7 @@ export default function GiangVienKhoaHocCaiDatPage() {
                   </svg>
                 </div>
                 <div>
-                  <div className="value">4</div>
+                  <div className="value">{courseStats.totalLessons}</div>
                   <div className="label">Tổng bài học</div>
                 </div>
               </div>
@@ -145,7 +261,7 @@ export default function GiangVienKhoaHocCaiDatPage() {
                   </svg>
                 </div>
                 <div>
-                  <div className="value">3</div>
+                  <div className="value">{courseStats.publishedLessons}</div>
                   <div className="label">Đã xuất bản</div>
                 </div>
               </div>
@@ -158,7 +274,7 @@ export default function GiangVienKhoaHocCaiDatPage() {
                   </svg>
                 </div>
                 <div>
-                  <div className="value">69 phút</div>
+                  <div className="value">{courseStats.totalDuration} phút</div>
                   <div className="label">Tổng thời lượng</div>
                 </div>
               </div>
@@ -174,7 +290,7 @@ export default function GiangVienKhoaHocCaiDatPage() {
                   </svg>
                 </div>
                 <div>
-                  <div className="value">59%</div>
+                  <div className="value">{courseStats.completionRate > 0 ? `${courseStats.completionRate}%` : '-'}</div>
                   <div className="label">Tỷ lệ hoàn thành TB</div>
                 </div>
               </div>
@@ -182,10 +298,15 @@ export default function GiangVienKhoaHocCaiDatPage() {
 
             {/* Tabs dưới summary */}
             <div className="gvc-tabbar">
-              <Link href="/giangvien/khoahoc/chinhsua" className="gvc-tab">Nội dung</Link>
+              <Link href={`/giangvien/khoahoc/chinhsua${courseId ? `?courseId=${courseId}` : ''}`} className="gvc-tab">Nội dung</Link>
               <button className="gvc-tab active">Cài đặt</button>
             </div>
 
+            {loading ? (
+              <div style={{ padding: '40px', textAlign: 'center' }}>
+                <div style={{ fontSize: '18px', color: '#666' }}>Đang tải dữ liệu...</div>
+              </div>
+            ) : (
             <div className="gvc-settings">
               <div className="gvc-settings-group">
                 <div className="gvc-settings-title">Cài đặt khóa học</div>
@@ -242,10 +363,13 @@ export default function GiangVienKhoaHocCaiDatPage() {
                 </div>
 
                 <div className="gvc-settings-actions">
-                  <button className="gvc-save-btn" onClick={saveSettings}>Lưu cài đặt</button>
+                  <button className="gvc-save-btn" onClick={saveSettings} disabled={loading}>
+                    {loading ? 'Đang lưu...' : 'Lưu cài đặt'}
+                  </button>
                 </div>
               </div>
             </div>
+            )}
           </div>
         </main>
       </div>

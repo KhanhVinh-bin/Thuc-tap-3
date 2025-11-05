@@ -3,6 +3,7 @@
     public class InstructorDTO
     {
         public int InstructorId { get; set; }
+        public string? FullName { get; set; }
         public string Expertise { get; set; }
         public string Biography { get; set; }
         public int? ExperienceYears { get; set; }

@@ -4,11 +4,16 @@ import { useState } from "react"
 import { Search } from "lucide-react"
 import CourseCard from "./course-card"
 
-export default function CoursesGrid({ courses = [] }) {
+export default function CoursesGrid({ courses = [], currentPage = 1, totalPages = 1, onPageChange, categories = [] }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategories, setSelectedCategories] = useState(["Tất cả"])
   const [selectedLevels, setSelectedLevels] = useState(["Tất cả"])
   const [maxPrice, setMaxPrice] = useState(20000000)
+
+  // ✅ Lấy danh mục từ props hoặc dùng default
+  const categoriesToDisplay = categories.length > 0 
+    ? ["Tất cả", ...categories.map(c => c.CategoryName || c.categoryName || c).filter(Boolean)]
+    : ["Tất cả", "Lập trình wed", "Lập trình Mobile", "AI & Data", "Cloud & DevOps", "Database", "Bảo mật an ninh", "Kiểm thử", "Lập trình game", "Backend", "UI/UX Design", "Blockchain & Web3"]
 
   // Handle category selection with checkboxes
   const handleCategoryToggle = (categoryName) => {
@@ -51,22 +56,6 @@ export default function CoursesGrid({ courses = [] }) {
   }
 
   const levels = ["Tất cả", "Cơ bản", "Trung cấp", "Nâng cao"]
-  
-  // Default categories from image
-  const defaultCategories = [
-    "Tất cả",
-    "Lập trình wed",
-    "Lập trình Mobile",
-    "AI & Data",
-    "Cloud & DevOps",
-    "Database",
-    "Bảo mật an ninh",
-    "Kiểm thử",
-    "Lập trình game",
-    "Backend",
-    "UI/UX Design",
-    "Blockchain & Web3"
-  ]
 
   // Lọc dữ liệu
   const filteredCourses = courses.filter((course) => {
@@ -146,7 +135,7 @@ export default function CoursesGrid({ courses = [] }) {
             <div className="mb-6">
               <h3 className="font-medium mb-3 text-gray-700">Danh mục</h3>
               <div className="space-y-2">
-                {defaultCategories.map((category) => (
+                {categoriesToDisplay.map((category) => (
                   <label
                     key={category}
                     className="flex items-center text-sm text-gray-700 cursor-pointer hover:bg-gray-50 px-2 py-1.5 rounded"
@@ -234,27 +223,48 @@ export default function CoursesGrid({ courses = [] }) {
             </div>
           )}
 
-          {/* Pagination demo */}
-          <div className="flex justify-center items-center mt-10 gap-2">
-            <button className="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">
-              &lt;
-            </button>
-            {[1, 2, 3, 4, 5].map((p) => (
-              <button
-                key={p}
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center mt-10 gap-2">
+              <button 
+                onClick={() => onPageChange && onPageChange(currentPage - 1)}
+                disabled={currentPage === 1}
                 className={`px-3 py-1 rounded-md border ${
-                  p === 1
-                    ? "bg-[#06b6d4] text-white border-[#06b6d4]"
+                  currentPage === 1
+                    ? "border-gray-300 text-gray-400 cursor-not-allowed"
                     : "border-gray-300 text-gray-600 hover:bg-gray-100"
                 }`}
               >
-                {p}
+                Trang trước
               </button>
-            ))}
-            <button className="px-3 py-1 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100">
-              &gt;
-            </button>
-          </div>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => onPageChange && onPageChange(page)}
+                  className={`px-3 py-1 rounded-md border ${
+                    page === currentPage
+                      ? "bg-[#06b6d4] text-white border-[#06b6d4]"
+                      : "border-gray-300 text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              
+              <button 
+                onClick={() => onPageChange && onPageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 rounded-md border ${
+                  currentPage === totalPages
+                    ? "border-gray-300 text-gray-400 cursor-not-allowed"
+                    : "border-gray-300 text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                Trang sau
+              </button>
+            </div>
+          )}
           </section>
         </div>
       </div>

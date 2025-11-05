@@ -9,7 +9,7 @@ import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/lib/auth-context"
-import { getLessonsByCourse, updateLesson, patchLesson, deleteLesson, uploadLessonFile } from "../../lib/instructorApi"
+import { getLessonsByCourse, updateLesson, patchLesson, deleteLesson, uploadLessonFile, createLesson, getLessonProgressSummary } from "../../lib/instructorApi"
 
 export default function GiangVienKhoaHocChinhSuaPage() {
   const router = useRouter()
@@ -17,15 +17,25 @@ export default function GiangVienKhoaHocChinhSuaPage() {
   const { token } = useAuth()
   const { toast } = useToast()
   
-  const courseId = searchParams?.get('courseId') || searchParams?.get('id') || null
+  // Lấy courseId từ URL params hoặc từ localStorage như fallback
+  const courseIdFromUrl = searchParams?.get('courseId') || searchParams?.get('id')
+  const courseIdFromStorage = typeof window !== 'undefined' ? localStorage.getItem('currentCourseId') : null
+  const courseId = courseIdFromUrl || courseIdFromStorage || null
+  
+  // Lưu courseId vào localStorage nếu có
+  useEffect(() => {
+    if (courseId && typeof window !== 'undefined') {
+      localStorage.setItem('currentCourseId', courseId.toString())
+    }
+  }, [courseId])
   
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [courseData, setCourseData] = useState(null)
-  const [chapters, setChapters] = useState([])
-  // Thêm state cho bài học bổ sung vào các chương tĩnh
-  const [extraLessons, setExtraLessons] = useState({ chapter1: [], chapter2: [] })
+  const [lessons, setLessons] = useState([]) // Lưu trực tiếp danh sách bài học, không cần chapters
+  // State để theo dõi file đang upload và preview
+  const [uploadingLessons, setUploadingLessons] = useState({}) // { lessonId: { uploading: boolean, file: File } }
 
   // Helper function để lấy accept attribute dựa trên loại bài học
   const getFileAcceptByType = (lessonType) => {
@@ -51,70 +61,27 @@ export default function GiangVienKhoaHocChinhSuaPage() {
     }
   }
   
-  const addChapter = () => {
-    setChapters(prev => [...prev, { 
-      id: Date.now(), 
-      title: "Chương mới", 
-      lessons: [],
-      expanded: true,
-      isEditing: false
+  // Thêm bài học mới
+  const addLesson = () => {
+    setLessons(prev => [...prev, {
+      id: Date.now(),
+      title: "Bài học mới",
+      type: "Video",
+      duration: "10:00",
+      durationSec: 600,
+      support: "Tài liệu hỗ trợ",
+      docs: []
     }])
   }
 
-  const addLesson = (chapterId) => {
-    setChapters(prev => prev.map(ch => 
-      ch.id === chapterId 
-        ? { 
-            ...ch, 
-            lessons: [...ch.lessons, {
-              id: Date.now(),
-              title: "Bài học mới",
-              type: "Video",
-              duration: "10:00",
-              support: "Tài liệu hỗ trợ",
-              docs: [],
-              status: "draft"
-            }],
-            expanded: true
-          }
-        : ch
-    ))
-  }
-
-  const toggleChapter = (chapterId) => {
-    setChapters(prev => prev.map(ch => 
-      ch.id === chapterId ? { ...ch, expanded: !ch.expanded } : ch
-    ))
-  }
-
-  const updateChapterTitle = (chapterId, newTitle) => {
-    setChapters(prev => prev.map(ch => 
-      ch.id === chapterId ? { ...ch, title: newTitle, isEditing: false } : ch
-    ))
-  }
-
-  const startEditingChapter = (chapterId) => {
-    setChapters(prev => prev.map(ch => 
-      ch.id === chapterId ? { ...ch, isEditing: true } : ch
-    ))
-  }
-
-  const updateLessonTitle = async (chapterId, lessonId, newTitle) => {
+  const updateLessonTitle = async (lessonId, newTitle) => {
     // Update UI immediately
-    setChapters(prev => prev.map(ch => 
-      ch.id === chapterId 
-        ? {
-            ...ch,
-            lessons: ch.lessons.map(lesson =>
-              lesson.id === lessonId ? { ...lesson, title: newTitle } : lesson
-            )
-          }
-        : ch
+    setLessons(prev => prev.map(lesson =>
+      lesson.id === lessonId ? { ...lesson, title: newTitle } : lesson
     ))
 
     // Update via API if lesson exists in DB
-    const chapter = chapters.find(ch => ch.id === chapterId)
-    const lesson = chapter?.lessons.find(l => l.id === lessonId)
+    const lesson = lessons.find(l => l.id === lessonId)
     
     if (lesson?.lessonId && courseId && token) {
       try {
@@ -125,17 +92,12 @@ export default function GiangVienKhoaHocChinhSuaPage() {
     }
   }
 
-  const handleDeleteLesson = async (chapterId, lessonId) => {
-    const chapter = chapters.find(ch => ch.id === chapterId)
-    const lesson = chapter?.lessons.find(l => l.id === lessonId)
+  const handleDeleteLesson = async (lessonId) => {
+    const lesson = lessons.find(l => l.id === lessonId)
     
     if (!lesson || !lesson.lessonId || !courseId || !token) {
       // Nếu không có lessonId (chưa lưu vào DB), chỉ xóa khỏi UI
-      setChapters(prev => prev.map(ch => 
-        ch.id === chapterId 
-          ? { ...ch, lessons: ch.lessons.filter(l => l.id !== lessonId) }
-          : ch
-      ))
+      setLessons(prev => prev.filter(l => l.id !== lessonId))
       return
     }
 
@@ -146,11 +108,7 @@ export default function GiangVienKhoaHocChinhSuaPage() {
 
     try {
       await deleteLesson(courseId, lesson.lessonId, token)
-      setChapters(prev => prev.map(ch => 
-        ch.id === chapterId 
-          ? { ...ch, lessons: ch.lessons.filter(l => l.id !== lessonId) }
-          : ch
-      ))
+      setLessons(prev => prev.filter(l => l.id !== lessonId))
       toast({
         title: "Đã xóa",
         description: "Bài học đã được xóa thành công.",
@@ -165,33 +123,95 @@ export default function GiangVienKhoaHocChinhSuaPage() {
     }
   }
 
-  const deleteChapter = (chapterId) => {
-    setChapters(prev => prev.filter(ch => ch.id !== chapterId))
-  }
+  // Load lessons từ API khi component mount
+  useEffect(() => {
+    const loadLessons = async () => {
+      if (!courseId || !token) {
+        setLoading(false)
+        if (!courseId) {
+          setError("Không có Course ID. Vui lòng quay lại trang khóa học.")
+        }
+        return
+      }
 
-  // Thêm bài vào chương tĩnh (Chapter 1/2)
-  const addLessonToStatic = (chapterKey) => {
-    setExtraLessons(prev => ({
-      ...prev,
-      [chapterKey]: [
-        ...prev[chapterKey],
-        { id: Date.now(), title: "Bài học mới", type: "Video", duration: "10:00", support: "Tài liệu hỗ trợ", docs: [], status: "draft" }
-      ]
-    }))
-  }
+      try {
+        setLoading(true)
+        setError(null)
+        
+        // ✅ Load lessons - getLessonsByCourse đã tự động xử lý fallback endpoints
+        const lessonsData = await getLessonsByCourse(courseId, token)
+        console.log("📦 Lessons data loaded:", lessonsData)
 
-  // Trạng thái cho hai bài tĩnh (React là gì?, Môi trường phát triển)
-  const [staticState, setStaticState] = useState({
-    l1: { deleted: false, fileName: "", fileUrl: "", docs: [] },
-    l2: { deleted: false, fileName: "", fileUrl: "", docs: [] },
-  })
+        // Set course data
+        if (lessonsData) {
+          setCourseData({
+            courseId: lessonsData.CourseId || lessonsData.courseId,
+            courseTitle: lessonsData.CourseTitle || lessonsData.courseTitle,
+            courseDescription: lessonsData.CourseDescription || lessonsData.courseDescription,
+            totalLessons: lessonsData.TotalLessons || lessonsData.totalLessons || 0,
+            totalDurationSec: lessonsData.TotalDurationSec || lessonsData.totalDurationSec || 0
+          })
 
-  // Toggle hiển thị bài trong Chapter 1
-  const [chapter1Expanded, setChapter1Expanded] = useState(true)
-  const toggleChapter1 = () => setChapter1Expanded(prev => !prev)
-  
-  // Tổng số bài trong Chapter 1 (tĩnh + thêm mới)
-  const chapter1Count = (staticState?.l1?.deleted ? 0 : 1) + (staticState?.l2?.deleted ? 0 : 1) + extraLessons.chapter1.length
+          // Map lessons vào chapters
+          const lessons = lessonsData.Lessons || lessonsData.lessons || []
+          if (lessons.length > 0) {
+            // Group lessons by chapter (giả sử tất cả lessons trong 1 chapter đầu tiên)
+            const formattedLessons = lessons.map((lesson, index) => ({
+              id: Date.now() + index,
+              lessonId: lesson.LessonId || lesson.lessonId,
+              title: lesson.Title || lesson.title || `Bài học ${index + 1}`,
+              type: lesson.ContentType === "video" ? "Video" : lesson.ContentType === "file" ? "Tài liệu" : "Video",
+              duration: lesson.DurationSec ? `${Math.floor(lesson.DurationSec / 60)}:${(lesson.DurationSec % 60).toString().padStart(2, '0')}` : "10:00",
+              durationSec: lesson.DurationSec || 0,
+              sortOrder: lesson.SortOrder || lesson.sortOrder || index + 1,
+              videoUrl: lesson.VideoUrl || lesson.videoUrl || null,
+              file: lesson.File || lesson.file || null,
+              // Xử lý URL từ server - ưu tiên FilePath từ File object, nếu không có thì dùng VideoUrl
+              fileUrl: (() => {
+                const filePath = lesson.File?.FilePath || lesson.file?.filePath
+                const vidUrl = lesson.VideoUrl || lesson.videoUrl
+                if (filePath) {
+                  return filePath.startsWith('http') 
+                    ? filePath
+                    : `https://localhost:3001${filePath.startsWith('/') ? '' : '/'}${filePath}`
+                }
+                if (vidUrl) {
+                  return vidUrl.startsWith('http') 
+                    ? vidUrl
+                    : `https://localhost:3001${vidUrl.startsWith('/') ? '' : '/'}${vidUrl}`
+                }
+                return null
+              })(),
+              fileName: lesson.File?.Name || lesson.file?.name || null,
+              // ✅ Không set status vì backend không có field này, nhưng khóa học đã published nên hiển thị "Đã xuất bản"
+              docs: []
+            }))
+
+            // Lưu trực tiếp danh sách bài học, không cần chapters
+            setLessons(formattedLessons)
+          } else {
+            // Nếu không có bài học, danh sách rỗng
+            setLessons([])
+          }
+        }
+      } catch (err) {
+        console.error("Error loading lessons:", err)
+        // ✅ Xử lý lỗi một cách graceful - vẫn cho phép chỉnh sửa
+        // Nếu có lỗi, để danh sách rỗng để vẫn có thể thêm bài học mới
+        setLessons([])
+        // Hiển thị cảnh báo nhẹ thay vì chặn hoàn toàn
+        toast({
+          title: "Cảnh báo",
+          description: "Không thể tải dữ liệu bài học từ server. Bạn vẫn có thể thêm bài học mới.",
+          variant: "default",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadLessons()
+  }, [courseId, token])
 
   // Thêm handler lưu cài đặt
   const saveSettings = async () => {
@@ -219,30 +239,95 @@ export default function GiangVienKhoaHocChinhSuaPage() {
       let savedCount = 0
       let errorCount = 0
       
-      chapters.forEach((ch) => {
-        ch.lessons.forEach((lesson) => {
-          if (lesson.lessonId) {
-            // Update existing lesson
-            const lessonData = {
-              title: lesson.title || "",
-              contentType: lesson.type === "Video" ? "video" : lesson.type === "Tài liệu" ? "pdf" : "text",
-              videoUrl: lesson.videoUrl || null,
-              durationSec: lesson.durationSec || (lesson.duration ? 
-                lesson.duration.split(':').reduce((acc, val) => acc * 60 + parseInt(val), 0) : 0),
-              sortOrder: lesson.sortOrder || 0,
-            }
-            savePromises.push(
-              patchLesson(courseId, lesson.lessonId, lessonData, token)
-                .then(() => {
-                  savedCount++
-                })
-                .catch((err) => {
-                  console.error("Error saving lesson:", lesson.title, err)
-                  errorCount++
-                })
-            )
+      lessons.forEach((lesson) => {
+        if (lesson.lessonId) {
+          // Update existing lesson
+          const lessonData = {
+            title: lesson.title || "",
+            contentType: lesson.type === "Video" ? "video" : lesson.type === "Tài liệu" ? "pdf" : "text",
+            videoUrl: lesson.videoUrl || null,
+            durationSec: lesson.durationSec || (lesson.duration ? 
+              lesson.duration.split(':').reduce((acc, val) => acc * 60 + parseInt(val), 0) : 0),
+            sortOrder: lesson.sortOrder || 0,
           }
-        })
+          savePromises.push(
+            patchLesson(courseId, lesson.lessonId, lessonData, token)
+              .then(() => {
+                savedCount++
+              })
+              .catch((err) => {
+                console.error("Error saving lesson:", lesson.title, err)
+                errorCount++
+              })
+          )
+        } else {
+          // Create new lesson if doesn't have lessonId
+          // ✅ Nếu contentType là "video" nhưng chưa có videoUrl, không gửi videoUrl hoặc đổi contentType thành "text"
+          const isVideoType = lesson.type === "Video"
+          const hasVideoUrl = lesson.videoUrl && !lesson.videoUrl.startsWith('blob:')
+          
+          const lessonData = {
+            title: lesson.title || "Bài học mới",
+            // ✅ Nếu là video nhưng chưa có videoUrl, tạm thời set contentType là "text" để tránh lỗi validation
+            contentType: isVideoType && hasVideoUrl ? "video" : (isVideoType && !hasVideoUrl ? "text" : (lesson.type === "Tài liệu" ? "pdf" : "text")),
+            // ✅ Chỉ gửi videoUrl nếu có và không phải blob URL
+            ...(hasVideoUrl ? { videoUrl: lesson.videoUrl } : {}),
+            durationSec: lesson.durationSec || (lesson.duration ? 
+              lesson.duration.split(':').reduce((acc, val) => acc * 60 + parseInt(val), 0) : 600),
+            sortOrder: lesson.sortOrder || 0,
+          }
+          savePromises.push(
+            createLesson(courseId, lessonData, token)
+              .then(async (createdLesson) => {
+                // Update the lesson in state with the new lessonId
+                const newLessonId = createdLesson.LessonId || createdLesson.lessonId
+                if (newLessonId) {
+                  setLessons(prev => prev.map(l => 
+                    l.id === lesson.id ? { ...l, lessonId: newLessonId } : l
+                  ))
+                  
+                  // ✅ Upload video nếu có videoFile
+                  if (lesson.videoFile && lesson.videoFile instanceof File) {
+                    try {
+                      const uploadResult = await uploadLessonFile(courseId, newLessonId, lesson.videoFile, token)
+                      const filePath = uploadResult.file?.FilePath || uploadResult.file?.filePath || uploadResult.filePath
+                      if (filePath) {
+                        const fullVideoUrl = filePath.startsWith('/') 
+                          ? `https://localhost:3001${filePath}`
+                          : `https://localhost:3001/${filePath}`
+                        
+                        // Update lesson với videoUrl từ server
+                        setLessons(prev => prev.map(l => {
+                          if (l.id === lesson.id) {
+                            // Cleanup blob URL
+                            if (l.fileUrl && l.fileUrl.startsWith('blob:')) {
+                              URL.revokeObjectURL(l.fileUrl)
+                            }
+                            return { ...l, fileUrl: fullVideoUrl, videoUrl: filePath, videoFile: null }
+                          }
+                          return l
+                        }))
+                        
+                        // Update lesson qua API với videoUrl
+                        await patchLesson(courseId, newLessonId, { 
+                          videoUrl: filePath,
+                          contentType: "video"
+                        }, token)
+                      }
+                    } catch (uploadErr) {
+                      console.error("Error uploading video for new lesson:", uploadErr)
+                      // Không throw để không làm fail việc tạo lesson
+                    }
+                  }
+                }
+                savedCount++
+              })
+              .catch((err) => {
+                console.error("Error creating lesson:", lesson.title, err)
+                errorCount++
+              })
+          )
+        }
       })
 
       await Promise.all(savePromises)
@@ -252,6 +337,10 @@ export default function GiangVienKhoaHocChinhSuaPage() {
           title: "Đã lưu thành công",
           description: `Đã lưu ${savedCount} bài học.`,
         })
+        // ✅ Redirect về trang danh sách khóa học sau 1 giây
+        setTimeout(() => {
+          router.push("/giangvien/khoahoc")
+        }, 1000)
       } else {
         toast({
           title: "Lưu không hoàn toàn",
@@ -269,267 +358,161 @@ export default function GiangVienKhoaHocChinhSuaPage() {
     }
   }
 
-  // Handlers cho bài tĩnh
-  const focusStaticTitle = (key) => {
-    const el = document.getElementById(`static-${key}-title`)
+
+  // Handlers cho bài học
+  const focusDynamicTitle = (lessonId) => {
+    const el = document.getElementById(`lesson-${lessonId}-title`)
     el?.focus()
   }
-  const uploadStaticFile = (key) => {
-    document.getElementById(`static-${key}-file`)?.click()
+  const handleUploadLessonFile = (lessonId) => {
+    document.getElementById(`lesson-${lessonId}-file`)?.click()
   }
-  const onStaticFileChange = (key, e) => {
+  const onDynamicFileChange = (lessonId, e) => {
     const file = e.target.files?.[0]
     if (!file) return
     const fileUrl = URL.createObjectURL(file)
-    setStaticState(prev => ({
-      ...prev,
-      [key]: { ...prev[key], fileName: file.name, fileUrl }
-    }))
-  }
-  const deleteStaticLesson = (key) => {
-    setStaticState(prev => ({
-      ...prev,
-      [key]: { ...prev[key], deleted: true }
-    }))
+    setLessons(prev => prev.map(lesson =>
+      lesson.id === lessonId ? { ...lesson, fileName: file.name, fileUrl } : lesson
+    ))
   }
 
-  // Upload/Xóa tài liệu cho bài tĩnh
-  const uploadStaticDoc = (key) => {
-    document.getElementById(`static-${key}-doc`)?.click()
+  // Upload/Xóa tài liệu cho bài học
+  const uploadDynamicDoc = (lessonId) => {
+    document.getElementById(`lesson-${lessonId}-doc`)?.click()
   }
-  const onStaticDocChange = (key, e) => {
+  const onDynamicDocChange = (lessonId, e) => {
     const files = Array.from(e.target.files || [])
     if (!files.length) return
-    setStaticState(prev => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        docs: [
-          ...(prev[key].docs || []),
-          ...files.map(f => ({ name: f.name, size: f.size, url: URL.createObjectURL(f) }))
-        ]
-      }
-    }))
+    setLessons(prev => prev.map(lesson =>
+      lesson.id === lessonId
+        ? {
+            ...lesson,
+            docs: [
+              ...(lesson.docs || []),
+              ...files.map(f => ({ name: f.name, size: f.size, url: URL.createObjectURL(f) }))
+            ]
+          }
+        : lesson
+    ))
     e.target.value = ''
   }
-  const deleteStaticDoc = (key, index) => {
-    setStaticState(prev => {
-      const docs = [...(prev[key].docs || [])]
+  const deleteDynamicDoc = (lessonId, index) => {
+    setLessons(prev => prev.map(lesson => {
+      if (lesson.id !== lessonId) return lesson
+      const docs = [...(lesson.docs || [])]
       const removed = docs.splice(index, 1)[0]
       if (removed?.url) URL.revokeObjectURL(removed.url)
-      return { ...prev, [key]: { ...prev[key], docs } }
-    })
+      return { ...lesson, docs }
+    }))
   }
 
-  // Upload hợp nhất cho bài tĩnh (video + tài liệu)
-  const uploadStaticAsset = (key) => {
-    document.getElementById(`static-${key}-asset`)?.click()
+  // Upload hợp nhất cho bài học (video + tài liệu)
+  const uploadDynamicAsset = (lessonId) => {
+    document.getElementById(`lesson-${lessonId}-asset`)?.click()
   }
-  const onStaticAssetChange = (key, e) => {
+  const onDynamicAssetChange = async (lessonId, e) => {
     const files = Array.from(e.target.files || [])
     if (!files.length) return
-    setStaticState(prev => {
-      const next = { ...prev[key] }
-      const videoFile = files.find(f => f.type?.startsWith('video'))
-      const docFiles = files.filter(f => !f.type?.startsWith('video'))
-      if (videoFile) {
-        next.fileName = videoFile.name
-        next.fileUrl = URL.createObjectURL(videoFile)
-      }
-      if (docFiles.length) {
-        next.docs = [
-          ...(prev[key].docs || []),
-          ...docFiles.map(f => ({ name: f.name, size: f.size, url: URL.createObjectURL(f) }))
-        ]
-      }
-      return { ...prev, [key]: next }
-    })
-    e.target.value = ''
-  }
-
-  // Handlers cho bài thêm vào Chapter 1/2
-  const focusExtraTitle = (chapterKey, lessonId) => {
-    const el = document.getElementById(`extra-${chapterKey}-${lessonId}-title`)
-    el?.focus()
-  }
-  const uploadExtraLessonFile = (chapterKey, lessonId) => {
-    document.getElementById(`extra-${chapterKey}-${lessonId}-file`)?.click()
-  }
-  const onExtraFileChange = (chapterKey, lessonId, e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const fileUrl = URL.createObjectURL(file)
-    setExtraLessons(prev => ({
-      ...prev,
-      [chapterKey]: prev[chapterKey].map(lesson =>
-        lesson.id === lessonId ? { ...lesson, fileName: file.name, fileUrl } : lesson
-      )
-    }))
-  }
-  const deleteExtraLesson = (chapterKey, lessonId) => {
-    setExtraLessons(prev => ({
-      ...prev,
-      [chapterKey]: prev[chapterKey].filter(lesson => lesson.id !== lessonId)
-    }))
-  }
-
-  // Upload/Xóa tài liệu cho bài thêm mới (Chapter 1/2)
-  const uploadExtraDoc = (chapterKey, lessonId) => {
-    document.getElementById(`extra-${chapterKey}-${lessonId}-doc`)?.click()
-  }
-  const onExtraDocChange = (chapterKey, lessonId, e) => {
-    const files = Array.from(e.target.files || [])
-    if (!files.length) return
-    setExtraLessons(prev => ({
-      ...prev,
-      [chapterKey]: prev[chapterKey].map(lesson =>
-        lesson.id === lessonId
-          ? {
-              ...lesson,
-              docs: [
-                ...(lesson.docs || []),
-                ...files.map(f => ({ name: f.name, size: f.size, url: URL.createObjectURL(f) }))
-              ]
-            }
-          : lesson
-      )
-    }))
-    e.target.value = ''
-  }
-  const deleteExtraDoc = (chapterKey, lessonId, index) => {
-    setExtraLessons(prev => ({
-      ...prev,
-      [chapterKey]: prev[chapterKey].map(lesson => {
+    
+    const videoFile = files.find(f => f.type?.startsWith('video'))
+    const docFiles = files.filter(f => !f.type?.startsWith('video'))
+    
+    // ✅ Update UI immediately với preview - LUÔN hiển thị preview ngay cả khi chưa có lessonId
+    if (videoFile) {
+      const previewUrl = URL.createObjectURL(videoFile)
+      setLessons(prev => prev.map(lesson => {
         if (lesson.id !== lessonId) return lesson
-        const docs = [...(lesson.docs || [])]
-        const removed = docs.splice(index, 1)[0]
-        if (removed?.url) URL.revokeObjectURL(removed.url)
-        return { ...lesson, docs }
-      })
-    }))
-  }
-
-  // Upload hợp nhất cho bài thêm mới (Chapter 1/2)
-  const uploadExtraAsset = (chapterKey, lessonId) => {
-    document.getElementById(`extra-${chapterKey}-${lessonId}-asset`)?.click()
-  }
-  const onExtraAssetChange = (chapterKey, lessonId, e) => {
-    const files = Array.from(e.target.files || [])
-    if (!files.length) return
-    setExtraLessons(prev => ({
-      ...prev,
-      [chapterKey]: prev[chapterKey].map(lesson => {
-        if (lesson.id !== lessonId) return lesson
-        const videoFile = files.find(f => f.type?.startsWith('video'))
-        const docFiles = files.filter(f => !f.type?.startsWith('video'))
+        // Cleanup old blob URL nếu có
+        if (lesson.fileUrl && lesson.fileUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(lesson.fileUrl)
+        }
         return {
           ...lesson,
-          ...(videoFile ? { fileName: videoFile.name, fileUrl: URL.createObjectURL(videoFile) } : {}),
+          fileName: videoFile.name,
+          fileUrl: previewUrl, // ✅ Luôn hiển thị preview ngay
+          videoFile: videoFile, // Lưu file để upload sau
+          uploading: lesson.lessonId ? true : false // Chỉ upload nếu có lessonId
+        }
+      }))
+      
+      // Upload video nếu có lessonId (đã lưu vào DB)
+      const lesson = lessons.find(l => l.id === lessonId)
+      
+      if (lesson?.lessonId && courseId && token) {
+        try {
+          setUploadingLessons(prev => ({ ...prev, [lesson.lessonId]: { uploading: true, file: videoFile } }))
+          
+          const uploadResult = await uploadLessonFile(courseId, lesson.lessonId, videoFile, token)
+          console.log("✅ Video uploaded:", uploadResult)
+          
+          // Update lesson với videoUrl từ server
+          const filePath = uploadResult.file?.FilePath || uploadResult.file?.filePath || uploadResult.filePath
+          if (filePath) {
+            const fullVideoUrl = filePath.startsWith('/') 
+              ? `https://localhost:3001${filePath}`
+              : `https://localhost:3001/${filePath}`
+            
+            setLessons(prev => prev.map(l => {
+              if (l.id !== lessonId) return l
+              // Cleanup blob URL
+              if (l.fileUrl && l.fileUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(l.fileUrl)
+              }
+              return { ...l, fileUrl: fullVideoUrl, videoUrl: filePath, uploading: false, videoFile: null }
+            }))
+            
+            // Update lesson qua API
+            await patchLesson(courseId, lesson.lessonId, { 
+              videoUrl: filePath,
+              contentType: "video"
+            }, token)
+          }
+          
+          toast({
+            title: "Upload thành công",
+            description: "Video đã được tải lên.",
+          })
+        } catch (err) {
+          console.error("Error uploading video:", err)
+          toast({
+            title: "Lỗi upload",
+            description: err.message || "Không thể tải video lên. Video sẽ được lưu khi bạn lưu bài học.",
+            variant: "destructive",
+          })
+          // Giữ preview nhưng đánh dấu chưa upload
+          setLessons(prev => prev.map(l =>
+            l.id === lessonId ? { ...l, uploading: false } : l
+          ))
+        } finally {
+          setUploadingLessons(prev => {
+            const updated = { ...prev }
+            delete updated[lesson.lessonId]
+            return updated
+          })
+        }
+      } else {
+        // Nếu chưa có lessonId, hiển thị toast thông báo sẽ upload khi lưu
+        toast({
+          title: "Đã chọn video",
+          description: "Video sẽ được tải lên khi bạn lưu bài học.",
+        })
+      }
+    }
+    
+    // Xử lý tài liệu
+    if (docFiles.length > 0) {
+      setLessons(prev => prev.map(lesson => {
+        if (lesson.id !== lessonId) return lesson
+        return {
+          ...lesson,
           docs: [
             ...(lesson.docs || []),
-            ...docFiles.map(f => ({ name: f.name, size: f.size, url: URL.createObjectURL(f) }))
+            ...docFiles.map(f => ({ name: f.name, size: f.size, url: URL.createObjectURL(f), file: f }))
           ]
         }
-      })
-    }))
-    e.target.value = ''
-  }
-
-  // Handlers cho bài trong chương động
-  const focusDynamicTitle = (chapterId, lessonId) => {
-    const el = document.getElementById(`dyn-${chapterId}-${lessonId}-title`)
-    el?.focus()
-  }
-  const uploadLessonFile = (chapterId, lessonId) => {
-    document.getElementById(`dyn-${chapterId}-${lessonId}-file`)?.click()
-  }
-  const onDynamicFileChange = (chapterId, lessonId, e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const fileUrl = URL.createObjectURL(file)
-    setChapters(prev => prev.map(ch =>
-      ch.id === chapterId
-        ? {
-            ...ch,
-            lessons: ch.lessons.map(lesson =>
-              lesson.id === lessonId ? { ...lesson, fileName: file.name, fileUrl } : lesson
-            )
-          }
-        : ch
-    ))
-  }
-
-  // Upload/Xóa tài liệu cho bài chương động
-  const uploadDynamicDoc = (chapterId, lessonId) => {
-    document.getElementById(`dyn-${chapterId}-${lessonId}-doc`)?.click()
-  }
-  const onDynamicDocChange = (chapterId, lessonId, e) => {
-    const files = Array.from(e.target.files || [])
-    if (!files.length) return
-    setChapters(prev => prev.map(ch =>
-      ch.id === chapterId
-        ? {
-            ...ch,
-            lessons: ch.lessons.map(lesson =>
-              lesson.id === lessonId
-                ? {
-                    ...lesson,
-                    docs: [
-                      ...(lesson.docs || []),
-                      ...files.map(f => ({ name: f.name, size: f.size, url: URL.createObjectURL(f) }))
-                    ]
-                  }
-                : lesson
-            )
-          }
-        : ch
-    ))
-    e.target.value = ''
-  }
-  const deleteDynamicDoc = (chapterId, lessonId, index) => {
-    setChapters(prev => prev.map(ch =>
-      ch.id === chapterId
-        ? {
-            ...ch,
-            lessons: ch.lessons.map(lesson => {
-              if (lesson.id !== lessonId) return lesson
-              const docs = [...(lesson.docs || [])]
-              const removed = docs.splice(index, 1)[0]
-              if (removed?.url) URL.revokeObjectURL(removed.url)
-              return { ...lesson, docs }
-            })
-          }
-        : ch
-    ))
-  }
-
-  // Upload hợp nhất cho bài chương động (video + tài liệu)
-  const uploadDynamicAsset = (chapterId, lessonId) => {
-    document.getElementById(`dyn-${chapterId}-${lessonId}-asset`)?.click()
-  }
-  const onDynamicAssetChange = (chapterId, lessonId, e) => {
-    const files = Array.from(e.target.files || [])
-    if (!files.length) return
-    setChapters(prev => prev.map(ch =>
-      ch.id === chapterId
-        ? {
-            ...ch,
-            lessons: ch.lessons.map(lesson => {
-              if (lesson.id !== lessonId) return lesson
-              const videoFile = files.find(f => f.type?.startsWith('video'))
-              const docFiles = files.filter(f => !f.type?.startsWith('video'))
-              return {
-                ...lesson,
-                ...(videoFile ? { fileName: videoFile.name, fileUrl: URL.createObjectURL(videoFile) } : {}),
-                docs: [
-                  ...(lesson.docs || []),
-                  ...docFiles.map(f => ({ name: f.name, size: f.size, url: URL.createObjectURL(f) }))
-                ]
-              }
-            })
-          }
-        : ch
-    ))
+      }))
+    }
+    
     e.target.value = ''
   }
 
@@ -627,21 +610,8 @@ export default function GiangVienKhoaHocChinhSuaPage() {
               </div>
             )}
 
-            {/* Error state */}
-            {error && !loading && (
-              <div style={{ padding: '40px', textAlign: 'center' }}>
-                <div style={{ fontSize: '18px', color: 'red', marginBottom: '20px' }}>{error}</div>
-                <button
-                  onClick={() => router.push('/giangvien/khoahoc')}
-                  style={{ padding: '10px 20px', background: '#6366f1', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
-                >
-                  Quay lại danh sách khóa học
-                </button>
-              </div>
-            )}
-
             {/* Summary cards */}
-            {!loading && !error && (
+            {!loading && (
               <div className="gvc-summary">
                 {/* Tổng bài học */}
                 <div className="gvc-summary-card blue">
@@ -666,7 +636,7 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                     </svg>
                   </div>
                   <div>
-                    <div className="value">{courseData?.totalLessons || chapters.reduce((sum, ch) => sum + ch.lessons.length, 0)}</div>
+                    <div className="value">{courseData?.totalLessons || lessons.length}</div>
                     <div className="label">Tổng bài học</div>
                   </div>
                 </div>
@@ -679,7 +649,7 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                     </svg>
                   </div>
                   <div>
-                    <div className="value">{chapters.reduce((sum, ch) => sum + ch.lessons.filter(l => l.status === 'published').length, 0)}</div>
+                    <div className="value">{lessons.length}</div>
                     <div className="label">Đã xuất bản</div>
                   </div>
                 </div>
@@ -695,8 +665,8 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                     <div className="value">
                       {courseData?.totalDurationSec 
                         ? `${Math.floor(courseData.totalDurationSec / 60)} phút`
-                        : chapters.reduce((sum, ch) => sum + ch.lessons.reduce((s, l) => s + (l.durationSec || 0), 0), 0) 
-                        ? `${Math.floor(chapters.reduce((sum, ch) => sum + ch.lessons.reduce((s, l) => s + (l.durationSec || 0), 0), 0) / 60)} phút`
+                        : lessons.reduce((sum, l) => sum + (l.durationSec || 0), 0) 
+                        ? `${Math.floor(lessons.reduce((sum, l) => sum + (l.durationSec || 0), 0) / 60)} phút`
                         : '0 phút'}
                     </div>
                     <div className="label">Tổng thời lượng</div>
@@ -752,33 +722,84 @@ export default function GiangVienKhoaHocChinhSuaPage() {
             {/* Tabs */}
             <div className="gvc-tabbar">
               <button className="gvc-tab active">Nội dung</button>
-              <Link href="/giangvien/khoahoc/caidat" className="gvc-tab">Cài đặt</Link>
+              <Link href={`/giangvien/khoahoc/caidat${courseId ? `?courseId=${courseId}` : ''}`} className="gvc-tab">Cài đặt</Link>
             </div>
 
-            {/* Chapters header */}
-           
+            {/* Danh sách bài học */}
+            <div style={{ marginTop: '20px', marginBottom: '20px' }}>
+              <button className="gvc-add-lesson" onClick={addLesson} style={{ marginBottom: '20px' }}>
+                + Thêm bài học
+              </button>
+            </div>
 
-            {/* Chapter 1 */}
-            <div className="gvc-chapter">
-              <div className="gvc-chapter-head">
-                <button className="gvc-expand" onClick={toggleChapter1}>{chapter1Expanded ? '▾' : '▸'}</button>
-                <div className="gvc-chapter-name" onClick={toggleChapter1}>Giới thiệu về React ({chapter1Count} bài)</div>
-                <button className="gvc-add-lesson" onClick={() => addLessonToStatic('chapter1')}>+ Thêm bài</button>
-              </div>
-
-              <div className="gvc-lessons" style={{ display: chapter1Expanded ? undefined : 'none' }}>
-                {/* Lesson 1 */}
-                <div className="gvc-lesson" style={{ display: staticState?.l1?.deleted ? 'none' : undefined }}>
+            {/* Hiển thị bài học trực tiếp, không có chapter wrapper */}
+            <div className="gvc-lessons">
+              {lessons.map((lesson) => (
+                <div className="gvc-lesson" key={lesson.id}>
                   <div className="gvc-lesson-row">
                     <div className="gvc-drag">⋮⋮</div>
-                    <div className="gvc-lesson-desc"><textarea className="gvc-settings-textarea" rows={1} defaultValue="React là gì?" /></div>
-                    <div className="gvc-lesson-actions">
-                      <span className="gvc-pill published">Đã xuất bản</span>
-                      {staticState?.l1?.fileName && (
-                        <span className="gvc-pill">{staticState.l1.fileName}</span>
+                    <div className="gvc-lesson-fields">
+                      <input 
+                        id={`lesson-${lesson.id}-title`}
+                        defaultValue={lesson.title} 
+                        className="gvc-lesson-title-input"
+                        onBlur={(e) => updateLessonTitle(lesson.id, e.target.value)}
+                      />
+                      <div className="gvc-lesson-meta">
+                        <select defaultValue={lesson.type} className="gvc-lesson-type" onChange={(e) => updateFileInputAccept(`lesson-${lesson.id}-asset`, e.target.value)}>
+                          <option>Video</option>
+                          <option>Tài liệu</option>
+                          <option>Bài kiểm tra</option>
+                          <option>Bài tập</option>
+                        </select>
+                        <input defaultValue={lesson.duration} className="gvc-lesson-time" />
+                        <select defaultValue={lesson.support} className="gvc-lesson-select-support">
+                          <option>Tài liệu hỗ trợ</option>
+                          <option>Không</option>
+                        </select>
+                      </div>
+                      <div className="gvc-lesson-desc">
+                        <textarea className="gvc-settings-textarea" placeholder="Mô tả bài học" rows={3} defaultValue={lesson.description || ""} />
+                      </div>
+                      
+                      {/* ✅ Hiển thị video preview ở dưới phần mô tả */}
+                      {lesson.fileUrl && (
+                        <div className="gvc-lesson-preview" style={{ 
+                          marginTop: '16px', 
+                          width: '100%', 
+                          maxWidth: '600px',
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          backgroundColor: '#000'
+                        }}>
+                          <video 
+                            src={lesson.fileUrl} 
+                            controls 
+                            style={{ 
+                              width: '100%', 
+                              borderRadius: '8px',
+                              maxHeight: '400px',
+                              display: 'block'
+                            }} 
+                          />
+                          {lesson.uploading && (
+                            <div style={{ marginTop: '8px', color: '#6366f1', fontSize: '12px' }}>Đang tải lên...</div>
+                          )}
+                        </div>
                       )}
-                      <button className="gvc-icon-btn" title="Sửa" onClick={() => focusStaticTitle('l1')}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 1025 1023">
+                    </div>
+                    <div className="gvc-lesson-actions">
+                      <span className="gvc-pill published">
+                        Đã xuất bản
+                      </span>
+                      {lesson.fileName && <span className="gvc-pill">{lesson.fileName}</span>}
+                      <button className="gvc-icon-btn" title="Sửa" onClick={() => focusDynamicTitle(lesson.id)}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 1025 1023"
+                        >
                           <path
                             fill="#000000"
                             d="
@@ -796,772 +817,8 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                           />
                         </svg>
                       </button>
-
-                      <button className="gvc-icon-btn" title="Upload tệp" onClick={() => uploadStaticAsset('l1')}>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M18.22 20.75H5.78
-        A2.64 2.64 0 0 1 3.25 18v-3
-        a.75.75 0 0 1 1.5 0v3
-        a1.16 1.16 0 0 0 1 1.25h12.47
-        a1.16 1.16 0 0 0 1-1.25v-3
-        a.75.75 0 0 1 1.5 0v3
-        a2.64 2.64 0 0 1-2.5 2.75Z
-        M16 8.75
-        a.74.74 0 0 1-.53-.22L12 5.06L8.53 8.53
-        a.75.75 0 0 1-1.06-1.06l4-4
-        a.75.75 0 0 1 1.06 0l4 4
-        a.75.75 0 0 1 0 1.06
-        a.74.74 0 0 1-.53.22Z
-      "
-    />
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M12 15.75
-        a.76.76 0 0 1-.75-.75V4
-        a.75.75 0 0 1 1.5 0v11
-        a.76.76 0 0 1-.75.75Z
-      "
-    />
-  </svg>
-</button>
-                      <button className="gvc-icon-btn danger" title="Xóa" onClick={() => deleteStaticLesson('l1')}>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 26 26"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="
-        M11.5-.031
-        c-1.958 0-3.531 1.627-3.531 3.594V4H4
-        c-.551 0-1 .449-1 1v1H2v2h2v15
-        c0 1.645 1.355 3 3 3h12
-        c1.645 0 3-1.355 3-3V8h2V6h-1V5
-        c0-.551-.449-1-1-1h-3.969v-.438
-        c0-1.966-1.573-3.593-3.531-3.593h-3z
-
-        m0 2.062h3
-        c.804 0 1.469.656 1.469 1.531V4H10.03v-.438
-        c0-.875.665-1.53 1.469-1.53z
-
-        M6 8h5.125
-        c.124.013.247.031.375.031h3
-        c.128 0 .25-.018.375-.031H20v15
-        c0 .563-.437 1-1 1H7
-        c-.563 0-1-.437-1-1V8z
-
-        m2 2v12h2V10H8z
-        m4 0v12h2V10h-2z
-        m4 0v12h2V10h-2z
-      "
-    />
-  </svg>
-</button>
-                      <input id="static-l1-asset" type="file" multiple accept="video/*" style={{ display: 'none' }} onChange={(e) => onStaticAssetChange('l1', e)} />
-                    </div>
-                  </div>
-                  <div className="gvc-lesson-row">
-                    <div className="gvc-drag"></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
-                      <div className="gvc-lesson-fields">
-                        <div className="gvc-lesson-desc">
-                          <textarea className="gvc-settings-textarea" rows={1} defaultValue="Giới thiệu tổng quan về React" />
-                        </div>
-                        <div className="gvc-lesson-meta">
-                          <select defaultValue="Video" className="gvc-lesson-type" onChange={(e) => updateFileInputAccept('static-l1-asset', e.target.value)}>
-                            <option>Video</option>
-                            <option>Tài liệu</option>
-                            <option>Bài kiểm tra</option>
-                            <option>Bài tập</option>
-                          </select>
-                          <input defaultValue="15:30" className="gvc-lesson-time" />
-                          <select defaultValue="Tài liệu hỗ trợ" className="gvc-lesson-select-support">
-                            <option>Tài liệu hỗ trợ</option>
-                            <option>Không</option>
-                          </select>
-                        </div>
-                        
-                      </div>
-                      <div className="gvc-lesson-actions"></div>
-                    </div>
-                  </div>
-                {staticState?.l1?.docs?.length > 0 && (
-                  <div className="gvc-doc-list" style={{ marginTop: '8px' }}>
-                    <div style={{ color: '#15803d', fontWeight: 600 }}>Danh sách tệp đã tải</div>
-                    <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                      {staticState.l1.docs.map((d, idx) => (
-                        <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
-                          <a href={d.url} target="_blank" rel="noreferrer" className="gvc-link">{d.name}</a>
-                          <span style={{ color: '#6b7280' }}>({(d.size/1024).toFixed(1)} KB)</span>
-                          <button className="gvc-icon-btn danger" title="Xóa" onClick={() => deleteStaticDoc('l1', idx)}>✖</button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {staticState?.l1?.fileUrl && (
-                  <div className="gvc-lesson-preview">
-                    <video src={staticState.l1.fileUrl} controls style={{ width: '100%', borderRadius: '10px' }} />
-                  </div>
-                )}
-                </div>
-
-                {/* Lesson 2 */}
-                <div className="gvc-lesson" style={{ display: staticState?.l2?.deleted ? 'none' : undefined }}>
-                  <div className="gvc-lesson-row">
-                    <div className="gvc-drag">⋮⋮</div>
-                    <div className="gvc-lesson-desc">
-                      <textarea className="gvc-settings-textarea" rows={1} defaultValue="Môi trường phát triển" />
-                    </div>
-                    <div className="gvc-lesson-actions">
-                      <span className="gvc-pill review">Chờ duyệt</span>
-                      {staticState?.l2?.fileName && (
-                        <span className="gvc-pill">{staticState.l2.fileName}</span>
-                      )}
-                      <button className="gvc-icon-btn" title="Sửa" onClick={() => focusStaticTitle('l2')}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 1025 1023">
-                          <path
-                            fill="#000000"
-                            d="
-                              M896.428 1023h-768
-                              q-53 0-90.5-37.5T.428 895V127
-                              q0-53 37.5-90t90.5-37h576l-128 127h-384
-                              q-27 0-45.5 19t-18.5 45v640
-                              q0 27 19 45.5t45 18.5h640
-                              q27 0 45.5-18.5t18.5-45.5V447l128-128v576
-                              q0 53-37.5 90.5t-90.5 37.5zm-576-464l144 144l-208 64zm208 96
-                              l-160-159l479-480
-                              q17-16 40.5-16t40.5 16l79 80
-                              q16 16 16.5 39.5t-16.5 40.5z
-                            "
-                          />
-                        </svg>
-                      </button>
-
-                      <button className="gvc-icon-btn" title="Upload tệp" onClick={() => uploadStaticAsset('l2')}>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M18.22 20.75H5.78
-        A2.64 2.64 0 0 1 3.25 18v-3
-        a.75.75 0 0 1 1.5 0v3
-        a1.16 1.16 0 0 0 1 1.25h12.47
-        a1.16 1.16 0 0 0 1-1.25v-3
-        a.75.75 0 0 1 1.5 0v3
-        a2.64 2.64 0 0 1-2.5 2.75Z
-        M16 8.75
-        a.74.74 0 0 1-.53-.22L12 5.06L8.53 8.53
-        a.75.75 0 0 1-1.06-1.06l4-4
-        a.75.75 0 0 1 1.06 0l4 4
-        a.75.75 0 0 1 0 1.06
-        a.74.74 0 0 1-.53.22Z
-      "
-    />
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M12 15.75
-        a.76.76 0 0 1-.75-.75V4
-        a.75.75 0 0 1 1.5 0v11
-        a.76.76 0 0 1-.75.75Z
-      "
-    />
-  </svg>
-</button>
-                      <button className="gvc-icon-btn danger" title="Xóa" onClick={() => deleteStaticLesson('l2')}>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 26 26"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="
-        M11.5-.031
-        c-1.958 0-3.531 1.627-3.531 3.594V4H4
-        c-.551 0-1 .449-1 1v1H2v2h2v15
-        c0 1.645 1.355 3 3 3h12
-        c1.645 0 3-1.355 3-3V8h2V6h-1V5
-        c0-.551-.449-1-1-1h-3.969v-.438
-        c0-1.966-1.573-3.593-3.531-3.593h-3z
-
-        m0 2.062h3
-        c.804 0 1.469.656 1.469 1.531V4H10.03v-.438
-        c0-.875.665-1.53 1.469-1.53z
-
-        M6 8h5.125
-        c.124.013.247.031.375.031h3
-        c.128 0 .25-.018.375-.031H20v15
-        c0 .563-.437 1-1 1H7
-        c-.563 0-1-.437-1-1V8z
-
-        m2 2v12h2V10H8z
-        m4 0v12h2V10h-2z
-        m4 0v12h2V10h-2z
-      "
-    />
-  </svg>
-</button>
-                      <input id="static-l2-asset" type="file" multiple accept="video/*" style={{ display: 'none' }} onChange={(e) => onStaticAssetChange('l2', e)} />
-                    </div>
-                  </div>
-                  <div className="gvc-lesson-row">
-                    <div className="gvc-drag"></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
-                      <div className="gvc-lesson-fields">
-                        <div className="gvc-lesson-desc">
-                          <textarea className="gvc-settings-textarea" defaultValue="Cài đặt và cấu hình" rows={1} />
-                        </div>
-                        <div className="gvc-lesson-meta">
-                          <select defaultValue="Video" className="gvc-lesson-type" onChange={(e) => updateFileInputAccept('static-l2-asset', e.target.value)}>
-                            <option>Video</option>
-                            <option>Tài liệu</option>
-                            <option>Bài kiểm tra</option>
-                            <option>Bài tập</option>
-                          </select>
-                          <input defaultValue="10:00" className="gvc-lesson-time" />
-                          <select defaultValue="Tài liệu hỗ trợ" className="gvc-lesson-select-support">
-                            <option>Tài liệu hỗ trợ</option>
-                            <option>Không</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="gvc-lesson-actions"></div>
-                    </div>
-                  </div>
-                {staticState?.l2?.docs?.length > 0 && (
-                  <div className="gvc-doc-list" style={{ marginTop: '8px' }}>
-                    <div style={{ color: '#15803d', fontWeight: 600 }}>Danh sách tệp đã tải</div>
-                    <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                      {staticState.l2.docs.map((d, idx) => (
-                        <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
-                          <a href={d.url} target="_blank" rel="noreferrer" className="gvc-link">{d.name}</a>
-                          <span style={{ color: '#6b7280' }}>({(d.size/1024).toFixed(1)} KB)</span>
-                          <button className="gvc-icon-btn danger" title="Xóa" onClick={() => deleteStaticDoc('l2', idx)}>✖</button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {staticState?.l2?.fileUrl && (
-                  <div className="gvc-lesson-preview">
-                    <video src={staticState.l2.fileUrl} controls style={{ width: '100%', borderRadius: '10px' }} />
-                  </div>
-                )}
-                </div>
-                {/* Bài học thêm mới cho Chapter 1 */}
-                {chapter1Expanded && extraLessons.chapter1.length > 0 && (
-                  <div className="gvc-lessons">
-                    {extraLessons.chapter1.map((lesson) => (
-                      <div className="gvc-lesson" key={lesson.id}>
-                        <div className="gvc-lesson-row">
-                          <div className="gvc-drag">⋮⋮</div>
-                          <div className="gvc-lesson-fields">
-                            <input id={`extra-chapter1-${lesson.id}-title`} defaultValue={lesson.title} className="gvc-lesson-title-input" />
-                            <div className="gvc-lesson-meta">
-                              <select defaultValue={lesson.type} className="gvc-lesson-type" onChange={(e) => updateFileInputAccept(`extra-chapter1-${lesson.id}-asset`, e.target.value)}>
-                                <option>Video</option>
-                                <option>Tài liệu</option>
-                                <option>Bài kiểm tra</option>
-                                <option>Bài tập</option>
-                              </select>
-                              <input defaultValue={lesson.duration} className="gvc-lesson-time" />
-                              <select defaultValue={lesson.support} className="gvc-lesson-select-support">
-                                <option>Tài liệu hỗ trợ</option>
-                                <option>Không</option>
-                              </select>
-                            </div>
-                            <div className="gvc-lesson-desc">
-                              <textarea className="gvc-settings-textarea" placeholder="Mô tả bài học" rows={3} defaultValue={lesson.description || ""} />
-                            </div>
-                          </div>
-                          <div className="gvc-lesson-actions">
-                            <span className={`gvc-pill ${lesson.status === 'draft' ? 'draft' : 'published'}`}>
-                              {lesson.status === 'draft' ? 'Nháp' : 'Đã xuất bản'}
-                            </span>
-                            {lesson.fileName && <span className="gvc-pill">{lesson.fileName}</span>}
-                            {lesson.docs?.length > 0 && (
-                              <div className="gvc-doc-list" style={{ gridColumn: '1 / -1', width: '100%' }}>
-                                <div style={{ color: '#15803d', fontWeight: 600 }}>Danh sách tệp đã tải</div>
-                                <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                                  {lesson.docs.map((d, idx) => (
-                                    <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
-                                      <a href={d.url} target="_blank" rel="noreferrer" className="gvc-link">{d.name}</a>
-                                      <span style={{ color: '#6b7280' }}>({(d.size/1024).toFixed(1)} KB)</span>
-                                      <button className="gvc-icon-btn danger" title="Xóa" onClick={() => deleteExtraDoc('chapter1', lesson.id, idx)}>✖</button>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            {lesson.docs?.length > 0 && (
-                              <div className="gvc-doc-list" style={{ gridColumn: '1 / -1', width: '100%' }}>
-                                <div style={{ color: '#15803d', fontWeight: 600 }}>Danh sách tệp đã tải</div>
-                                <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                                  {lesson.docs.map((d, idx) => (
-                                    <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
-                                      <a href={d.url} target="_blank" rel="noreferrer" className="gvc-link">{d.name}</a>
-                                      <span style={{ color: '#6b7280' }}>({(d.size/1024).toFixed(1)} KB)</span>
-                                      <button className="gvc-icon-btn danger" title="Xóa" onClick={() => deleteDynamicDoc(ch.id, lesson.id, idx)}>✖</button>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            {lesson.fileUrl && (
-                              <div className="gvc-lesson-preview" style={{ gridColumn: '1 / -1', width: '100%' }}>
-                                <video src={lesson.fileUrl} controls style={{ width: '100%', borderRadius: '10px' }} />
-                              </div>
-                            )}
-                            <button className="gvc-icon-btn" title="Sửa" onClick={() => focusExtraTitle('chapter1', lesson.id)}>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 1025 1023">
-                                <path
-                                  fill="#000000"
-                                  d="
-                                    M896.428 1023h-768
-                                    q-53 0-90.5-37.5T.428 895V127
-                                    q0-53 37.5-90t90.5-37h576l-128 127h-384
-                                    q-27 0-45.5 19t-18.5 45v640
-                                    q0 27 19 45.5t45 18.5h640
-                                    q27 0 45.5-18.5t18.5-45.5V447l128-128v576
-                                    q0 53-37.5 90.5t-90.5 37.5zm-576-464l144 144l-208 64zm208 96
-                                    l-160-159l479-480
-                                    q17-16 40.5-16t40.5 16l79 80
-                                    q16 16 16.5 39.5t-16.5 40.5z
-                                  "
-                                />
-                              </svg>
-                            </button>
-                            <button className="gvc-icon-btn" title="Upload tệp" onClick={() => uploadExtraAsset('chapter1', lesson.id)}>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M18.22 20.75H5.78
-        A2.64 2.64 0 0 1 3.25 18v-3
-        a.75.75 0 0 1 1.5 0v3
-        a1.16 1.16 0 0 0 1 1.25h12.47
-        a1.16 1.16 0 0 0 1-1.25v-3
-        a.75.75 0 0 1 1.5 0v3
-        a2.64 2.64 0 0 1-2.5 2.75Z
-        M16 8.75
-        a.74.74 0 0 1-.53-.22L12 5.06L8.53 8.53
-        a.75.75 0 0 1-1.06-1.06l4-4
-        a.75.75 0 0 1 1.06 0l4 4
-        a.75.75 0 0 1 0 1.06
-        a.74.74 0 0 1-.53.22Z
-      "
-    />
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M12 15.75
-        a.76.76 0 0 1-.75-.75V4
-        a.75.75 0 0 1 1.5 0v11
-        a.76.76 0 0 1-.75.75Z
-      "
-    />
-  </svg>
-</button>
-                            <button className="gvc-icon-btn danger" title="Xóa" onClick={() => deleteExtraLesson('chapter1', lesson.id)}>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 26 26"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="
-        M11.5-.031
-        c-1.958 0-3.531 1.627-3.531 3.594V4H4
-        c-.551 0-1 .449-1 1v1H2v2h2v15
-        c0 1.645 1.355 3 3 3h12
-        c1.645 0 3-1.355 3-3V8h2V6h-1V5
-        c0-.551-.449-1-1-1h-3.969v-.438
-        c0-1.966-1.573-3.593-3.531-3.593h-3z
-
-        m0 2.062h3
-        c.804 0 1.469.656 1.469 1.531V4H10.03v-.438
-        c0-.875.665-1.53 1.469-1.53z
-
-        M6 8h5.125
-        c.124.013.247.031.375.031h3
-        c.128 0 .25-.018.375-.031H20v15
-        c0 .563-.437 1-1 1H7
-        c-.563 0-1-.437-1-1V8z
-
-        m2 2v12h2V10H8z
-        m4 0v12h2V10h-2z
-        m4 0v12h2V10h-2z
-      "
-    />
-  </svg>
-</button>
-                            <input id={`extra-chapter1-${lesson.id}-asset`} type="file" multiple accept="video/*" style={{ display: 'none' }} onChange={(e) => onExtraAssetChange('chapter1', lesson.id, e)} />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Chapter 2 (removed) */}
-            <div className="gvc-chapter" style={{ display: 'none' }}>
-              <div className="gvc-chapter-head">
-                <button className="gvc-expand">▸</button>
-                <div className="gvc-chapter-name">Components và Props (2 bài)</div>
-                <button className="gvc-add-lesson" onClick={() => addLessonToStatic('chapter2')}>+ Thêm bài</button>
-              </div>
-              {/* Bài học thêm mới cho Chapter 2 */}
-              {extraLessons.chapter2.length > 0 && (
-                <div className="gvc-lessons">
-                  {extraLessons.chapter2.map((lesson) => (
-                    <div className="gvc-lesson" key={lesson.id}>
-                      <div className="gvc-lesson-row">
-                        <div className="gvc-drag">⋮⋮</div>
-                        <div className="gvc-lesson-fields">
-                          <input id={`extra-chapter2-${lesson.id}-title`} defaultValue={lesson.title} className="gvc-lesson-title-input" />
-                          <div className="gvc-lesson-meta">
-                            <select defaultValue={lesson.type} className="gvc-lesson-type" onChange={(e) => updateFileInputAccept(`extra-chapter2-${lesson.id}-asset`, e.target.value)}>
-                              <option>Video</option>
-                              <option>Tài liệu</option>
-                              <option>Bài kiểm tra</option>
-                              <option>Bài tập</option>
-                            </select>
-                            <input defaultValue={lesson.duration} className="gvc-lesson-time" />
-                            <select defaultValue={lesson.support} className="gvc-lesson-select-support">
-                              <option>Tài liệu hỗ trợ</option>
-                              <option>Không</option>
-                            </select>
-                          </div>
-                          <div className="gvc-lesson-desc">
-                            <textarea className="gvc-settings-textarea" placeholder="Mô tả bài học" rows={3} defaultValue={lesson.description || ""} />
-                          </div>
-                        </div>
-                        <div className="gvc-lesson-actions">
-                            <span className={`gvc-pill ${lesson.status === 'draft' ? 'draft' : 'published'}`}>
-                              {lesson.status === 'draft' ? 'Nháp' : 'Đã xuất bản'}
-                            </span>
-                            {lesson.fileName && <span className="gvc-pill">{lesson.fileName}</span>}
-                            {lesson.docs?.length > 0 && (
-                              <div className="gvc-doc-list" style={{ gridColumn: '1 / -1', width: '100%' }}>
-                                <div style={{ color: '#15803d', fontWeight: 600 }}>Danh sách tệp đã tải</div>
-                                <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                                  {lesson.docs.map((d, idx) => (
-                                    <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
-                                      <a href={d.url} target="_blank" rel="noreferrer" className="gvc-link">{d.name}</a>
-                                      <span style={{ color: '#6b7280' }}>({(d.size/1024).toFixed(1)} KB)</span>
-                                      <button className="gvc-icon-btn danger" title="Xóa" onClick={() => deleteExtraDoc('chapter2', lesson.id, idx)}>✖</button>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                            {lesson.fileUrl && (
-                              <div className="gvc-lesson-preview" style={{ gridColumn: '1 / -1', width: '100%' }}>
-                                <video src={lesson.fileUrl} controls style={{ width: '100%', borderRadius: '10px' }} />
-                              </div>
-                            )}
-                            <button className="gvc-icon-btn" title="Sửa" onClick={() => focusExtraTitle('chapter2', lesson.id)}>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 1025 1023"
-                              >
-                                <path
-                                  fill="#000000"
-                                  d="
-                                    M896.428 1023h-768
-                                    q-53 0-90.5-37.5T.428 895V127
-                                    q0-53 37.5-90t90.5-37h576l-128 127h-384
-                                    q-27 0-45.5 19t-18.5 45v640
-                                    q0 27 19 45.5t45 18.5h640
-                                    q27 0 45.5-18.5t18.5-45.5V447l128-128v576
-                                    q0 53-37.5 90.5t-90.5 37.5zm-576-464l144 144l-208 64zm208 96
-                                    l-160-159l479-480
-                                    q17-16 40.5-16t40.5 16l79 80
-                                    q16 16 16.5 39.5t-16.5 40.5z
-                                  "
-                                />
-                              </svg>
-                            </button>
-                            <button className="gvc-icon-btn" title="Upload tệp" onClick={() => uploadExtraAsset('chapter2', lesson.id)}>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M18.22 20.75H5.78
-        A2.64 2.64 0 0 1 3.25 18v-3
-        a.75.75 0 0 1 1.5 0v3
-        a1.16 1.16 0 0 0 1 1.25h12.47
-        a1.16 1.16 0 0 0 1-1.25v-3
-        a.75.75 0 0 1 1.5 0v3
-        a2.64 2.64 0 0 1-2.5 2.75Z
-        M16 8.75
-        a.74.74 0 0 1-.53-.22L12 5.06L8.53 8.53
-        a.75.75 0 0 1-1.06-1.06l4-4
-        a.75.75 0 0 1 1.06 0l4 4
-        a.75.75 0 0 1 0 1.06
-        a.74.74 0 0 1-.53.22Z
-      "
-    />
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M12 15.75
-        a.76.76 0 0 1-.75-.75V4
-        a.75.75 0 0 1 1.5 0v11
-        a.76.76 0 0 1-.75.75Z
-      "
-    />
-  </svg>
-</button>
-                            <button className="gvc-icon-btn danger" title="Xóa" onClick={() => deleteExtraLesson('chapter2', lesson.id)}>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 26 26"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="
-        M11.5-.031
-        c-1.958 0-3.531 1.627-3.531 3.594V4H4
-        c-.551 0-1 .449-1 1v1H2v2h2v15
-        c0 1.645 1.355 3 3 3h12
-        c1.645 0 3-1.355 3-3V8h2V6h-1V5
-        c0-.551-.449-1-1-1h-3.969v-.438
-        c0-1.966-1.573-3.593-3.531-3.593h-3z
-
-        m0 2.062h3
-        c.804 0 1.469.656 1.469 1.531V4H10.03v-.438
-        c0-.875.665-1.53 1.469-1.53z
-
-        M6 8h5.125
-        c.124.013.247.031.375.031h3
-        c.128 0 .25-.018.375-.031H20v15
-        c0 .563-.437 1-1 1H7
-        c-.563 0-1-.437-1-1V8z
-
-        m2 2v12h2V10H8z
-        m4 0v12h2V10h-2z
-        m4 0v12h2V10h-2z
-      "
-    />
-  </svg>
-</button>
-                            <input id={`extra-chapter2-${lesson.id}-asset`} type="file" multiple accept="video/*" style={{ display: 'none' }} onChange={(e) => onExtraAssetChange('chapter2', lesson.id, e)} />
-                          </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Các chương được thêm mới */}
-            {chapters.map((ch) => (
-              <div className="gvc-chapter" key={ch.id}>
-                <div className="gvc-chapter-head">
-                  <button className="gvc-expand" onClick={() => toggleChapter(ch.id)}>
-                    {ch.expanded ? "▾" : "▸"}
-                  </button>
-                  {ch.isEditing ? (
-                    <input 
-                      className="gvc-chapter-name-input"
-                      defaultValue={ch.title}
-                      onBlur={(e) => updateChapterTitle(ch.id, e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          updateChapterTitle(ch.id, e.target.value)
-                        }
-                      }}
-                      autoFocus
-                    />
-                  ) : (
-                    <div 
-                      className="gvc-chapter-name" 
-                      onClick={() => startEditingChapter(ch.id)}
-                    >
-                      {ch.title} ({ch.lessons.length} bài)
-                    </div>
-                  )}
-                  <div className="gvc-chapter-actions">
-                    <button className="gvc-add-lesson" onClick={() => addLesson(ch.id)}>
-                      + Thêm bài
-                    </button>
-                    <button className="gvc-icon-btn danger" onClick={() => deleteChapter(ch.id)} title="Xóa chương">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 26 26"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="
-        M11.5-.031
-        c-1.958 0-3.531 1.627-3.531 3.594V4H4
-        c-.551 0-1 .449-1 1v1H2v2h2v15
-        c0 1.645 1.355 3 3 3h12
-        c1.645 0 3-1.355 3-3V8h2V6h-1V5
-        c0-.551-.449-1-1-1h-3.969v-.438
-        c0-1.966-1.573-3.593-3.531-3.593h-3z
-
-        m0 2.062h3
-        c.804 0 1.469.656 1.469 1.531V4H10.03v-.438
-        c0-.875.665-1.53 1.469-1.53z
-
-        M6 8h5.125
-        c.124.013.247.031.375.031h3
-        c.128 0 .25-.018.375-.031H20v15
-        c0 .563-.437 1-1 1H7
-        c-.563 0-1-.437-1-1V8z
-
-        m2 2v12h2V10H8z
-        m4 0v12h2V10h-2z
-        m4 0v12h2V10h-2z
-      "
-    />
-  </svg>
-</button>
-                  </div>
-                </div>
                 
-                {ch.expanded && (
-                  <div className="gvc-lessons">
-                    {ch.lessons.map((lesson) => (
-                      <div className="gvc-lesson" key={lesson.id}>
-                        <div className="gvc-lesson-row">
-                          <div className="gvc-drag">⋮⋮</div>
-                          <div className="gvc-lesson-fields">
-                            <input 
-                              id={`dyn-${ch.id}-${lesson.id}-title`}
-                              defaultValue={lesson.title} 
-                              className="gvc-lesson-title-input"
-                              onBlur={(e) => updateLessonTitle(ch.id, lesson.id, e.target.value)}
-                            />
-                            <div className="gvc-lesson-meta">
-                              <select defaultValue={lesson.type} className="gvc-lesson-type" onChange={(e) => updateFileInputAccept(`dyn-${ch.id}-${lesson.id}-asset`, e.target.value)}>
-                                <option>Video</option>
-                                <option>Tài liệu</option>
-                                <option>Bài kiểm tra</option>
-                                <option>Bài tập</option>
-                              </select>
-                              <input defaultValue={lesson.duration} className="gvc-lesson-time" />
-                              <select defaultValue={lesson.support} className="gvc-lesson-select-support">
-                                <option>Tài liệu hỗ trợ</option>
-                                <option>Không</option>
-                              </select>
-                            </div>
-                            <div className="gvc-lesson-desc">
-                              <textarea className="gvc-settings-textarea" placeholder="Mô tả bài học" rows={3} defaultValue={lesson.description || ""} />
-                            </div>
-                          </div>
-                          <div className="gvc-lesson-actions">
-                            <span className={`gvc-pill ${lesson.status === 'draft' ? 'draft' : 'published'}`}>
-                              {lesson.status === 'draft' ? 'Nháp' : 'Đã xuất bản'}
-                            </span>
-                            {lesson.fileName && <span className="gvc-pill">{lesson.fileName}</span>}
-                            {lesson.fileUrl && (
-                              <div className="gvc-lesson-preview" style={{ gridColumn: '1 / -1', width: '100%' }}>
-                                <video src={lesson.fileUrl} controls style={{ width: '100%', borderRadius: '10px' }} />
-                              </div>
-                            )}
-                            <button className="gvc-icon-btn" title="Sửa" onClick={() => focusDynamicTitle(ch.id, lesson.id)}>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 1025 1023"
-                              >
-                                <path
-                                  fill="#000000"
-                                  d="
-                                    M896.428 1023h-768
-                                    q-53 0-90.5-37.5T.428 895V127
-                                    q0-53 37.5-90t90.5-37h576l-128 127h-384
-                                    q-27 0-45.5 19t-18.5 45v640
-                                    q0 27 19 45.5t45 18.5h640
-                                    q27 0 45.5-18.5t18.5-45.5V447l128-128v576
-                                    q0 53-37.5 90.5t-90.5 37.5zm-576-464l144 144l-208 64zm208 96
-                                    l-160-159l479-480
-                                    q17-16 40.5-16t40.5 16l79 80
-                                    q16 16 16.5 39.5t-16.5 40.5z
-                                  "
-                                />
-                              </svg>
-                            </button>
-                            <button className="gvc-icon-btn" title="Upload file" onClick={() => uploadLessonFile(ch.id, lesson.id)}>
+                      <button className="gvc-icon-btn" title="Upload tệp" onClick={() => uploadDynamicAsset(lesson.id)}>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="18"
@@ -1601,51 +858,11 @@ export default function GiangVienKhoaHocChinhSuaPage() {
     />
   </svg>
 </button>
-                            <button className="gvc-icon-btn" title="Upload tệp" onClick={() => uploadDynamicAsset(ch.id, lesson.id)}>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M18.22 20.75H5.78
-        A2.64 2.64 0 0 1 3.25 18v-3
-        a.75.75 0 0 1 1.5 0v3
-        a1.16 1.16 0 0 0 1 1.25h12.47
-        a1.16 1.16 0 0 0 1-1.25v-3
-        a.75.75 0 0 1 1.5 0v3
-        a2.64 2.64 0 0 1-2.5 2.75Z
-        M16 8.75
-        a.74.74 0 0 1-.53-.22L12 5.06L8.53 8.53
-        a.75.75 0 0 1-1.06-1.06l4-4
-        a.75.75 0 0 1 1.06 0l4 4
-        a.75.75 0 0 1 0 1.06
-        a.74.74 0 0 1-.53.22Z
-      "
-    />
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M12 15.75
-        a.76.76 0 0 1-.75-.75V4
-        a.75.75 0 0 1 1.5 0v11
-        a.76.76 0 0 1-.75.75Z
-      "
-    />
-  </svg>
-</button>
-                            <button 
-                              className="gvc-icon-btn danger" 
-                              title="Xóa"
-                              onClick={() => handleDeleteLesson(ch.id, lesson.id)}
-                            >
+                      <button 
+                        className="gvc-icon-btn danger" 
+                        title="Xóa"
+                        onClick={() => handleDeleteLesson(lesson.id)}
+                      >
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="18"
@@ -1683,25 +900,22 @@ export default function GiangVienKhoaHocChinhSuaPage() {
       "
     />
   </svg>
-                            </button>
-                            <input id={`dyn-${ch.id}-${lesson.id}-asset`} type="file" multiple accept="video/*" style={{ display: 'none' }} onChange={(e) => onDynamicAssetChange(ch.id, lesson.id, e)} />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                      </button>
+                      <input id={`lesson-${lesson.id}-asset`} type="file" multiple accept="video/*" style={{ display: 'none' }} onChange={(e) => onDynamicAssetChange(lesson.id, e)} />
+                    </div>
                   </div>
-                )}
-              </div>
-            ))}
-            {!loading && !error && (
+                </div>
+              ))}
+            </div>
+            {!loading && (
               <div className="gvc-settings-actions">
                 <button 
                   className="gvc-save-btn" 
                   onClick={saveSettings}
-                  disabled={loading || chapters.length === 0}
+                  disabled={loading || lessons.length === 0}
                   style={{
-                    opacity: (loading || chapters.length === 0) ? 0.6 : 1,
-                    cursor: (loading || chapters.length === 0) ? 'not-allowed' : 'pointer'
+                    opacity: (loading || lessons.length === 0) ? 0.6 : 1,
+                    cursor: (loading || lessons.length === 0) ? 'not-allowed' : 'pointer'
                   }}
                 >
                   {loading ? 'Đang lưu...' : 'Lưu cài đặt'}

@@ -74,11 +74,23 @@ export default function GiangVienKhoaHocPage() {
     } catch (err) {
       console.error('Error loading courses:', err)
       const errorMessage = err.message || "Có lỗi xảy ra khi tải khóa học"
-      setError(errorMessage)
       
-      // Nếu lỗi 401, có thể cần đăng nhập lại
-      if (errorMessage.includes("401") || errorMessage.includes("không hợp lệ") || errorMessage.includes("hết hạn")) {
-        console.warn("⚠️ Token không hợp lệ, người dùng cần đăng nhập lại")
+      // ✅ Kiểm tra nếu đây là trường hợp giảng viên chưa có khóa học (không phải lỗi)
+      if (errorMessage.includes("404") && 
+          (errorMessage.includes("Bạn chưa có khóa học nào") || 
+           errorMessage.includes("chưa có khóa học") ||
+           errorMessage.includes("Không tìm thấy"))) {
+        // Đây không phải lỗi, chỉ là giảng viên chưa tạo khóa học nào
+        setCourses([])
+        setError(null) // Không set error để không hiển thị phần lỗi
+        console.log("ℹ️ Giảng viên chưa có khóa học nào - đây là trạng thái bình thường")
+      } else {
+        // Đây là lỗi thật sự
+        setError(errorMessage)
+        // Nếu lỗi 401, có thể cần đăng nhập lại
+        if (errorMessage.includes("401") || errorMessage.includes("không hợp lệ") || errorMessage.includes("hết hạn")) {
+          console.warn("⚠️ Token không hợp lệ, người dùng cần đăng nhập lại")
+        }
       }
     } finally {
       setLoading(false)
@@ -306,21 +318,68 @@ export default function GiangVienKhoaHocPage() {
                 </div>
               </div>
             ) : courses.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem' }}>
-                <p style={{ marginBottom: '1rem' }}>Chưa có khóa học nào</p>
-                <Link 
-                  href="/giangvien/khoahoc/tao"
-                  style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#28a745',
-                    color: 'white',
-                    textDecoration: 'none',
-                    borderRadius: '4px',
-                    display: 'inline-block'
-                  }}
-                >
-                  Tạo khóa học
-                </Link>
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '3rem 2rem',
+                maxWidth: '600px',
+                margin: '0 auto'
+              }}>
+                <div style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  borderRadius: '16px',
+                  padding: '3rem 2rem',
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+                  marginBottom: '2rem'
+                }}>
+                  <div style={{
+                    fontSize: '4rem',
+                    marginBottom: '1rem',
+                    animation: 'bounce 2s ease-in-out infinite'
+                  }}>
+                    📚
+                  </div>
+                  <h2 style={{ 
+                    color: '#fff', 
+                    fontSize: '1.5rem',
+                    fontWeight: '600',
+                    marginBottom: '0.5rem'
+                  }}>
+                    Bạn chưa tạo khóa học nào
+                  </h2>
+                  <p style={{ 
+                    color: 'rgba(255,255,255,0.9)', 
+                    fontSize: '1rem',
+                    marginBottom: '2rem',
+                    lineHeight: '1.6'
+                  }}>
+                    Hãy bắt đầu tạo khóa học đầu tiên của bạn để chia sẻ kiến thức với học viên!
+                  </p>
+                  <Link 
+                    href="/giangvien/khoahoc/tao"
+                    style={{
+                      padding: '12px 32px',
+                      backgroundColor: '#fff',
+                      color: '#667eea',
+                      textDecoration: 'none',
+                      borderRadius: '8px',
+                      display: 'inline-block',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.transform = 'translateY(-2px)'
+                      e.target.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.transform = 'translateY(0)'
+                      e.target.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)'
+                    }}
+                  >
+                    ➕ Tạo khóa học ngay
+                  </Link>
+                </div>
               </div>
             ) : (
               courses.map((c, i) => (

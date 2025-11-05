@@ -437,6 +437,7 @@ export const getLessonsByCourse = async (courseId, token) => {
     throw new Error("CourseId không hợp lệ.");
   }
 
+  // ✅ Thử endpoint chính trước
   try {
     console.log("📤 GET Lessons for course:", courseId);
 
@@ -459,6 +460,17 @@ export const getLessonsByCourse = async (courseId, token) => {
         console.error("❌ 404 Not Found:", errorText);
         throw new Error("Không tìm thấy khóa học hoặc bạn không có quyền truy cập.");
       }
+      // ✅ Xử lý lỗi 500 từ backend (do backend cố truy cập Status không tồn tại)
+      if (response.status === 500) {
+        const errorText = await response.text();
+        console.error("❌ 500 Server Error:", errorText);
+        // Nếu là lỗi về Status, thử endpoint alternative
+        if (errorText.includes('Status') || errorText.includes('RuntimeBinderException')) {
+          console.warn("⚠️ Backend error về Status field - thử endpoint alternative...");
+          throw new Error("STATUS_ERROR"); // Throw error đặc biệt để catch block biết là cần thử endpoint khác
+        }
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+      }
       const errorText = await response.text();
       console.error("❌ API Error:", response.status, errorText);
       throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
@@ -467,6 +479,73 @@ export const getLessonsByCourse = async (courseId, token) => {
     const data = await response.json();
     return data;
   } catch (error) {
+    // ✅ Nếu là lỗi Status, thử endpoint alternative
+    if (error.message === "STATUS_ERROR" || (error.message.includes('Status') || error.message.includes('RuntimeBinderException'))) {
+      console.log("🔄 Thử endpoint alternative: /Lessons/ByCourse");
+      
+      try {
+        // Thử với port 3001 (instructor API)
+        const altResponse = await fetch(`${API_URL}/Lessons/ByCourse/${courseId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (altResponse.ok) {
+          const altData = await altResponse.json()
+          console.log("✅ Lessons loaded from alternative endpoint:", altData)
+          
+          // Format lại để giống với response từ endpoint chính
+          const formattedLessons = Array.isArray(altData) ? altData : []
+          return {
+            CourseId: courseId,
+            courseId: courseId,
+            Lessons: formattedLessons,
+            lessons: formattedLessons,
+            TotalLessons: formattedLessons.length,
+            totalLessons: formattedLessons.length,
+            TotalDurationSec: formattedLessons.reduce((sum, l) => sum + (l.DurationSec || l.durationSec || 0), 0),
+            totalDurationSec: formattedLessons.reduce((sum, l) => sum + (l.DurationSec || l.durationSec || 0), 0)
+          }
+        }
+        
+        // Nếu port 3001 không được, thử port 7025 (public API)
+        console.log("🔄 Thử endpoint alternative với port 7025...")
+        const altResponse2 = await fetch(`https://localhost:7025/api/Lessons/ByCourse/${courseId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (altResponse2.ok) {
+          const altData2 = await altResponse2.json()
+          console.log("✅ Lessons loaded from alternative endpoint (7025):", altData2)
+          
+          const formattedLessons = Array.isArray(altData2) ? altData2 : []
+          return {
+            CourseId: courseId,
+            courseId: courseId,
+            Lessons: formattedLessons,
+            lessons: formattedLessons,
+            TotalLessons: formattedLessons.length,
+            totalLessons: formattedLessons.length,
+            TotalDurationSec: formattedLessons.reduce((sum, l) => sum + (l.DurationSec || l.durationSec || 0), 0),
+            totalDurationSec: formattedLessons.reduce((sum, l) => sum + (l.DurationSec || l.durationSec || 0), 0)
+          }
+        }
+        
+        console.warn("⚠️ Cả hai endpoint alternative đều failed, trả về empty array")
+        return { Lessons: [], lessons: [], CourseId: courseId, courseId: courseId };
+      } catch (altErr) {
+        console.error("❌ Alternative endpoints also failed:", altErr);
+        // Trả về empty array để UI vẫn hoạt động
+        return { Lessons: [], lessons: [], CourseId: courseId, courseId: courseId };
+      }
+    }
+    
     console.error('Error fetching lessons:', error);
     throw error;
   }
@@ -774,6 +853,193 @@ export const autoReplyReview = async (reviewId, token) => {
     return data;
   } catch (error) {
     console.error('Error auto replying review:', error);
+    throw error;
+  }
+};
+
+// ========== LESSON MANAGEMENT APIs ==========
+
+// Get lesson progress summary (Thông tin tiến độ bài học)
+export const getLessonProgressSummary = async (courseId, token) => {
+  if (!token) {
+    throw new Error("Không có token xác thực. Vui lòng đăng nhập lại.");
+  }
+
+  if (!courseId) {
+    throw new Error("CourseId không hợp lệ.");
+  }
+
+  try {
+    console.log("📤 GET Lesson progress summary for course:", courseId);
+
+    const response = await fetch(`${API_URL}/Lesson/Get/${courseId}/Thong_tin_tien_do_bai_hoc`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        const errorText = await response.text();
+        console.error("❌ 401 Unauthorized:", errorText);
+        throw new Error("Token không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.");
+      }
+      if (response.status === 404) {
+        const errorText = await response.text();
+        console.error("❌ 404 Not Found:", errorText);
+        throw new Error("Không tìm thấy khóa học hoặc bạn không có quyền truy cập.");
+      }
+      const errorText = await response.text();
+      console.error("❌ API Error:", response.status, errorText);
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error getting lesson progress summary:', error);
+    throw error;
+  }
+};
+
+// Patch course settings (Cập nhật cài đặt khóa học)
+export const patchCourseSettings = async (courseId, settingsData, token) => {
+  if (!token) {
+    throw new Error("Không có token xác thực. Vui lòng đăng nhập lại.");
+  }
+
+  if (!courseId) {
+    throw new Error("CourseId không hợp lệ.");
+  }
+
+  try {
+    console.log("📤 PATCH Course settings:", { courseId, settingsData });
+
+    const response = await fetch(`${API_URL}/Lesson/update/${courseId}/Cap_nhap_bai_hoc_Cai_Dat`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(settingsData),
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        const errorText = await response.text();
+        console.error("❌ 401 Unauthorized:", errorText);
+        throw new Error("Token không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.");
+      }
+      if (response.status === 404) {
+        const errorText = await response.text();
+        console.error("❌ 404 Not Found:", errorText);
+        throw new Error("Không tìm thấy khóa học hoặc bạn không có quyền chỉnh sửa.");
+      }
+      const errorText = await response.text();
+      console.error("❌ API Error:", response.status, errorText);
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log("✅ Course settings updated:", data);
+    return data;
+  } catch (error) {
+    console.error('Error updating course settings:', error);
+    throw error;
+  }
+};
+
+// Create new lesson (Tạo bài học mới)
+export const createLesson = async (courseId, lessonData, token) => {
+  if (!token) {
+    throw new Error("Không có token xác thực. Vui lòng đăng nhập lại.");
+  }
+
+  if (!courseId) {
+    throw new Error("CourseId không hợp lệ.");
+  }
+
+  try {
+    console.log("📤 POST Create lesson:", { courseId, lessonData });
+
+    const response = await fetch(`${API_URL}/Lesson/Post/courses/${courseId}/lessons/Tao_bai_hoc_moi`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(lessonData),
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        const errorText = await response.text();
+        console.error("❌ 401 Unauthorized:", errorText);
+        throw new Error("Token không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.");
+      }
+      if (response.status === 404) {
+        const errorText = await response.text();
+        console.error("❌ 404 Not Found:", errorText);
+        throw new Error("Không tìm thấy khóa học hoặc bạn không có quyền thêm bài học.");
+      }
+      const errorText = await response.text();
+      console.error("❌ API Error:", response.status, errorText);
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log("✅ Lesson created:", data);
+    return data;
+  } catch (error) {
+    console.error('Error creating lesson:', error);
+    throw error;
+  }
+};
+
+// Delete all lessons (Xóa toàn bộ bài học)
+export const deleteAllLessons = async (courseId, token) => {
+  if (!token) {
+    throw new Error("Không có token xác thực. Vui lòng đăng nhập lại.");
+  }
+
+  if (!courseId) {
+    throw new Error("CourseId không hợp lệ.");
+  }
+
+  try {
+    console.log("🗑️ DELETE All lessons for course:", courseId);
+
+    const response = await fetch(`${API_URL}/Lesson/courses/${courseId}/lessons/all/Xoa_toan_bo_bai_hoc`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        const errorText = await response.text();
+        console.error("❌ 401 Unauthorized:", errorText);
+        throw new Error("Token không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.");
+      }
+      if (response.status === 404) {
+        const errorText = await response.text();
+        console.error("❌ 404 Not Found:", errorText);
+        throw new Error("Không tìm thấy khóa học hoặc bạn không có quyền xóa.");
+      }
+      const errorText = await response.text();
+      console.error("❌ API Error:", response.status, errorText);
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log("✅ All lessons deleted:", data);
+    return data;
+  } catch (error) {
+    console.error('Error deleting all lessons:', error);
     throw error;
   }
 };

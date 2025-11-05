@@ -13,6 +13,33 @@ export default function TongQuan({ course }) {
   const level = course.level || course.Level || ""
   const thumbnailUrl = course.thumbnailUrl || course.ThumbnailUrl || course.image || "/placeholder.jpg"
   const previewVideoUrl = course.previewVideoUrl || course.PreviewVideoUrl || ""
+  
+  // ✅ Lấy prerequisites và learningOutcomes từ API
+  const prerequisitesRaw = course.prerequisites || course.Prerequisites || ""
+  const learningOutcomesRaw = course.learningOutcomes || course.LearningOutcomes || ""
+  
+  // ✅ Parse string thành array (hỗ trợ nhiều format: newline, comma, semicolon)
+  const parseToList = (text) => {
+    if (!text || typeof text !== 'string') return []
+    
+    // Tách theo nhiều dòng (\n)
+    let items = text.split('\n').map(item => item.trim()).filter(item => item.length > 0)
+    
+    // Nếu chỉ có 1 dòng, thử tách theo dấu phẩy hoặc chấm phẩy
+    if (items.length === 1) {
+      items = items[0].split(/[,;]/).map(item => item.trim()).filter(item => item.length > 0)
+    }
+    
+    // Nếu vẫn chỉ có 1 item và có dấu gạch đầu dòng (-), tách theo đó
+    if (items.length === 1 && items[0].includes('-')) {
+      items = items[0].split('-').map(item => item.trim()).filter(item => item.length > 0)
+    }
+    
+    return items.length > 0 ? items : []
+  }
+  
+  const prerequisitesList = parseToList(prerequisitesRaw)
+  const learningOutcomesList = parseToList(learningOutcomesRaw)
 
   const formatPrice = (price) => {
     // Nếu price là string đã format thì trả về luôn
@@ -43,22 +70,29 @@ export default function TongQuan({ course }) {
       {/* What you'll learn */}
       <div className="mt-6">
         <h3 className="text-lg font-semibold mb-3">Bạn sẽ học được gì</h3>
-        <ul className="list-disc list-inside space-y-2 text-gray-700">
-          <li>Nắm vững kiến thức cơ bản và nâng cao</li>
-          <li>Thực hành với dự án thực tế</li>
-          <li>Phát triển kỹ năng chuyên môn</li>
-          <li>Chuẩn bị cho công việc thực tế</li>
-        </ul>
+        {learningOutcomesList.length > 0 ? (
+          <ul className="list-disc list-inside space-y-2 text-gray-700">
+            {learningOutcomesList.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-500 italic">Chưa có thông tin về kết quả học tập</p>
+        )}
       </div>
 
       {/* Requirements */}
       <div className="mt-6">
         <h3 className="text-lg font-semibold mb-3">Yêu cầu</h3>
-        <ul className="list-disc list-inside space-y-2 text-gray-700">
-          <li>Kiến thức cơ bản về máy tính</li>
-          <li>Đam mê học hỏi và khám phá</li>
-          <li>Máy tính có kết nối Internet</li>
-        </ul>
+        {prerequisitesList.length > 0 ? (
+          <ul className="list-disc list-inside space-y-2 text-gray-700">
+            {prerequisitesList.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-500 italic">Chưa có yêu cầu cụ thể</p>
+        )}
       </div>
     </div>
   )

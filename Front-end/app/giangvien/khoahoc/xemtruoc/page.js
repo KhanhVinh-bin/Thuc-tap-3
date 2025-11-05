@@ -322,7 +322,7 @@ export default function XemTruocKhoaHocPage(){
                   prerequisites: courseData.prerequisites || "",
                   learningOutcomes: courseData.learningOutcomes || "",
                   tagName: courseData.tagName || "",
-                  tagIds: courseData.tagIds || [],
+                  tagIds: null, // ✅ Backend chỉ dùng TagName, không dùng TagIds. Gửi null để tránh lỗi validation
                   slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course", // ✅ Thêm slug
                   lessons: courseData.lessons || [],
                   status: "published", // ✅ Mặc định là published

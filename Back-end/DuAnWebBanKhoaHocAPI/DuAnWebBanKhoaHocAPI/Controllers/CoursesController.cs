@@ -22,6 +22,7 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
         {
             var courses = await _context.Courses
                 .Include(c => c.Instructor)
+                    .ThenInclude(i => i.InstructorNavigation)
                 .Include(c => c.Category)
                 .Select(c => new CourseDTO
                 {
@@ -36,6 +37,8 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                     Language = c.Language,
                     Duration = c.Duration,
                     Level = c.Level,
+                    Prerequisites = c.Prerequisites,
+                    LearningOutcomes = c.LearningOutcomes,
                     Status = c.Status,
                     CreatedAt = c.CreatedAt,
                     UpdatedAt = c.UpdatedAt,
@@ -48,6 +51,7 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                     Instructor = c.Instructor != null ? new InstructorDTO
                     {
                         InstructorId = c.Instructor.InstructorId,
+                        FullName = c.Instructor.InstructorNavigation != null ? c.Instructor.InstructorNavigation.FullName : null,
                         Expertise = c.Instructor.Expertise,
                         Biography = c.Instructor.Biography,
                         ExperienceYears = c.Instructor.ExperienceYears,
@@ -69,6 +73,7 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
         {
             var course = await _context.Courses
                 .Include(c => c.Instructor)
+                    .ThenInclude(i => i.InstructorNavigation)
                 .Include(c => c.Category)
                 .Where(c => c.CourseId == id)
                 .Select(c => new CourseDTO
@@ -84,6 +89,8 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                     Language = c.Language,
                     Duration = c.Duration,
                     Level = c.Level,
+                    Prerequisites = c.Prerequisites,
+                    LearningOutcomes = c.LearningOutcomes,
                     Status = c.Status,
                     CreatedAt = c.CreatedAt,
                     UpdatedAt = c.UpdatedAt,
@@ -96,6 +103,7 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                     Instructor = c.Instructor != null ? new InstructorDTO
                     {
                         InstructorId = c.Instructor.InstructorId,
+                        FullName = c.Instructor.InstructorNavigation != null ? c.Instructor.InstructorNavigation.FullName : null,
                         Expertise = c.Instructor.Expertise,
                         Biography = c.Instructor.Biography,
                         ExperienceYears = c.Instructor.ExperienceYears,

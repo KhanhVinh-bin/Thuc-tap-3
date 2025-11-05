@@ -20,6 +20,8 @@
         // Now these will work because the classes are defined in other files
         public CategoryDTO Category { get; set; }
         public InstructorDTO Instructor { get; set; }
+        public string? LearningOutcomes { get; internal set; }
+        public string? Prerequisites { get; internal set; }
     }
 
     public class CourseCreateDTO

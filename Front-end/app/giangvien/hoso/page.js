@@ -217,7 +217,7 @@ export default function GiangVienHoSoPage() {
           </div>
         </div>
         <div className="gv-topbar-right">
-          <AvatarMenu />
+          
         </div>
       </header>
 

@@ -58,13 +58,39 @@
 .gvc-lesson-type { height: 36px; min-width: 200px; border: 1px solid #e5e7eb; border-radius: 10px; padding: 0 10px; background: #f3f4f6; color: #374151; font-size: 14px; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
 .gvc-lesson-time { height: 36px; width: 72px; border: 1px solid #e5e7eb; border-radius: 10px; padding: 0 8px; text-align: center; color: #374151; font-size: 14px; background: #f3f4f6; }
 .gvc-lesson-select-support { height: 36px; width: 200px; border: 1px solid #e5e7eb; border-radius: 10px; padding: 0 10px; background: #f3f4f6; color: #374151; font-size: 14px; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
-.gvc-lesson-actions { display: inline-flex; align-items: center; gap: 8px; justify-content: flex-end; }
-.gvc-icon-btn { width: 28px; height: 28px; border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; color: #6b7280; transition: all .15s ease; }
+.gvc-lesson-actions { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 8px; 
+  justify-content: flex-end; 
+  flex-wrap: nowrap;
+  min-width: 260px;
+}
+.gvc-icon-btn { 
+  width: 28px; 
+  height: 28px; 
+  border: 1px solid #e5e7eb; 
+  border-radius: 8px; 
+  background: #ffffff; 
+  color: #6b7280; 
+  transition: all .15s ease; 
+  flex-shrink: 0;
+}
 .gvc-icon-btn:hover { background: #f1f5f9; color: #374151; }
 .gvc-icon-btn.danger { color: #dc2626; }
 
 /* Pill trạng thái */
-.gvc-pill { font-size: 12px; padding: 6px 10px; border-radius: 9999px; font-weight: 700; display: inline-flex; align-items: center; color: #ffffff; }
+.gvc-pill { 
+  font-size: 12px; 
+  padding: 6px 10px; 
+  border-radius: 9999px; 
+  font-weight: 700; 
+  display: inline-flex; 
+  align-items: center; 
+  color: #ffffff; 
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 .gvc-pill.published { background: #22c55e; }
 .gvc-pill.review { background: #f59e0b; }
 .gvc-pill.draft { background: #6b7280; }

@@ -3,6 +3,7 @@ using DuAnWebBanKhoaHocAPI.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using BCrypt.Net;
 
 namespace DuAnWebBanKhoaHocAPI.Controllers
 {
@@ -100,7 +101,7 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                 return Conflict(new { message = "Email already exists" });
             }
 
-            // Hash password using BCrypt
+            // Hash password using BCrypt.Net-Next
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password);
 
             var user = new User
@@ -199,12 +200,12 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
                 return Unauthorized(new { message = "Invalid email or password" });
             }
 
-            // Verify password - hỗ trợ cả BCrypt và Identity PasswordHasher
+            // Verify password - hỗ trợ cả BCrypt.Net-Next và Identity PasswordHasher
             bool isPasswordValid = false;
             
             try
             {
-                // Thử verify bằng BCrypt trước (cho student đăng ký qua UsersController)
+                // Thử verify bằng BCrypt.Net-Next trước (cho student đăng ký qua UsersController)
                 isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDTO.Password, user.PasswordHash);
             }
             catch (BCrypt.Net.SaltParseException)
@@ -277,21 +278,82 @@ namespace DuAnWebBanKhoaHocAPI.Controllers
         [HttpPost("{id}/ChangePassword")]
         public async Task<IActionResult> ChangePassword(int id, ChangePasswordDTO changePasswordDTO)
         {
+            // Validate input
+            if (changePasswordDTO == null)
+            {
+                return BadRequest(new { message = "Change password data is required" });
+            }
+
+            if (string.IsNullOrEmpty(changePasswordDTO.CurrentPassword))
+            {
+                return BadRequest(new { message = "Current password is required" });
+            }
+
+            if (string.IsNullOrEmpty(changePasswordDTO.NewPassword))
+            {
+                return BadRequest(new { message = "New password is required" });
+            }
+
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound(new { message = $"User with ID {id} not found" });
             }
 
-            // Verify current password using BCrypt
-            bool isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(changePasswordDTO.CurrentPassword, user.PasswordHash);
+            // Verify current password - hỗ trợ cả BCrypt.Net-Next và Identity PasswordHasher
+            bool isCurrentPasswordValid = false;
+            bool isCurrentPasswordBCrypt = false; // Lưu lại định dạng password hiện tại
+            
+            // Kiểm tra xem password hash có phải là BCrypt hash không (bắt đầu bằng "$2a$", "$2b$", "$2y$")
+            if (!string.IsNullOrEmpty(user.PasswordHash) && user.PasswordHash.StartsWith("$2"))
+            {
+                // Password hash là BCrypt hash, verify bằng BCrypt.Net-Next
+                try
+                {
+                    isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(changePasswordDTO.CurrentPassword, user.PasswordHash);
+                    isCurrentPasswordBCrypt = true;
+                }
+                catch
+                {
+                    // Nếu có lỗi khi verify BCrypt, set false
+                    isCurrentPasswordValid = false;
+                }
+            }
+            else
+            {
+                // Password hash không phải BCrypt, thử verify bằng Identity PasswordHasher
+                try
+                {
+                    var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, changePasswordDTO.CurrentPassword);
+                    isCurrentPasswordValid = result == PasswordVerificationResult.Success || 
+                                             result == PasswordVerificationResult.SuccessRehashNeeded;
+                    isCurrentPasswordBCrypt = false;
+                }
+                catch
+                {
+                    // Nếu có lỗi (ví dụ: không phải Base-64), set false
+                    isCurrentPasswordValid = false;
+                }
+            }
+
             if (!isCurrentPasswordValid)
             {
                 return BadRequest(new { message = "Current password is incorrect" });
             }
 
-            // Hash new password using BCrypt
-            string newPasswordHash = BCrypt.Net.BCrypt.HashPassword(changePasswordDTO.NewPassword);
+            // Hash new password theo cùng định dạng với password hiện tại
+            string newPasswordHash;
+            if (isCurrentPasswordBCrypt)
+            {
+                // Nếu password hiện tại là BCrypt, hash mới bằng BCrypt.Net-Next
+                newPasswordHash = BCrypt.Net.BCrypt.HashPassword(changePasswordDTO.NewPassword);
+            }
+            else
+            {
+                // Nếu password hiện tại là Identity PasswordHasher, hash mới bằng Identity PasswordHasher
+                newPasswordHash = _passwordHasher.HashPassword(user, changePasswordDTO.NewPassword);
+            }
+            
             user.PasswordHash = newPasswordHash;
             user.UpdatedAt = DateTime.UtcNow;
 

@@ -102,14 +102,13 @@ export default function Header() {
             >
               Blog
             </Link>
-            {/* Tạm thời ẩn trang Liên hệ */}
-            {/* <Link
+            <Link
               href="/contact"
               className="text-gray-800 hover:text-[#6B5EDB] px-3 py-2 rounded-lg hover:bg-[#F6F4FF] transition-all duration-200 font-medium"
               style={{ lineHeight: '1.6' }}
             >
               Liên hệ
-            </Link> */}
+            </Link>
           </nav>
 
           {/* Search Bar */}

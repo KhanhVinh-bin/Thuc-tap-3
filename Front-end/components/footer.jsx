@@ -72,12 +72,11 @@ export default function Footer() {
                   Blog & Tin tức
                 </Link>
               </li>
-              {/* Tạm thời ẩn trang Liên hệ */}
-              {/* <li>  
+              <li>  
                 <Link href="/contact" className="text-white-300 hover:text-[#06b6d4] transition-colors">
                   Liên hệ
                 </Link>
-              </li> */}
+              </li>
               <li>
                 <Link href="/faq" className="text-white-300 hover:text-[#06b6d4] transition-colors">
                   Câu hỏi thường gặp
@@ -120,7 +119,7 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#06b6d4] flex-shrink-0 mt-1" />
                 <span className="text-white-300">
-                  194 Đ. số 7, Khu dân cư Trung Sơn, Bình Chánh, Hồ Chí Minh, Việt Nam
+                  194 Đ. số 7, Khu dân cư Trung Sơn, Bình Chánh, Thành phố Hồ Chí Minh, Việt Nam
                 </span>
               </li>
               <li className="flex items-center gap-3">

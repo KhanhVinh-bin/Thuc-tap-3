@@ -83,7 +83,7 @@ export default function ChiTietKhoaHocPage() {
         prerequisites: prerequisites.trim(),
         learningOutcomes: learningOutcomes.trim(),
         tagName: tags.length > 0 ? tags[0] : "",
-        tagIds: tags,
+        tagIds: null, // ✅ Backend chỉ dùng TagName, không dùng TagIds. Gửi null để tránh lỗi validation
         slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course", // ✅ Thêm slug
         lessons: courseData.lessons || [],
         status: "published", // ✅ Tự động publish, không cần duyệt
@@ -99,7 +99,7 @@ export default function ChiTietKhoaHocPage() {
         learningOutcomes: result.LearningOutcomes || result.learningOutcomes || learningOutcomes,
         thumbnailUrl: result.ThumbnailUrl || result.thumbnailUrl || courseData.thumbnailUrl || "", // ✅ Giữ thumbnailUrl từ step trước
         tagName: tags.length > 0 ? tags[0] : "",
-        tagIds: tags,
+        tagIds: null, // ✅ Backend chỉ dùng TagName, không dùng TagIds. Gửi null để tránh lỗi validation
         courseId: result.courseId || courseData.courseId,
       })
 

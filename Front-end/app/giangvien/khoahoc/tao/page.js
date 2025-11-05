@@ -134,7 +134,7 @@ export default function TaoKhoaHocPage() {
             prerequisites: courseData.prerequisites || "",
             learningOutcomes: courseData.learningOutcomes || "",
             tagName: courseData.tagName || "",
-            tagIds: courseData.tagIds || [],
+            tagIds: null, // ✅ Backend chỉ dùng TagName, không dùng TagIds. Gửi null để tránh lỗi validation
             slug: slug || generateSlug(title.trim()) || "untitled-course",
             lessons: courseData.lessons || [],
             status: "published",
@@ -168,7 +168,7 @@ export default function TaoKhoaHocPage() {
         prerequisites: courseData.prerequisites || "",
         learningOutcomes: courseData.learningOutcomes || "",
         tagName: courseData.tagName || "",
-        tagIds: courseData.tagIds || [],
+        tagIds: null, // ✅ Backend chỉ dùng TagName, không dùng TagIds. Gửi null để tránh lỗi validation
         slug: slug || generateSlug(title.trim()) || "untitled-course", // ✅ Thêm slug (bắt buộc)
         lessons: courseData.lessons || [],
         status: "published", // ✅ Tự động publish, không cần duyệt

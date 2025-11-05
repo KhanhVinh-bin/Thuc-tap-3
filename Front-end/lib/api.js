@@ -173,6 +173,59 @@ class ApiService {
     })
   }
 
+  // Feedbacks API methods
+  async getAllFeedbacks() {
+    return this.fetchData("/Feedbacks")
+  }
+
+  async getFeedbackById(id) {
+    return this.fetchData(`/Feedbacks/${id}`)
+  }
+
+  async getFeedbacksByUser(userId) {
+    return this.fetchData(`/Feedbacks/ByUser/${userId}`)
+  }
+
+  async getFeedbacksWithRating() {
+    return this.fetchData("/Feedbacks/WithRating")
+  }
+
+  async getRecentFeedbacks(count = 10) {
+    return this.fetchData(`/Feedbacks/Recent/${count}`)
+  }
+
+  async getFeedbackStats() {
+    return this.fetchData("/Feedbacks/Stats")
+  }
+
+  async searchFeedbacks(keyword) {
+    return this.fetchData(`/Feedbacks/Search?keyword=${encodeURIComponent(keyword)}`)
+  }
+
+  async getFeedbacksByRating(rating) {
+    return this.fetchData(`/Feedbacks/ByRating/${rating}`)
+  }
+
+  async createFeedback(feedbackData) {
+    return this.fetchData("/Feedbacks", {
+      method: "POST",
+      body: JSON.stringify(feedbackData),
+    })
+  }
+
+  async updateFeedback(feedbackId, feedbackData) {
+    return this.fetchData(`/Feedbacks/${feedbackId}`, {
+      method: "PUT",
+      body: JSON.stringify(feedbackData),
+    })
+  }
+
+  async deleteFeedback(feedbackId) {
+    return this.fetchData(`/Feedbacks/${feedbackId}`, {
+      method: "DELETE",
+    })
+  }
+
   // Carts API methods
   async getAllCarts() {
     return this.fetchData("/Carts")
@@ -404,6 +457,8 @@ export const formatCourseData = (courseData) => {
     level: courseData.Level || courseData.level || "Cơ bản",
     language: courseData.Language || courseData.language || "Tiếng Việt",
     duration: courseData.Duration || courseData.duration || "20 giờ",
+    prerequisites: courseData.Prerequisites || courseData.prerequisites || null,
+    learningOutcomes: courseData.LearningOutcomes || courseData.learningOutcomes || null,
     rating:
       courseData.Instructor?.RatingAverage || courseData.Instructor?.ratingAverage || courseData.instructor?.RatingAverage || courseData.instructor?.ratingAverage || (Math.random() * 5).toFixed(1),
     reviews: Math.floor(Math.random() * 500) + 100,
@@ -413,6 +468,7 @@ export const formatCourseData = (courseData) => {
       : `${Math.floor(Math.random() * 200) + 50}k`,
     instructor: {
       name: courseData.Instructor?.Expertise || courseData.Instructor?.expertise || courseData.instructor?.Expertise || courseData.instructor?.expertise || "Giảng viên",
+      fullName: courseData.Instructor?.FullName || courseData.Instructor?.fullName || courseData.instructor?.FullName || courseData.instructor?.fullName || null,
       expertise: courseData.Instructor?.Expertise || courseData.Instructor?.expertise || courseData.instructor?.Expertise || courseData.instructor?.expertise,
       bio: courseData.Instructor?.Biography || courseData.Instructor?.biography || courseData.instructor?.Biography || courseData.instructor?.biography || "Chuyên gia trong lĩnh vực lập trình",
       avatar: (courseData.Instructor?.AvatarUrl || courseData.Instructor?.avatarUrl || courseData.instructor?.AvatarUrl || courseData.instructor?.avatarUrl)
@@ -471,6 +527,19 @@ export const getReviewsByCourse = apiService.getReviewsByCourse.bind(apiService)
 export const createReview = apiService.createReview.bind(apiService)
 export const updateReview = apiService.updateReview.bind(apiService)
 export const deleteReview = apiService.deleteReview.bind(apiService)
+
+// Feedbacks API exports
+export const getAllFeedbacks = apiService.getAllFeedbacks.bind(apiService)
+export const getFeedbackById = apiService.getFeedbackById.bind(apiService)
+export const getFeedbacksByUser = apiService.getFeedbacksByUser.bind(apiService)
+export const getFeedbacksWithRating = apiService.getFeedbacksWithRating.bind(apiService)
+export const getRecentFeedbacks = apiService.getRecentFeedbacks.bind(apiService)
+export const getFeedbackStats = apiService.getFeedbackStats.bind(apiService)
+export const searchFeedbacks = apiService.searchFeedbacks.bind(apiService)
+export const getFeedbacksByRating = apiService.getFeedbacksByRating.bind(apiService)
+export const createFeedback = apiService.createFeedback.bind(apiService)
+export const updateFeedback = apiService.updateFeedback.bind(apiService)
+export const deleteFeedback = apiService.deleteFeedback.bind(apiService)
 
 // Cart API exports
 export const getAllCarts = apiService.getAllCarts.bind(apiService)

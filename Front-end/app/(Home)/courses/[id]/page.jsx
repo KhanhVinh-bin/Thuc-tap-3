@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
@@ -16,8 +16,9 @@ import {
   getReviewsByCourse,
   createReview,
   addToCartAPI,
+  getOrdersByUser,
 } from "@/lib/api"
-import { getEnrollmentsByCourse } from "@/lib/enrollmentApi"
+import { getEnrollmentsByCourse, getEnrollmentsByUser } from "@/lib/enrollmentApi"
 
 import { useCart } from "@/lib/cart-context"
 import { useAuth } from "@/lib/auth-context"
@@ -56,11 +57,117 @@ export default function CourseDetailPage() {
   
   // students count state
   const [studentsCount, setStudentsCount] = useState(0)
+  
+  // enrollment state - kiểm tra user đã mua khóa học chưa
+  const [isEnrolled, setIsEnrolled] = useState(false)
+  const [checkingEnrollment, setCheckingEnrollment] = useState(false)
 
   // Ensure tab resets when switching to a different course ID
   useEffect(() => {
     setActiveTab("overview")
   }, [params?.id])
+  
+  // Helper to check enrollment - kiểm tra user đã mua khóa học chưa (từ Enrollment hoặc Orders)
+  const checkEnrollment = useCallback(async (courseId) => {
+    if (!isAuthenticated || !user || !courseId) {
+      setIsEnrolled(false)
+      return
+    }
+
+    try {
+      setCheckingEnrollment(true)
+      const userId = user.userId || user.id || user.UserId || user.ID
+      if (!userId) {
+        setIsEnrolled(false)
+        return
+      }
+
+      const parsedCourseId = typeof courseId === 'string' ? parseInt(courseId, 10) : courseId
+      let enrolled = false
+      
+      // ✅ Method 1: Kiểm tra từ Enrollments
+      try {
+        const enrollments = await getEnrollmentsByUser(userId)
+        console.log("📦 Enrollments data:", enrollments)
+        
+        enrolled = enrollments.some(
+          (enrollment) => {
+            const eCourseId = enrollment.courseId || enrollment.CourseId
+            const eStatus = enrollment.status || enrollment.Status || ''
+            const isMatch = eCourseId === parsedCourseId
+            const isValidStatus = ['active', 'Active', 'Completed', 'completed', 'paid', 'Paid'].includes(eStatus)
+            
+            if (isMatch) {
+              console.log("🔍 Found enrollment match:", { eCourseId, eStatus, isValidStatus })
+            }
+            
+            return isMatch && isValidStatus
+          }
+        )
+        
+        if (enrolled) {
+          console.log("✅ Found enrollment for course:", parsedCourseId)
+          setIsEnrolled(true)
+          setCheckingEnrollment(false)
+          return
+        }
+      } catch (enrollmentError) {
+        console.warn("⚠️ Error fetching enrollments, trying Orders:", enrollmentError)
+      }
+      
+      // ✅ Method 2: Kiểm tra từ Orders (nếu enrollment không có thì check từ orders đã thanh toán)
+      if (!enrolled) {
+        try {
+          const orders = await getOrdersByUser(userId)
+          console.log("📦 Orders data:", orders)
+          
+          // Kiểm tra xem có order nào đã thanh toán (status = "paid") chứa courseId này không
+          enrolled = orders.some((order) => {
+            const orderStatus = order.status || order.Status || ''
+            const isPaid = orderStatus.toLowerCase() === 'paid'
+            
+            if (!isPaid) return false
+            
+            // Kiểm tra orderDetails có chứa courseId này không
+            const orderDetails = order.orderDetails || order.OrderDetails || []
+            const hasCourse = orderDetails.some((detail) => {
+              const detailCourseId = detail.courseId || detail.CourseId
+              return detailCourseId === parsedCourseId
+            })
+            
+            if (hasCourse) {
+              console.log("✅ Found paid order for course:", parsedCourseId, "Order ID:", order.orderId || order.OrderId)
+            }
+            
+            return hasCourse
+          })
+          
+          if (enrolled) {
+            console.log("✅ Found paid order for course:", parsedCourseId)
+          }
+        } catch (orderError) {
+          console.error("❌ Error fetching orders:", orderError)
+        }
+      }
+      
+      setIsEnrolled(enrolled)
+      console.log("✅ Final enrollment check result:", { enrolled, courseId: parsedCourseId, userId })
+    } catch (error) {
+      console.error("❌ Error checking enrollment:", error)
+      setIsEnrolled(false)
+    } finally {
+      setCheckingEnrollment(false)
+    }
+  }, [isAuthenticated, user])
+  
+  // Check enrollment when user or course changes
+  useEffect(() => {
+    if (course?.id && isAuthenticated && user) {
+      checkEnrollment(course.id)
+    } else {
+      setIsEnrolled(false)
+    }
+  }, [course?.id, isAuthenticated, user, checkEnrollment])
 
   // Helper to load reviews (separate, can be reused)
   const loadReviews = async (courseId) => {
@@ -79,15 +186,24 @@ export default function CourseDetailPage() {
           date: r.createdAt ? new Date(r.createdAt).toLocaleDateString('vi-VN') : (r.createdAtString || "")
         }))
         setReviews(formattedReviews)
-        if (reviewsData.stats) {
-          setReviewStats(reviewsData.stats)
+        
+        // ✅ Tính toán rating từ reviews thực tế: tổng số sao / số lượng đánh giá
+        const total = formattedReviews.length
+        if (total > 0) {
+          const totalStars = formattedReviews.reduce((sum, r) => sum + (r.rating || 0), 0)
+          const average = (totalStars / total).toFixed(1)
+          setReviewStats({ 
+            average: parseFloat(average), 
+            total, 
+            stars: [0,0,0,0,0] 
+          })
         } else {
-          // Tính toán từ reviews nếu không có stats
-          const total = formattedReviews.length
-          const average = total > 0 
-            ? (formattedReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / total).toFixed(1)
-            : 0
-          setReviewStats({ average: parseFloat(average), total, stars: [0,0,0,0,0] })
+          // Nếu có stats từ API thì dùng, không thì để 0
+          if (reviewsData.stats) {
+            setReviewStats(reviewsData.stats)
+          } else {
+            setReviewStats({ average: 0, total: 0, stars: [0,0,0,0,0] })
+          }
         }
       } else {
         setReviews([])
@@ -101,7 +217,7 @@ export default function CourseDetailPage() {
       setReviewsLoading(false)
     }
   }
-
+  
   // Helper to load students count
   const loadStudentsCount = async (courseId) => {
     try {
@@ -175,6 +291,10 @@ export default function CourseDetailPage() {
           // load reviews and students count but don't block UI
           loadReviews(finalCourseId).catch(err => console.error("Load reviews error:", err))
           loadStudentsCount(finalCourseId).catch(err => console.error("Load students count error:", err))
+          // check enrollment status
+          if (isAuthenticated && user) {
+            checkEnrollment(finalCourseId).catch(err => console.error("Check enrollment error:", err))
+          }
         }
       } catch (err) {
         console.error("Error fetching course:", err)
@@ -305,7 +425,7 @@ export default function CourseDetailPage() {
       const cartItemForContext = {
         id: course.id,
         title: course.title,
-        instructor: course.instructor?.name || "Giảng viên",
+        instructor: (course.instructor && (course.instructor.fullName || course.instructor.name)) || "Giảng viên",
         price: parseFloat(String(course.price || course.priceValue || 0).replace(/[^\d]/g, "")) || 0,
         image: course.image || course.thumbnailUrl || "/placeholder-course.jpg"
       }
@@ -438,7 +558,7 @@ export default function CourseDetailPage() {
                 <div className="flex items-center gap-2">
                   <span className="text-yellow-400">⭐</span>
                   <span className="font-semibold">
-                    {reviewStats.average > 0 ? reviewStats.average.toFixed(1) : "0.0"}
+                    {reviewStats.average > 0 ? parseFloat(reviewStats.average).toFixed(1) : "0.0"}
                   </span>
                   <span className="text-white-400">({reviewStats.total || 0} lượt đánh giá)</span>
                 </div>
@@ -463,9 +583,9 @@ export default function CourseDetailPage() {
                     />
                   </div>
                   <div>
-                    <p className="font-semibold text-lg">Giảng viên: {course.instructor.full_name}</p>
+                    <p className="font-semibold text-lg">Giảng viên: {course.instructor?.fullName || course.instructor?.name || "Giảng viên"}</p>
                     <p className="text-white-400 text-sm">
-                      {course.instructor.bio}
+                      {course.instructor?.bio || "Chuyên gia trong lĩnh vực lập trình"}
                     </p>
                   </div>
                 </div>
@@ -474,14 +594,14 @@ export default function CourseDetailPage() {
 
             {/* Right Card - Price */}
             <div className="lg:col-span-1 fade-in-element">
-              <div className="bg-white text-white-900 rounded-xl shadow-2xl p-6 sticky top-24">
+              <div className="bg-white text-white-900 rounded-xl  p-6 sticky top-24">
                 <div
                   className="relative mb-6 rounded-lg overflow-hidden course-preview-image"
                 >
                   <img
                     src={course.image || course.thumbnailUrl || "/placeholder-course.jpg"}
                     alt="Course preview"
-                    className="w-full h-89 object-cover transition-transform duration-500"
+                    className="w-full h-90 object-cover transition-transform duration-500"
                     onLoad={() => setImageLoaded(true)}
                     onError={(e) => {
                       if (!e.target.src.includes("/placeholder")) {
@@ -489,41 +609,56 @@ export default function CourseDetailPage() {
                       }
                     }}
                   />
-                  <div className="">
-                    
+                  
+                </div>
+
+               
+
+                <div className="text-center mb-2">
+                  {/* 🔹 Thêm dòng title nằm trên giá */}
+                  <div className="text-4xl font-sans-serif text-gray-800 mb-3 uppercase">
+                    {course.title}
                   </div>
-                </div>
 
-                <h3 className="text-xl font-bold mb-4 text-center">{course.title}</h3>
+                  <div className="text-4xl font-bold text-green-600 mb-">
+                    {course.price ?? course.priceFormatted ?? "0đ"}
+                  </div>
 
-                <div className="text-center mb-6">
-                  <div className="text-4xl font-bold text-green-600 mb-2">{course.price ?? course.priceFormatted ?? "0đ"}</div>
                   {course.oldPrice && course.oldPrice !== course.price && (
-                    <div className="text-white-400 line-through text-lg">{course.oldPrice}</div>
-                  )}
-                  {course.discount && String(course.discount) !== "0" && (
-                    <div className="text-red-500 font-semibold mt-1">Giảm {course.discount}%</div>
+                    <div className="text-gray-400 line-through text-lg">{/*course.oldPrice*/}</div>
                   )}
                 </div>
 
-                <button
-                  onClick={handleBuyNow}
-                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-4 rounded-lg font-bold text-lg mb-4 hover:from-purple-700 hover:to-purple-800 transition-all hover:shadow-lg hover:scale-105 active:scale-95 buy-now-btn"
-                >
-                  Mua khóa học
-                </button>
+                {isEnrolled ? (
+                  // ✅ Nếu đã mua khóa học, chỉ hiển thị 1 nút "Bạn đã mua khóa học này"
+                  <button
+                    onClick={() => router.push(`/bai-hoc/${course.id}`)}
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-lg font-bold text-lg mb-4 hover:from-blue-700 hover:to-blue-800 transition-all hover:shadow-lg hover:scale-105 active:scale-95"
+                  >
+                     Bạn đã mua khóa học này vào xem
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleBuyNow}
+                      className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-4 rounded-lg font-bold text-lg mb-4 hover:from-purple-700 hover:to-purple-800 transition-all hover:shadow-lg hover:scale-105 active:scale-95 buy-now-btn"
+                    >
+                      Mua khóa học
+                    </button>
 
-                <button
-                  onClick={handleAddToCart}
-                  disabled={isInCart && isInCart(course?.id)}
-                  className={`w-full py-4 rounded-lg font-bold text-lg mb-4 transition-all hover:shadow-lg hover:scale-105 active:scale-95 ${
-                    (isInCart && isInCart(course?.id))
-                      ? "bg-gray-400 text-gray-600 cursor-not-allowed"
-                      : "bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800"
-                  }`}
-                >
-                  {(isInCart && isInCart(course?.id)) ? "Đã có trong giỏ hàng" : "Thêm vào giỏ hàng"}
-                </button>
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={isInCart && isInCart(course?.id)}
+                      className={`w-full py-4 rounded-lg font-bold text-lg mb-4 transition-all hover:shadow-lg hover:scale-105 active:scale-95 ${
+                        (isInCart && isInCart(course?.id))
+                          ? "bg-gray-400 text-gray-600 cursor-not-allowed"
+                          : "bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800"
+                      }`}
+                    >
+                      {(isInCart && isInCart(course?.id)) ? "Đã có trong giỏ hàng" : "Thêm vào giỏ hàng"}
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -657,7 +792,7 @@ export default function CourseDetailPage() {
                   <p><strong className="text-gray-800">Cấp độ:</strong> {course.level || "Trung cấp"}</p>
                   <p><strong className="text-gray-800">Thời lượng:</strong> {course.duration || "—"}</p>
                   <p><strong className="text-gray-800">Ngôn ngữ:</strong> {course.language || "React"}</p>
-                  <p><strong className="text-gray-800">Chứng chỉ:</strong> {course.certificate ? "Có" : "Không"}</p>
+                  
                 </div>
               </div>
             </div>

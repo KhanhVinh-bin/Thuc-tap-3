@@ -133,3 +133,9 @@
 .gvc-page:hover { background: #f1f5f9; color: #374151; }
 .gvc-page.active { background: #6366f1; color: #ffffff; }
 .gvc-page.arrow { color: #9ca3af; }
+
+/* Animation for empty state */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
