@@ -1,0 +1,44 @@
+<svg width="600" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="600" height="300" fill="#1e3a8a"/>
+  
+  <!-- Yellow accent -->
+  <rect x="0" y="0" width="600" height="60" fill="#fbbf24"/>
+  
+  <!-- Main title -->
+  <text x="50" y="120" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white">
+    KHÓA HỌC THIẾT KẾ
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="50" y="150" font-family="Arial, sans-serif" font-size="18" fill="#fbbf24">
+    LANDING PAGE CHUYÊN SÂU
+  </text>
+  
+  <!-- Features -->
+  <circle cx="80" cy="200" r="8" fill="#fbbf24"/>
+  <text x="100" y="206" font-family="Arial, sans-serif" font-size="14" fill="white">
+    Cơ bản đến nâng cao
+  </text>
+  
+  <circle cx="280" cy="200" r="8" fill="#fbbf24"/>
+  <text x="300" y="206" font-family="Arial, sans-serif" font-size="14" fill="white">
+    Hướng dẫn chi tiết
+  </text>
+  
+  <circle cx="480" cy="200" r="8" fill="#fbbf24"/>
+  <text x="500" y="206" font-family="Arial, sans-serif" font-size="14" fill="white">
+    Ưu đãi đặc biệt
+  </text>
+  
+  <!-- Call to action -->
+  <rect x="50" y="240" width="120" height="35" rx="5" fill="#fbbf24"/>
+  <text x="110" y="262" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1e3a8a" text-anchor="middle">
+    KHÁM PHÁ NGAY
+  </text>
+  
+  <!-- Date -->
+  <text x="550" y="280" font-family="Arial, sans-serif" font-size="12" fill="#fbbf24" text-anchor="end">
+    Ngày khai giảng: 3/7/2024
+  </text>
+</svg>

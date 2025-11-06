@@ -1,0 +1,48 @@
+/* Trang cài đặt khóa học - sử dụng styles chung từ trang chỉnh sửa */
+
+/* Header trong editor */
+.gvc-editor { display: flex; flex-direction: column; gap: 20px; }
+.gvc-editor-header { display: flex; align-items: center; justify-content: flex-start; gap: 16px; }
+.gvc-back { background: #ffffff; color: #374151; border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
+.gvc-editor-title { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.gvc-editor-title h2 { margin: 0; color: #111827; font-weight: 800; font-size: 28px; line-height: 1.25; }
+.gvc-course-id { color: #64748b; font-size: 12px; }
+
+/* Summary cards */
+.gvc-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.gvc-summary-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 16px; display: grid; grid-template-columns: 44px 1fr; align-items: center; column-gap: 12px; }
+.gvc-summary-card .icon { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; }
+.gvc-summary-card .icon svg { width: 22px; height: 22px; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.gvc-summary-card .value { font-size: 20px; font-weight: 800; color: #0f172a; line-height: 1; }
+.gvc-summary-card .label { color: #64748b; font-size: 12px; }
+/* Màu theo từng loại */
+.gvc-summary-card.blue .icon { background: #eef2ff; }
+.gvc-summary-card.blue .icon svg, .gvc-summary-card.blue .icon svg * { stroke: #2563EB; fill: none; }
+.gvc-summary-card.green .icon { background: #dcfce7; }
+.gvc-summary-card.green .icon svg { stroke: #22c55e; }
+.gvc-summary-card.purple .icon { background: #f5f3ff; }
+.gvc-summary-card.purple .icon svg { stroke: #8b5cf6; }
+.gvc-summary-card.orange .icon { background: #fff7ed; }
+.gvc-summary-card.orange .icon svg { stroke: #f59e0b; }
+
+/* Tabbar: two equal columns */
+.gvc-tabbar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 6px; border-radius: 12px; background: #f3f4f6; }
+.gvc-tab { background: transparent; border: 0; border-radius: 10px; padding: 8px 12px; font-weight: 600; color: #374151; text-align: center; }
+.gvc-tab.active { background: #ffffff; border: 1px solid #e5e7eb; color: #111827; }
+
+/* Settings card */
+.gvc-settings { margin-top: 16px; }
+.gvc-settings-group { background: #fff; border: 1px solid #edf0f5; border-radius: 16px; padding: 16px; }
+.gvc-settings-title { font-weight: 700; margin-bottom: 10px; }
+
+.gvc-settings-row { display: grid; gap: 8px; margin-bottom: 10px; }
+.gvc-settings-row.two-cols { grid-template-columns: 1fr 1fr; gap: 12px; }
+.gvc-settings-col { display: grid; gap: 8px; }
+
+.gvc-settings-label { font-size: 13px; color: #6b7280; }
+.gvc-settings-input, .gvc-settings-textarea, .gvc-settings-select { width: 100%; border-radius: 12px; border: 1px solid #e5e7eb; padding: 12px; font-size: 14px; background: #f9fafb; }
+.gvc-settings-textarea { resize: vertical; }
+
+.gvc-settings-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
+.gvc-save-btn { background: #4338ca; color: #fff; border: none; border-radius: 10px; padding: 10px 14px; font-weight: 600; cursor: pointer; }
+.gvc-save-btn:hover { background: #3730a3; }

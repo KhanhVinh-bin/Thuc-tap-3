@@ -1,0 +1,324 @@
+
+/* Sidebar Styles - Phong cách vũ trụ */
+
+/* Toggle Button */
+.sidebar-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+/* Căn nút: overlay thì giữ cố định ở 20px thay vì bám mép phải sidebar */
+.admin-layout:not(.sidebar-collapsed) .sidebar-toggle {
+  left: 20px;
+}
+
+/* Khi đóng sidebar, nút nằm ở góc trái trên */
+.admin-layout.sidebar-collapsed .sidebar-toggle {
+  left: 20px;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(167, 139, 250, 0.6);
+  transform: scale(1.05);
+  box-shadow: 
+    0 12px 25px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(167, 139, 250, 0.4);
+}
+
+.sidebar-toggle.collapsed {
+  left: 20px;
+}
+
+.sidebar-toggle:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 3px rgba(167, 139, 250, 0.3),
+    0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-toggle svg {
+  color: rgba(255, 255, 255, 0.9);
+  transition: color 0.3s ease;
+}
+
+.sidebar-toggle:hover svg {
+  color: #a78bfa;
+  filter: drop-shadow(0 0 5px rgba(167, 139, 250, 0.6));
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: radial-gradient(ellipse at top left, #1e1b4b 0%, #0f0f23 50%, #000000 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 80px 0 20px 0;
+  box-shadow: 
+    0 0 50px rgba(0, 0, 0, 0.5),
+    inset 0 0 50px rgba(255, 255, 255, 0.05);
+  transition: transform 0.3s ease;
+  z-index: 999;
+  transform: translateX(0);
+  overflow: hidden;
+}
+
+/* Hiệu ứng sao cho sidebar */
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(0.5px 0.5px at 90px 40px, rgba(255,255,255,0.9), transparent),
+    radial-gradient(0.5px 0.5px at 130px 80px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1px 1px at 160px 30px, rgba(255,255,255,0.7), transparent),
+    radial-gradient(0.5px 0.5px at 200px 120px, rgba(255,255,255,0.5), transparent);
+  background-repeat: repeat;
+  background-size: 250px 150px;
+  animation: sidebarSparkle 4s linear infinite;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Hiệu ứng nebula cho sidebar */
+.sidebar::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(167, 139, 250, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 50%);
+  animation: sidebarRotate 25s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes sidebarSparkle {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes sidebarRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.sidebar.collapsed {
+  transform: translateX(-100%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none; /* ẩn hẳn, không còn vệt/ăn sự kiện */
+}
+
+.sidebar-header {
+  padding: 0 20px 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.search-box input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: rgba(167, 139, 250, 0.6);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 0 0 3px rgba(167, 139, 250, 0.2),
+    0 0 15px rgba(167, 139, 250, 0.3);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 0 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  margin: 2px 0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    0 0 10px rgba(167, 139, 250, 0.2);
+  transform: translateX(5px);
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #a78bfa 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 20px rgba(102, 126, 234, 0.3),
+    0 0 15px rgba(167, 139, 250, 0.4);
+  transform: translateX(8px);
+}
+
+.nav-item a {
+  display: flex;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+  width: 100%;
+  padding: 0;
+}
+
+.nav-item a:hover {
+  color: inherit;
+}
+
+.nav-icon {
+  margin-right: 12px;
+  font-size: 16px;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.user-role {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-btn, .logout-btn {
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.settings-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.logout-btn {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ff6b6b;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.settings-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(167, 139, 250, 0.4);
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.2);
+  transform: translateY(-2px);
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Responsive: luôn đặt nút ở góc trái khi màn hình nhỏ */
+@media (max-width: 1024px) {
+  .sidebar-toggle {
+    left: 20px !important;
+  }
+}
