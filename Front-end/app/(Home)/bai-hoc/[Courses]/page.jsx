@@ -35,6 +35,12 @@ export default function LearningPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [enrollmentId, setEnrollmentId] = useState(null)
+  
+  // Q&A state
+  const [feedbacks, setFeedbacks] = useState([])
+  const [loadingFeedbacks, setLoadingFeedbacks] = useState(false)
+  const [newFeedbackContent, setNewFeedbackContent] = useState("")
+  const [submittingFeedback, setSubmittingFeedback] = useState(false)
 
   const formatDuration = (seconds) => {
     if (!seconds) return "0:00"
@@ -162,14 +168,26 @@ export default function LearningPage() {
           
           // ✅ Thu thập TẤT CẢ các URL có thể từ nhiều nguồn
           const videoUrlFromLesson = lesson.VideoUrl || lesson.videoUrl || null
-          const filePathFromFile = fileObj?.FilePath || fileObj?.filePath || null
+          
+          // ✅ QUAN TRỌNG: Lấy FilePath từ nhiều nguồn theo thứ tự ưu tiên
+          // 1. FilePath trực tiếp từ lesson (backend CreateOrUpdateCourseStep đã thêm)
+          // 2. FilePath từ File object (backend Lessons/ByCourse trả về)
+          // 3. FilePath từ các thuộc tính khác
           const filePathFromLesson = lesson.FilePath || lesson.filePath || null
-          const fileUrlFromFile = fileObj?.FileUrl || fileObj?.fileUrl || null
+          const filePathFromFile = fileObj?.FilePath || fileObj?.filePath || null
+          const filePathFromFileUrl = fileObj?.FileUrl || fileObj?.fileUrl || null
           const fileUrlFromLesson = lesson.FileUrl || lesson.fileUrl || null
           
-          // ✅ Ưu tiên: videoUrl > filePath từ file > filePath từ lesson > fileUrl từ file > fileUrl từ lesson
-          const finalVideoUrl = videoUrlFromLesson || filePathFromFile || filePathFromLesson || fileUrlFromFile || fileUrlFromLesson || null
-          const finalFilePath = filePathFromFile || filePathFromLesson || fileUrlFromFile || fileUrlFromLesson || finalVideoUrl || null
+          // ✅ Ưu tiên FilePath: từ lesson trực tiếp > từ File object > từ các nguồn khác
+          // ✅ QUAN TRỌNG: Ưu tiên FilePath từ File object vì endpoint Lessons/ByCourse chỉ trả về File.FilePath
+          const finalFilePath = filePathFromFile || filePathFromLesson || filePathFromFileUrl || fileUrlFromLesson || null
+          
+          // ✅ Ưu tiên VideoUrl: từ lesson > từ file object (nếu là video)
+          const finalVideoUrl = videoUrlFromLesson || null
+          
+          // ✅ Xác định contentType để phân biệt video và document
+          const contentType = (lesson.ContentType || lesson.contentType || "").toLowerCase().trim()
+          const isDocumentType = contentType === 'pdf' || contentType === 'text'
           
           // ✅ Tạo formatted object với spread trước, sau đó ghi đè các giá trị đã format
           const formatted = {
@@ -181,18 +199,18 @@ export default function LearningPage() {
             title: lesson.Title || lesson.title || `Bài học ${index + 1}`,
             duration: formatDuration(lesson.DurationSec || lesson.durationSec || lesson.durationSec || 0),
             durationSec: lesson.DurationSec || lesson.durationSec || 0,
-            contentType: lesson.ContentType || lesson.contentType || "video",
-            // ✅ Lưu tất cả các URL có thể - ĐẢM BẢO không bị ghi đè
-            videoUrl: finalVideoUrl,
-            filePath: finalFilePath,
-            // ✅ Giữ nguyên file object để fallback
+            contentType: contentType || "video",
+            // ✅ Lưu videoUrl (chỉ cho video) và filePath (cho document)
+            videoUrl: isDocumentType ? null : finalVideoUrl,
+            filePath: finalFilePath, // ✅ QUAN TRỌNG: Luôn lưu filePath từ File.FilePath hoặc FilePath trực tiếp
+            // ✅ Giữ nguyên file object để fallback (có thể là null)
             file: fileObj || lesson.File || lesson.file,
             fileType: (fileObj?.FileType || fileObj?.fileType || lesson.FileType || lesson.fileType || "").toLowerCase(),
             completed: false,
             sortOrder: lesson.SortOrder || lesson.sortOrder || index + 1,
             // ✅ Đảm bảo các thuộc tính gốc được giữ lại
             VideoUrl: videoUrlFromLesson || lesson.VideoUrl || lesson.videoUrl,
-            FilePath: filePathFromLesson || lesson.FilePath || lesson.filePath,
+            FilePath: finalFilePath || filePathFromFile || filePathFromLesson || lesson.FilePath || lesson.filePath, // ✅ QUAN TRỌNG: Giữ FilePath từ File object hoặc lesson
             FileUrl: fileUrlFromLesson || lesson.FileUrl || lesson.fileUrl
           }
           
@@ -227,18 +245,259 @@ export default function LearningPage() {
     fetchData()
   }, [courseId])
 
+  // Fetch feedbacks for Q&A - chỉ lấy feedbacks của user hiện tại
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      if (activeTab !== "qa") return
+      if (!user) {
+        setFeedbacks([])
+        return
+      }
+      
+      try {
+        setLoadingFeedbacks(true)
+        const userId = user.userId || user.id || user.UserId
+        if (!userId) {
+          setFeedbacks([])
+          return
+        }
+        
+        const headers = {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` })
+        }
+        
+        // Lấy feedbacks của user hiện tại và filter theo courseId
+        const response = await fetch(`${API_BASE_URL}/Feedbacks/ByUser/${userId}`, { headers })
+        if (response.ok) {
+          const data = await response.json()
+          // Filter feedbacks có chứa courseId trong content
+          const filteredFeedbacks = Array.isArray(data) 
+            ? data.filter(fb => {
+                const content = (fb.content || fb.Content || "").toLowerCase()
+                const courseIdStr = String(courseId).toLowerCase()
+                // Chỉ hiển thị feedbacks có tag [CourseId:xxx] khớp với courseId hiện tại
+                return content.includes(`courseid:${courseIdStr}`)
+              }).slice(0, 20) // Giới hạn 20 feedbacks
+            : []
+          setFeedbacks(filteredFeedbacks)
+        }
+      } catch (err) {
+        console.error("Error fetching feedbacks:", err)
+        setFeedbacks([])
+      } finally {
+        setLoadingFeedbacks(false)
+      }
+    }
+    
+    fetchFeedbacks()
+  }, [activeTab, token, user, courseId])
+
+  // Handle submit feedback
+  const handleSubmitFeedback = async () => {
+    if (!newFeedbackContent.trim() || !user) {
+      alert("Vui lòng đăng nhập và nhập nội dung câu hỏi!")
+      return
+    }
+    
+    try {
+      setSubmittingFeedback(true)
+      const userId = user.userId || user.id || user.UserId
+      if (!userId) {
+        alert("Vui lòng đăng nhập để đặt câu hỏi!")
+        return
+      }
+      
+      const headers = {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` })
+      }
+      
+      // Thêm courseId vào content để có thể filter sau
+      const contentWithCourseId = `[CourseId:${courseId}] ${newFeedbackContent.trim()}`
+      
+      const response = await fetch(`${API_BASE_URL}/Feedbacks`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          userId: userId,
+          content: contentWithCourseId,
+          rating: null // Q&A không có rating
+        })
+      })
+      
+      if (response.ok) {
+        const newFeedback = await response.json()
+        setFeedbacks(prev => [newFeedback, ...prev])
+        setNewFeedbackContent("")
+        alert("Đã gửi câu hỏi thành công!")
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        alert(errorData.message || "Không thể gửi câu hỏi. Vui lòng thử lại!")
+      }
+    } catch (err) {
+      console.error("Error submitting feedback:", err)
+      alert("Có lỗi xảy ra khi gửi câu hỏi!")
+    } finally {
+      setSubmittingFeedback(false)
+    }
+  }
+
   const getResources = () => {
-    if (!lessons[currentLesson] || !lessons[currentLesson].file) return []
+    if (!lessons[currentLesson]) {
+      console.log("⚠️ No lesson at current index:", currentLesson)
+      return []
+    }
     
-    const file = lessons[currentLesson].file
-    if (!file.filePath) return []
+    const lesson = lessons[currentLesson]
+    console.log("📄 Getting resources for lesson:", {
+      lessonIndex: currentLesson,
+      title: lesson.title,
+      contentType: lesson.contentType || lesson.ContentType,
+      hasFile: !!lesson.file,
+      hasFileObject: !!lesson.File,
+      filePath: lesson.filePath || lesson.FilePath,
+      filePathFromFile: lesson.file?.FilePath || lesson.file?.filePath || lesson.File?.FilePath || lesson.File?.filePath,
+      videoUrl: lesson.videoUrl || lesson.VideoUrl,
+      fullLesson: lesson
+    })
     
-    return [{
-      name: file.name || "Tài liệu",
-      size: file.fileSizeBigint ? formatFileSize(file.fileSizeBigint) : "N/A",
-      filePath: file.filePath,
-      fileType: file.fileType || "pdf"
-    }]
+    const resources = []
+    
+    // ✅ Lấy file từ lesson.file object (camelCase và PascalCase)
+    const fileObj = lesson.file || lesson.File || null
+    if (fileObj) {
+      const file = fileObj
+      const filePath = file.FilePath || file.filePath || file.FileUrl || file.fileUrl || file.Path || file.path || null
+      const fileName = file.Name || file.name || file.FileName || file.fileName || "Tài liệu"
+      const fileType = file.FileType || file.fileType || file.Type || file.type || ""
+      const fileSize = file.FileSizeBigint || file.fileSizeBigint || file.FileSize || file.fileSize || file.Size || file.size || 0
+      
+      console.log("📎 File object found:", {
+        filePath,
+        fileName,
+        fileType,
+        fileSize,
+        fullFile: file
+      })
+      
+      // ✅ Chỉ lấy file PDF hoặc TXT
+      if (filePath) {
+        const fileNameLower = fileName.toLowerCase()
+        const filePathLower = String(filePath).toLowerCase()
+        const fileTypeLower = fileType.toLowerCase()
+        
+        const isPdfOrTxt = fileTypeLower === 'pdf' || fileTypeLower === 'txt' ||
+                          fileNameLower.endsWith('.pdf') || fileNameLower.endsWith('.txt') ||
+                          filePathLower.endsWith('.pdf') || filePathLower.endsWith('.txt')
+        
+        if (isPdfOrTxt) {
+          resources.push({
+            name: fileName || (filePathLower.endsWith('.pdf') ? 'Tài liệu.pdf' : filePathLower.endsWith('.txt') ? 'Tài liệu.txt' : 'Tài liệu'),
+            filePath: filePath,
+            size: fileSize ? formatFileSize(fileSize) : "N/A",
+            fileType: fileTypeLower || (filePathLower.endsWith('.pdf') ? 'pdf' : filePathLower.endsWith('.txt') ? 'txt' : '')
+          })
+          console.log("✅ Added resource from file object:", resources[resources.length - 1])
+        }
+      }
+    }
+    
+    // ✅ QUAN TRỌNG: Lấy file từ lesson.filePath hoặc lesson.FilePath TRỰC TIẾP (ngay cả khi file object là null)
+    const contentType = (lesson.contentType || lesson.ContentType || "").toLowerCase().trim()
+    const isDocumentType = contentType === 'pdf' || contentType === 'text'
+    
+    // ✅ Lấy filePath từ TẤT CẢ các nguồn có thể (ưu tiên filePath trực tiếp từ lesson)
+    const filePath = lesson.filePath || lesson.FilePath || 
+                     lesson.file?.FilePath || lesson.file?.filePath || 
+                     lesson.File?.FilePath || lesson.File?.filePath ||
+                     lesson.fileUrl || lesson.FileUrl ||
+                     null
+    
+    console.log("📋 Checking document type:", {
+      contentType,
+      isDocumentType,
+      filePath,
+      hasFileObject: !!fileObj,
+      lessonKeys: Object.keys(lesson)
+    })
+    
+    // ✅ Nếu có filePath và (contentType là pdf/text HOẶC filePath có extension pdf/txt)
+    if (filePath && String(filePath).trim() !== '') {
+      const filePathLower = String(filePath).toLowerCase().trim()
+      const isPdfOrTxtPath = filePathLower.endsWith('.pdf') || filePathLower.endsWith('.txt')
+      
+      // ✅ Kiểm tra nếu là document type HOẶC filePath có extension đúng
+      if (isDocumentType || isPdfOrTxtPath) {
+        // Kiểm tra xem đã có trong resources chưa
+        const alreadyExists = resources.some(r => r.filePath === filePath || String(r.filePath) === String(filePath))
+        
+        if (!alreadyExists) {
+          // ✅ Lấy fileName từ nhiều nguồn
+          let fileName = lesson.file?.Name || lesson.file?.name || 
+                         lesson.File?.Name || lesson.File?.name ||
+                         lesson.docFileName ||
+                         null
+          
+          // ✅ Nếu không có fileName, tạo từ filePath
+          if (!fileName || fileName === "Tài liệu") {
+            const pathParts = filePathLower.split('/')
+            const lastPart = pathParts[pathParts.length - 1]
+            if (lastPart && (lastPart.endsWith('.pdf') || lastPart.endsWith('.txt'))) {
+              // ✅ Decode fileName nếu có encode
+              try {
+                fileName = decodeURIComponent(lastPart)
+              } catch {
+                fileName = lastPart
+              }
+            } else {
+              fileName = contentType === 'pdf' ? 'Tài liệu.pdf' : contentType === 'text' ? 'Tài liệu.txt' : 
+                         (filePathLower.endsWith('.pdf') ? 'Tài liệu.pdf' : filePathLower.endsWith('.txt') ? 'Tài liệu.txt' : 'Tài liệu')
+            }
+          }
+          
+          const fileType = lesson.fileType || lesson.FileType || 
+                          (filePathLower.endsWith('.pdf') ? 'pdf' : filePathLower.endsWith('.txt') ? 'txt' : contentType) ||
+                          (contentType === 'pdf' ? 'pdf' : contentType === 'text' ? 'txt' : '')
+          
+          const fileSize = lesson.fileSizeBigint || lesson.FileSizeBigint || lesson.fileSize || lesson.FileSize || 
+                          lesson.file?.FileSizeBigint || lesson.file?.fileSizeBigint ||
+                          lesson.File?.FileSizeBigint || lesson.File?.fileSizeBigint || 0
+          
+          resources.push({
+            name: fileName,
+            filePath: filePath,
+            size: fileSize ? formatFileSize(fileSize) : "N/A",
+            fileType: fileType.toLowerCase() || (filePathLower.endsWith('.pdf') ? 'pdf' : filePathLower.endsWith('.txt') ? 'txt' : '')
+          })
+          console.log("✅ Added resource from filePath (file object was null):", resources[resources.length - 1])
+        }
+      }
+    }
+    
+    // ✅ Lấy từ courseData.courseFiles (nếu có và là PDF/TXT)
+    if (course?.courseFiles && Array.isArray(course.courseFiles) && course.courseFiles.length > 0) {
+      course.courseFiles.forEach((file, idx) => {
+        const filePath = file.filePath || file.url || file.file?.name || ''
+        const fileName = file.name || `Tài liệu ${idx + 1}`
+        const fileNameLower = fileName.toLowerCase()
+        const filePathLower = String(filePath).toLowerCase()
+        
+        // ✅ Chỉ thêm nếu là PDF hoặc TXT và chưa có trong resources
+        if ((fileNameLower.endsWith('.pdf') || fileNameLower.endsWith('.txt') ||
+             filePathLower.endsWith('.pdf') || filePathLower.endsWith('.txt')) &&
+            !resources.some(r => r.filePath === filePath)) {
+          resources.push({
+            name: fileName,
+            filePath: file.file?.name ? URL.createObjectURL(file.file) : filePath,
+            size: file.size ? formatFileSize(file.size) : 'Unknown'
+          })
+        }
+      })
+    }
+    
+    console.log("📦 Final resources for lesson:", resources)
+    return resources
   }
 
   const formatFileSize = (bytes) => {
@@ -269,10 +528,12 @@ export default function LearningPage() {
       const urlStr = String(url).trim()
       if (!urlStr) return null
       
+      // ✅ Nếu đã là absolute URL, giữ nguyên
       if (urlStr.startsWith('http://') || urlStr.startsWith('https://')) {
         return urlStr
       }
       
+      // ✅ Build URL với base URL của backend
       const baseUrl = `https://localhost:3001`
       let normalizedPath = urlStr
       
@@ -286,16 +547,20 @@ export default function LearningPage() {
         normalizedPath = urlStr.startsWith('/') ? urlStr : `/${urlStr}`
       }
       
-      // Encode URL parts
+      // ✅ Encode URL parts để đảm bảo video có thể load được
       const parts = normalizedPath.split('/').filter(p => p)
       const encodedParts = parts.map((part) => {
         if (part === 'uploads' || part === 'lessons') {
           return part
         }
+        // ✅ Encode các phần còn lại (bao gồm tên file với ký tự đặc biệt)
         return encodeURIComponent(part)
       })
       const encodedPath = '/' + encodedParts.join('/')
-      return `${baseUrl}${encodedPath}`
+      
+      const fullUrl = `${baseUrl}${encodedPath}`
+      console.log(`🔗 Built video URL: ${fullUrl} from: ${urlStr}`)
+      return fullUrl
     }
     
     // ✅ Thu thập TẤT CẢ các URL có thể từ lesson - kiểm tra cả camelCase và PascalCase
@@ -537,11 +802,42 @@ export default function LearningPage() {
   }
 
   const handleDownload = (filePath, fileName) => {
+    if (!filePath) return
+    
     let downloadUrl = filePath
-    if (filePath.startsWith('/uploads/')) {
-      downloadUrl = `https://localhost:3001${filePath}`
+    
+    // ✅ Xử lý các loại URL khác nhau
+    const pathStr = String(filePath).trim()
+    
+    // Nếu là blob URL hoặc absolute URL, giữ nguyên
+    if (pathStr.startsWith('blob:') || pathStr.startsWith('http://') || pathStr.startsWith('https://')) {
+      downloadUrl = pathStr
+    } else {
+      // Nếu là relative path từ uploads, thêm base URL
+      const baseUrl = `https://localhost:3001`
+      let normalizedPath = pathStr
+      
+      if (pathStr.startsWith('/uploads/') || pathStr.startsWith('uploads/')) {
+        normalizedPath = pathStr.startsWith('/') ? pathStr : `/${pathStr}`
+      } else if (!pathStr.startsWith('/') && !pathStr.startsWith('http')) {
+        // Nếu không có prefix, thêm /uploads/
+        normalizedPath = `/uploads/${pathStr}`
+      } else {
+        normalizedPath = pathStr.startsWith('/') ? pathStr : `/${pathStr}`
+      }
+      
+      downloadUrl = `${baseUrl}${normalizedPath}`
     }
-    window.open(downloadUrl, '_blank')
+    
+    // ✅ Tạo link tạm thời để download
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = fileName || 'download'
+    link.target = '_blank'
+    link.rel = 'noopener noreferrer'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   const toggleSection = (sectionId) => {
@@ -635,27 +931,35 @@ export default function LearningPage() {
                     <>
                       <video
                         ref={videoRef}
-                        className="w-full h-full"
+                        className="w-full h-full object-contain bg-black"
                         src={mediaData.url}
                         onTimeUpdate={handleTimeUpdate}
                         onLoadedMetadata={handleLoadedMetadata}
-                        onPlay={() => setIsPlaying(true)}
-                        onPause={() => setIsPlaying(false)}
+                        onPlay={() => {
+                          setIsPlaying(true)
+                          setShowPlayButton(false)
+                        }}
+                        onPause={() => {
+                          setIsPlaying(false)
+                          setShowPlayButton(true)
+                        }}
                         onEnded={() => {
                           setIsPlaying(false)
                           setShowPlayButton(true)
                         }}
                         onClick={handlePlayPause}
                         crossOrigin="anonymous"
+                        playsInline
                       >
                         Trình duyệt của bạn không hỗ trợ video.
                       </video>
                       
-                      {/* Custom Play Button Overlay */}
+                      {/* Custom Play Button Overlay - chỉ hiển thị khi không đang play */}
                       {showPlayButton && !isPlaying && (
                         <div 
                           className="absolute inset-0 flex items-center justify-center bg-black/50 cursor-pointer z-10"
                           onClick={handlePlayPause}
+                          style={{ pointerEvents: 'auto' }}
                         >
                           <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-all">
                             <Play className="w-10 h-10 text-white ml-1" fill="white" />
@@ -663,18 +967,21 @@ export default function LearningPage() {
                         </div>
                       )}
                       
-                      {/* Video Info Overlay */}
-                      <div className="absolute top-4 left-4 right-4 z-10 pointer-events-none">
-                        <h3 className="text-xl font-bold mb-1">{currentLessonData.title}</h3>
-                        <p className="text-sm text-white/80">Bài học {currentLesson + 1} - {course?.title || "Khóa học"}</p>
-                      </div>
+                      {/* Video Info Overlay - chỉ hiển thị khi không đang play hoặc khi hover */}
+                      {(!isPlaying || showPlayButton) && (
+                        <div className="absolute top-4 left-4 right-4 z-10 pointer-events-none">
+                          <h3 className="text-xl font-bold mb-1 text-white drop-shadow-lg">{currentLessonData.title}</h3>
+                          <p className="text-sm text-white/80 drop-shadow-lg">Bài học {currentLesson + 1} - {course?.title || "Khóa học"}</p>
+                        </div>
+                      )}
                       
                       {/* Custom Controls */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
                         {/* Progress Bar */}
                         <div 
                           className="w-full h-1 bg-white/30 rounded-full mb-3 cursor-pointer"
                           onClick={handleSeek}
+                          style={{ pointerEvents: 'auto' }}
                         >
                           <div 
                             className="h-full bg-[#06b6d4] rounded-full transition-all"
@@ -683,7 +990,7 @@ export default function LearningPage() {
                         </div>
                         
                         {/* Controls */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4" style={{ pointerEvents: 'auto' }}>
                           <button onClick={handlePlayPause} className="text-white hover:text-[#06b6d4] transition-colors">
                             {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
                           </button>
@@ -772,6 +1079,90 @@ export default function LearningPage() {
                 </div>
               </div>
 
+              {/* ✅ Hiển thị tài liệu PDF/TXT phía trên phần tabs */}
+              {(() => {
+                const currentLessonResources = getResources()
+                return currentLessonResources.length > 0 ? (
+                  <div className="mb-6 px-6">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">Tài liệu bài học</h3>
+                          <p className="text-sm text-gray-600">Tải xuống tài liệu để học tập offline</p>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        {currentLessonResources.map((resource, index) => {
+                          const getDownloadUrl = (filePath) => {
+                            if (!filePath) return null
+                            const pathStr = String(filePath).trim()
+                            
+                            if (pathStr.startsWith('blob:') || pathStr.startsWith('http://') || pathStr.startsWith('https://')) {
+                              return pathStr
+                            }
+                            
+                            if (pathStr.startsWith('/uploads/') || pathStr.startsWith('uploads/')) {
+                              const normalizedPath = pathStr.startsWith('/') ? pathStr : `/${pathStr}`
+                              return `https://localhost:3001${normalizedPath}`
+                            }
+                            
+                            const normalizedPath = pathStr.startsWith('/') ? pathStr : `/uploads/${pathStr}`
+                            return `https://localhost:3001${normalizedPath}`
+                          }
+                          
+                          const downloadUrl = getDownloadUrl(resource.filePath)
+                          
+                          return (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-3 bg-white rounded-lg border border-blue-200 hover:shadow-md transition-shadow"
+                            >
+                              <div className="flex items-center gap-3 flex-1">
+                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  {resource.fileType === 'pdf' ? (
+                                    <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                  ) : (
+                                    <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-semibold text-gray-900 text-sm truncate">
+                                    {resource.name}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {resource.size} • {resource.fileType.toUpperCase()}
+                                  </p>
+                                </div>
+                              </div>
+                              {downloadUrl && (
+                                <button
+                                  onClick={() => handleDownload(resource.filePath, resource.name)}
+                                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors flex-shrink-0 ml-3 flex items-center gap-2"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                  </svg>
+                                  Tải xuống
+                                </button>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                ) : null
+              })()}
+
               {/* Lesson Content Tabs */}
               <div className="bg-white rounded-lg p-6 px-6">
                 <div className="flex gap-4 border-b border-gray-200 mb-6">
@@ -793,7 +1184,7 @@ export default function LearningPage() {
                         : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
-                    Q&A {false ? `(2)` : ""}
+                    Q&A {feedbacks.length > 0 ? `(${feedbacks.length})` : ""}
                   </button>
                   <button
                     onClick={() => setActiveTab("resources")}
@@ -803,7 +1194,7 @@ export default function LearningPage() {
                         : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
-                    Tài liệu {resources.length > 0 ? `(${resources.length})` : ""}
+                    Tài liệu
                   </button>
                 </div>
 
@@ -823,45 +1214,180 @@ export default function LearningPage() {
                 )}
 
                 {activeTab === "qa" && (
-                  <div className="space-y-4">
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p className="font-semibold text-gray-900 mb-2">Trần Văn B</p>
-                      <p className="text-gray-700">Làm sao để sử dụng React Hooks trong class components?</p>
+                  <div className="space-y-6">
+                    {/* Form để đặt câu hỏi */}
+                    <div className="border border-gray-200 rounded-lg p-4 bg-white">
+                      <h3 className="font-semibold text-gray-900 mb-3">Đặt câu hỏi</h3>
+                      <textarea
+                        value={newFeedbackContent}
+                        onChange={(e) => setNewFeedbackContent(e.target.value)}
+                        placeholder="Bạn có câu hỏi gì về bài học này? Hãy chia sẻ với mọi người..."
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#06b6d4] focus:border-transparent resize-none"
+                        rows={4}
+                        disabled={submittingFeedback || !user}
+                      />
+                      <div className="flex items-center justify-between mt-3">
+                        <p className="text-sm text-gray-500">
+                          {user ? `Đăng nhập với tên: ${user.fullName || user.FullName || "Bạn"}` : "Vui lòng đăng nhập để đặt câu hỏi"}
+                        </p>
+                        <button
+                          onClick={handleSubmitFeedback}
+                          disabled={!newFeedbackContent.trim() || submittingFeedback || !user}
+                          className="px-6 py-2 bg-[#06b6d4] text-white rounded-lg font-semibold hover:bg-[#0891b2] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        >
+                          {submittingFeedback ? "Đang gửi..." : "Gửi câu hỏi"}
+                        </button>
+                      </div>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p className="font-semibold text-gray-900 mb-2">Nguyễn Thị C</p>
-                      <p className="text-gray-700">Có cách nào để tối ưu hóa performance trong React không?</p>
-                    </div>
+
+                    {/* Danh sách câu hỏi */}
+                    {loadingFeedbacks ? (
+                      <div className="flex items-center justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#06b6d4]"></div>
+                        <span className="ml-3 text-gray-600">Đang tải câu hỏi...</span>
+                      </div>
+                    ) : feedbacks.length > 0 ? (
+                      <div className="space-y-4">
+                        {feedbacks.map((feedback) => {
+                          const feedbackUser = feedback.user || feedback.User
+                          const userName = feedbackUser?.fullName || feedbackUser?.FullName || "Người dùng"
+                          const userAvatar = feedbackUser?.avatarUrl || feedbackUser?.AvatarUrl || "/placeholder-user.jpg"
+                          const feedbackContent = feedback.content || feedback.Content || ""
+                          const createdAt = feedback.createdAt || feedback.CreatedAt
+                          const formatDate = (dateString) => {
+                            if (!dateString) return ""
+                            try {
+                              const date = new Date(dateString)
+                              return date.toLocaleDateString("vi-VN", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit"
+                              })
+                            } catch {
+                              return dateString
+                            }
+                          }
+                          
+                          return (
+                            <div key={feedback.feedbackId || feedback.FeedbackId} className="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
+                              <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 bg-[#06b6d4] rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                  {userAvatar && userAvatar !== "/placeholder-user.jpg" && !userAvatar.includes("placeholder") ? (
+                                    <img 
+                                      src={userAvatar.startsWith('http') ? userAvatar : `${userAvatar.startsWith('/') ? '' : '/'}${userAvatar}`} 
+                                      alt={userName}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        e.target.style.display = "none"
+                                        e.target.nextElementSibling.style.display = "flex"
+                                      }}
+                                    />
+                                  ) : null}
+                                  <span 
+                                    className="text-white font-semibold text-sm w-full h-full flex items-center justify-center"
+                                    style={{ display: !userAvatar || userAvatar.includes("placeholder") ? "flex" : "none" }}
+                                  >
+                                    {userName.charAt(0).toUpperCase()}
+                                  </span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <p className="font-semibold text-gray-900">{userName}</p>
+                                    {createdAt && (
+                                      <span className="text-xs text-gray-500">{formatDate(createdAt)}</span>
+                                    )}
+                                  </div>
+                                  <p className="text-gray-700 whitespace-pre-wrap break-words">
+                                    {feedbackContent.replace(/^\[CourseId:\d+\]\s*/i, "")}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <p>Chưa có câu hỏi nào. Hãy là người đầu tiên đặt câu hỏi!</p>
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {activeTab === "resources" && (
                   <div className="space-y-3">
                     {resources.length > 0 ? (
-                      resources.map((resource, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-100 rounded flex items-center justify-center">
-                              <span className="text-blue-600 font-semibold">📄</span>
-                            </div>
-                            <div>
-                              <p className="font-semibold text-gray-900">{resource.name}</p>
-                              <p className="text-sm text-gray-600">{resource.size}</p>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleDownload(resource.filePath, resource.name)}
-                            className="px-4 py-2 bg-black text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors"
+                      resources.map((resource, index) => {
+                        // ✅ Xây dựng URL đầy đủ cho download
+                        const getDownloadUrl = (filePath) => {
+                          if (!filePath) return null
+                          const pathStr = String(filePath).trim()
+                          
+                          // Nếu là blob URL hoặc absolute URL, giữ nguyên
+                          if (pathStr.startsWith('blob:') || pathStr.startsWith('http://') || pathStr.startsWith('https://')) {
+                            return pathStr
+                          }
+                          
+                          // Nếu là relative path từ uploads, thêm base URL
+                          if (pathStr.startsWith('/uploads/') || pathStr.startsWith('uploads/')) {
+                            const normalizedPath = pathStr.startsWith('/') ? pathStr : `/${pathStr}`
+                            return `https://localhost:3001${normalizedPath}`
+                          }
+                          
+                          // Nếu không có prefix, thêm /uploads/
+                          const normalizedPath = pathStr.startsWith('/') ? pathStr : `/uploads/${pathStr}`
+                          return `https://localhost:3001${normalizedPath}`
+                        }
+                        
+                        const downloadUrl = getDownloadUrl(resource.filePath)
+                        
+                        return (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
                           >
-                            Tải xuống
-                          </button>
-                        </div>
-                      ))
+                            <div className="flex items-center gap-4 flex-1">
+                              {/* ✅ Icon tài liệu với màu xanh nhạt */}
+                              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                              </div>
+                              
+                              {/* ✅ Thông tin file */}
+                              <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-gray-900 text-base mb-1 truncate">
+                                  {resource.name}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                  {resource.size}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            {/* ✅ Nút tải xuống */}
+                            {downloadUrl && (
+                              <button
+                                onClick={() => handleDownload(resource.filePath, resource.name)}
+                                className="px-5 py-2.5 bg-black text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors flex-shrink-0 ml-4"
+                              >
+                                Tải xuống
+                              </button>
+                            )}
+                          </div>
+                        )
+                      })
                     ) : (
-                      <p className="text-gray-500 text-center py-8">Không có tài liệu đính kèm cho bài học này.</p>
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <p className="text-gray-500 text-base">Không có tài liệu đính kèm cho bài học này.</p>
+                      </div>
                     )}
                   </div>
                 )}

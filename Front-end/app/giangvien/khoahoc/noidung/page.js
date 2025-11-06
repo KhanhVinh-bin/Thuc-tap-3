@@ -28,11 +28,13 @@ export default function NoiDungChuongPage() {
         docName: (l.file && l.file.filePath) ? (l.file.filePath.includes('/uploads/') ? l.file.filePath.split('/').pop() : l.file.filePath) : "",
         filePath: (l.file && l.file.filePath) ? l.file.filePath : "",
         docFile: null,
+        docFiles: [], // ✅ Hỗ trợ nhiều file tài liệu
+        docFilePaths: [], // ✅ Danh sách filePaths cho nhiều file
         lessonId: l.lessonId || 0,
         sortOrder: l.sortOrder || idx + 1,
       }))
     }
-    return [{ id: 1, title: "Bài học mới", type: "video", duration: "", videoName: "", videoUrl: "", videoFile: null, docName: "", filePath: "", docFile: null, lessonId: 0, sortOrder: 1 }]
+    return [{ id: 1, title: "Bài học mới", type: "video", duration: "", videoName: "", videoUrl: "", videoFile: null, docName: "", filePath: "", docFile: null, docFiles: [], docFilePaths: [], lessonId: 0, sortOrder: 1 }]
   })
   
   const [isSaving, setIsSaving] = useState(false)
@@ -61,14 +63,20 @@ export default function NoiDungChuongPage() {
         })
       }
       if (patch.docFile && patch.docFile instanceof File) {
-        // ✅ Cleanup old blob URL nếu có
-        if (updated.filePath && updated.filePath.startsWith('blob:')) {
-          URL.revokeObjectURL(updated.filePath)
-        }
-        updated.docFile = patch.docFile
-        updated.docName = patch.docFile.name
-        // Tạo preview URL chỉ để hiển thị (cho document có thể không cần)
-        // updated.filePath = URL.createObjectURL(patch.docFile)
+        // ✅ Hỗ trợ nhiều file tài liệu
+        if (!updated.docFiles) updated.docFiles = []
+        if (!updated.docFilePaths) updated.docFilePaths = []
+        updated.docFiles = [...updated.docFiles, patch.docFile]
+        updated.docName = patch.docFile.name // Giữ tên file cuối cùng để hiển thị
+        updated.docFile = patch.docFile // Giữ file cuối cùng để upload
+      }
+      if (patch.docFiles && Array.isArray(patch.docFiles)) {
+        // ✅ Cập nhật mảng docFiles
+        updated.docFiles = patch.docFiles
+      }
+      if (patch.docFilePaths && Array.isArray(patch.docFilePaths)) {
+        // ✅ Cập nhật mảng docFilePaths
+        updated.docFilePaths = patch.docFilePaths
       }
       return updated
     }))
@@ -256,7 +264,7 @@ export default function NoiDungChuongPage() {
                                 <rect x="6" y="4" width="12" height="16" rx="2" strokeWidth="2" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 8h8M8 12h8M8 16h8" />
                               </svg>
-                              Tài liệu
+                              
                             </button>
                           </div>
                         )}
@@ -325,12 +333,35 @@ export default function NoiDungChuongPage() {
                                 type="file" 
                                 id={`doc-${inputId}`} 
                                 hidden 
-                                accept="*/*"
+                                accept=".pdf,.txt"
+                                multiple // ✅ Cho phép chọn nhiều file
                                 onChange={(e) => {
-                                  const file = e.target.files?.[0]
-                                  if (file) {
-                                    updateLesson(ls.id, { docFile: file })
+                                  const files = Array.from(e.target.files || [])
+                                  if (files.length > 0) {
+                                    // ✅ Kiểm tra loại file: chỉ chấp nhận PDF và TXT
+                                    const validFiles = files.filter(file => {
+                                      const fileName = file.name.toLowerCase()
+                                      return fileName.endsWith('.pdf') || fileName.endsWith('.txt')
+                                    })
+                                    
+                                    if (validFiles.length === 0) {
+                                      alert("Chỉ chấp nhận file PDF (.pdf) hoặc TXT (.txt)")
+                                      e.target.value = '' // Reset input
+                                      return
+                                    }
+                                    
+                                    if (validFiles.length < files.length) {
+                                      alert(`Đã chọn ${validFiles.length}/${files.length} file hợp lệ (PDF/TXT). Các file không hợp lệ đã được bỏ qua.`)
+                                    }
+                                    
+                                    // ✅ Thêm các file vào danh sách
+                                    const currentFiles = ls.docFiles || []
+                                    updateLesson(ls.id, { 
+                                      docFiles: [...currentFiles, ...validFiles],
+                                      docFile: validFiles[validFiles.length - 1] // Giữ file cuối cùng để upload ngay
+                                    })
                                   }
+                                  e.target.value = '' // Reset để có thể chọn lại cùng file
                                 }} 
                               />
                               <span className="gvc-upload-icon">
@@ -339,7 +370,7 @@ export default function NoiDungChuongPage() {
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 8h8M8 12h8M8 16h8" />
                                 </svg>
                               </span>
-                              <span className="gvc-upload-text">Tải tài liệu</span>
+                              <span className="gvc-upload-text">Tải tài liệu (PDF, TXT) - Có thể chọn nhiều file</span>
                             </div>
                           )}
                         </div>
@@ -412,7 +443,7 @@ export default function NoiDungChuongPage() {
                           </div>
                         )}
                         
-                        {(ls.videoName || ls.docName) && (
+                        {(ls.videoName || (ls.docFiles && ls.docFiles.length > 0) || ls.docName) && (
                           <div className="gvc-upload-list">
                             {ls.videoName && (
                               <div className="gvc-upload-item">
@@ -433,14 +464,37 @@ export default function NoiDungChuongPage() {
                                 </button>
                               </div>
                             )}
-                            {ls.docName && (
+                            {/* ✅ Hiển thị danh sách nhiều file tài liệu */}
+                            {ls.docFiles && ls.docFiles.length > 0 && ls.docFiles.map((file, idx) => (
+                              <div key={idx} className="gvc-upload-item">
+                                <span className="gvc-upload-type">Tài liệu {idx + 1}</span>
+                                <span className="gvc-upload-filename">{file.name}</span>
+                                <button 
+                                  type="button" 
+                                  className="gvc-remove-btn" 
+                                  onClick={() => {
+                                    const newFiles = ls.docFiles.filter((_, i) => i !== idx)
+                                    updateLesson(ls.id, { 
+                                      docFiles: newFiles,
+                                      docFile: newFiles.length > 0 ? newFiles[newFiles.length - 1] : null,
+                                      docName: newFiles.length > 0 ? newFiles[newFiles.length - 1].name : "",
+                                      filePath: newFiles.length === 0 ? "" : ls.filePath
+                                    })
+                                  }}
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                            {/* ✅ Fallback: hiển thị docName nếu không có docFiles nhưng có docName */}
+                            {(!ls.docFiles || ls.docFiles.length === 0) && ls.docName && (
                               <div className="gvc-upload-item">
                                 <span className="gvc-upload-type">Tài liệu</span>
                                 <span className="gvc-upload-filename">{ls.docName}</span>
                                 <button 
                                   type="button" 
                                   className="gvc-remove-btn" 
-                                  onClick={() => updateLesson(ls.id, { docName: "", filePath: "", docFile: null })}
+                                  onClick={() => updateLesson(ls.id, { docName: "", filePath: "", docFile: null, docFiles: [], docFilePaths: [] })}
                                 >
                                   ×
                                 </button>
@@ -510,19 +564,57 @@ export default function NoiDungChuongPage() {
                       filePath = null
                     }
 
+                    // ✅ Xác định contentType dựa trên type và file có sẵn
+                    let contentType = "video"
+                    const hasVideoFile = ls.videoFile && ls.videoFile instanceof File
+                    const hasDocFile = ls.docFile && ls.docFile instanceof File
+                    const hasDocFiles = ls.docFiles && Array.isArray(ls.docFiles) && ls.docFiles.length > 0
+                    
+                    if (ls.type === "document" || ls.type === "text") {
+                      // Nếu là document type, xác định pdf hay text dựa trên file extension của file đầu tiên
+                      const firstDocFile = hasDocFiles ? ls.docFiles[0] : (hasDocFile ? ls.docFile : null)
+                      if (firstDocFile && firstDocFile instanceof File) {
+                        const fileName = firstDocFile.name.toLowerCase()
+                        contentType = fileName.endsWith('.pdf') ? "pdf" : "text"
+                      } else if (ls.type === "document") {
+                        contentType = "pdf"
+                      } else {
+                        contentType = "text"
+                      }
+                    } else if (ls.type === "video" && hasVideoFile) {
+                      contentType = "video"
+                    }
+                    
+                    // ✅ Nếu là document type nhưng chưa có filePath hợp lệ và chưa có docFile/docFiles, tạm thời set filePath để pass validation
+                    const isDocumentType = contentType === "pdf" || contentType === "text"
+                    const hasValidFilePath = filePath && filePath.startsWith('/uploads/')
+                    const hasAnyDocFile = hasDocFile || hasDocFiles
+                    
+                    // ✅ Nếu là document nhưng chưa có filePath hợp lệ, set filePath tạm thời nếu có docFile/docFiles
+                    if (isDocumentType && !hasValidFilePath && hasAnyDocFile) {
+                      filePath = "/temp/path" // FilePath tạm thời để pass validation, sẽ được thay thế sau khi upload
+                    }
+                    
+                    // ✅ Nếu là document nhưng không có cả filePath và docFile/docFiles, bỏ qua lesson này
+                    if (isDocumentType && !hasValidFilePath && !hasAnyDocFile) {
+                      console.log(`⚠️ Skipping lesson "${ls.title}" - ContentType is "${contentType}" but no file to upload`)
+                      return null
+                    }
+
                     return {
                       lessonId: ls.lessonId || 0,
                       title: ls.title || "",
-                      contentType: ls.type === "video" ? "video" : (ls.type === "document" ? "pdf" : "text"),
-                      videoUrl: ls.type === "video" && videoUrl && !videoUrl.startsWith('/uploads/') ? videoUrl : null,
-                      filePath: ls.type === "video" && !videoUrl && filePath && filePath.startsWith('/uploads/') ? filePath :
-                                ((ls.type === "document" || ls.type === "text") && filePath ? filePath : null),
+                      contentType: contentType,
+                      // ✅ Chỉ gửi videoUrl nếu là video và có videoUrl hợp lệ
+                      videoUrl: (contentType === "video" && videoUrl && !videoUrl.startsWith('/uploads/')) ? videoUrl : null,
+                      // ✅ Gửi filePath nếu là document và có filePath (tạm thời hoặc thực tế)
+                      filePath: isDocumentType && filePath ? filePath : null,
                       durationSec: durationSec,
                       sortOrder: ls.sortOrder || lsIdx + 1,
                       _videoFile: ls.videoFile || null,
                       _docFile: ls.docFile || null,
                     }
-                  })
+                  }).filter(ls => ls !== null) // ✅ Lọc bỏ các lesson null
 
                 const coursePayload = {
                   courseId: courseData.courseId || 0,
@@ -653,12 +745,12 @@ export default function NoiDungChuongPage() {
                         type: ls.type
                       })
 
-                      // Upload video
+                      // ✅ Upload video (chỉ khi type là video và có videoFile)
                       if (ls.videoFile && ls.videoFile instanceof File && ls.type === "video") {
                         uploadPromises.push(
                           uploadLessonFile(courseId, savedLessonId, ls.videoFile, token)
                             .then(uploadResult => {
-                              console.log(`📤 Upload result for lesson ${lsIdx + 1} (${savedLessonId}):`, uploadResult)
+                              console.log(`📤 Upload result for lesson ${lsIdx + 1} (${savedLessonId}) - VIDEO:`, uploadResult)
                               // ✅ Hỗ trợ cả PascalCase và camelCase từ API response
                               const uploadedFilePath = uploadResult.file?.FilePath || 
                                                        uploadResult.file?.filePath || 
@@ -682,14 +774,14 @@ export default function NoiDungChuongPage() {
                                   prerequisites: courseData.prerequisites || "",
                                   learningOutcomes: courseData.learningOutcomes || "",
                                   tagName: courseData.tagName || "",
-                                  tagIds: null, // ✅ Backend chỉ dùng TagName, không dùng TagIds. Gửi null để tránh lỗi validation
+                                  tagIds: null,
                                   slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course",
                                   lessons: [{
                                     lessonId: savedLessonId,
                                     title: ls.title || "",
-                                    contentType: "video",
+                                    contentType: "video", // ✅ Đảm bảo contentType là video
                                     videoUrl: uploadedFilePath, // ✅ Set videoUrl từ filePath đã upload
-                                    filePath: uploadedFilePath, // ✅ Giữ cả filePath để tương thích
+                                    filePath: null, // ✅ Không set filePath cho video
                                     durationSec: savedLesson.DurationSec || savedLesson.durationSec || 0,
                                     sortOrder: savedLesson.SortOrder || savedLesson.sortOrder || expectedSortOrder,
                                   }],
@@ -712,66 +804,299 @@ export default function NoiDungChuongPage() {
                         console.warn(`⚠️ Lesson ${lsIdx + 1} (${savedLessonId}) "${ls.title}" is type video but has no videoFile to upload`)
                       }
 
-                      // Upload document
-                      if (ls.docFile && ls.docFile instanceof File && (ls.type === "document" || ls.type === "text")) {
-                        uploadPromises.push(
-                          uploadLessonFile(courseId, savedLessonId, ls.docFile, token)
-                            .then(uploadResult => {
+                      // ✅ Upload documents (hỗ trợ nhiều file tài liệu)
+                      const docFilesToUpload = ls.docFiles && ls.docFiles.length > 0 ? ls.docFiles : 
+                                               (ls.docFile && ls.docFile instanceof File ? [ls.docFile] : [])
+                      
+                      if (docFilesToUpload.length > 0 && (ls.type === "document" || ls.type === "text")) {
+                        const uploadDocFiles = async () => {
+                          try {
+                            // ✅ Nếu lesson chưa có lessonId (chưa được tạo), tạo lesson trước với filePath tạm thời
+                            let currentLessonId = savedLessonId
+                            
+                            if (!currentLessonId || currentLessonId === 0) {
+                              // Tạo lesson mới trước khi upload
+                              console.log(`📤 Creating new lesson for "${ls.title}" before uploading documents`)
+                              const firstFileName = docFilesToUpload[0].name.toLowerCase()
+                              const contentType = firstFileName.endsWith('.pdf') ? "pdf" : "text"
+                              
+                              const createLessonResult = await createOrUpdateCourseStep({
+                                courseId: courseId,
+                                title: courseData.title || "",
+                                description: courseData.description || "",
+                                categoryId: courseData.categoryId || null,
+                                thumbnailUrl: courseData.thumbnailUrl || "",
+                                price: courseData.price || 0,
+                                duration: courseData.duration || "",
+                                level: courseData.level || "",
+                                prerequisites: courseData.prerequisites || "",
+                                learningOutcomes: courseData.learningOutcomes || "",
+                                tagName: courseData.tagName || "",
+                                tagIds: null,
+                                slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course",
+                                lessons: [{
+                                  lessonId: 0,
+                                  title: ls.title || "",
+                                  contentType: contentType,
+                                  videoUrl: null,
+                                  filePath: "/temp/path", // FilePath tạm thời để pass validation
+                                  durationSec: ls.duration ? (ls.duration.split(':').reduce((acc, val) => acc * 60 + parseInt(val), 0)) : 0,
+                                  sortOrder: expectedSortOrder,
+                                }],
+                              }, token)
+                              
+                              const createdLessons = createLessonResult.Lessons || createLessonResult.lessons || []
+                              if (createdLessons.length > 0) {
+                                currentLessonId = createdLessons[0].LessonId || createdLessons[0].lessonId
+                                console.log(`✅ Created new lesson with ID: ${currentLessonId}`)
+                              } else {
+                                throw new Error("Không thể tạo lesson mới")
+                              }
+                            }
+                            
+                            const uploadedFilePaths = []
+                            
+                            // ✅ Upload từng file một
+                            for (let i = 0; i < docFilesToUpload.length; i++) {
+                              const file = docFilesToUpload[i]
+                              const fileName = file.name.toLowerCase()
+                              const contentType = fileName.endsWith('.pdf') ? "pdf" : "text"
+                              
+                              console.log(`📤 Uploading document ${i + 1}/${docFilesToUpload.length} for lesson ${lsIdx + 1} (${currentLessonId}):`, {
+                                fileName: file.name,
+                                contentType: contentType,
+                                fileSize: file.size
+                              })
+                              
+                              // ✅ Upload file document
+                              const uploadResult = await uploadLessonFile(courseId, currentLessonId, file, token)
+                              console.log(`📤 Upload result for document ${i + 1}:`, uploadResult)
+                              
                               const uploadedFilePath = uploadResult.file?.FilePath || 
                                                        uploadResult.file?.filePath || 
                                                        uploadResult.filePath ||
                                                        uploadResult.FilePath
+                              
                               if (uploadedFilePath) {
-                                return createOrUpdateCourseStep({
-                                  courseId: courseId,
-                                  title: courseData.title || "",
-                                  description: courseData.description || "",
-                                  categoryId: courseData.categoryId || null,
-                                  thumbnailUrl: courseData.thumbnailUrl || "",
-                                  price: courseData.price || 0,
-                                  duration: courseData.duration || "",
-                                  level: courseData.level || "",
-                                  prerequisites: courseData.prerequisites || "",
-                                  learningOutcomes: courseData.learningOutcomes || "",
-                                  tagName: courseData.tagName || "",
-                                  tagIds: null, // ✅ Backend chỉ dùng TagName, không dùng TagIds. Gửi null để tránh lỗi validation
-                                  slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course",
-                                  lessons: [{
-                                    lessonId: savedLessonId,
-                                    title: ls.title || "",
-                                    contentType: ls.type === "document" ? "pdf" : "text",
-                                    videoUrl: null,
-                                    filePath: uploadedFilePath,
-                                    durationSec: savedLesson.DurationSec || savedLesson.durationSec || 0,
-                                    sortOrder: savedLesson.SortOrder || savedLesson.sortOrder || expectedSortOrder,
-                                  }],
-                                }, token).then(() => {
-                                  console.log(`✅ Lesson ${lsIdx + 1} (${savedLessonId}) updated with document filePath:`, uploadedFilePath)
-                                })
+                                uploadedFilePaths.push(uploadedFilePath)
+                              } else {
+                                console.warn(`⚠️ No filePath for document ${i + 1}:`, file.name)
                               }
-                            })
-                            .catch(err => {
-                              console.error(`❌ Error uploading document for lesson ${lsIdx + 1} (${savedLessonId}):`, err)
-                            })
-                        )
+                            }
+                            
+                            // ✅ Update lesson với filePath đầu tiên (vì backend chỉ hỗ trợ một filePath)
+                            // ✅ Các file khác sẽ được lưu trong docFiles và hiển thị trong UI
+                            if (uploadedFilePaths.length > 0) {
+                              const firstFileName = docFilesToUpload[0].name.toLowerCase()
+                              const contentType = firstFileName.endsWith('.pdf') ? "pdf" : "text"
+                              
+                              const updateResult = await createOrUpdateCourseStep({
+                                courseId: courseId,
+                                title: courseData.title || "",
+                                description: courseData.description || "",
+                                categoryId: courseData.categoryId || null,
+                                thumbnailUrl: courseData.thumbnailUrl || "",
+                                price: courseData.price || 0,
+                                duration: courseData.duration || "",
+                                level: courseData.level || "",
+                                prerequisites: courseData.prerequisites || "",
+                                learningOutcomes: courseData.learningOutcomes || "",
+                                tagName: courseData.tagName || "",
+                                tagIds: null,
+                                slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course",
+                                lessons: [{
+                                  lessonId: currentLessonId, // ✅ Dùng currentLessonId (có thể là savedLessonId hoặc lessonId mới tạo)
+                                  title: ls.title || "",
+                                  contentType: contentType, // ✅ Đảm bảo contentType đúng
+                                  videoUrl: null, // ✅ Không set videoUrl cho document
+                                  filePath: uploadedFilePaths[0], // ✅ Set filePath từ file đã upload
+                                  durationSec: ls.duration ? (ls.duration.split(':').reduce((acc, val) => acc * 60 + parseInt(val), 0)) : 0,
+                                  sortOrder: expectedSortOrder,
+                                }],
+                              }, token)
+                              
+                              console.log(`✅ Lesson "${ls.title}" (${currentLessonId}) updated with document filePath:`, uploadedFilePaths[0])
+                              console.log(`✅ Update result includes FilePath:`, {
+                                lessonId: updateResult.Lessons?.[0]?.LessonId || updateResult.lessons?.[0]?.lessonId,
+                                filePath: updateResult.Lessons?.[0]?.FilePath || updateResult.lessons?.[0]?.filePath,
+                                hasFile: !!(updateResult.Lessons?.[0]?.File || updateResult.lessons?.[0]?.file)
+                              })
+                            } else {
+                              throw new Error(`Không có filePath nào được upload cho lesson "${ls.title}"`)
+                            }
+                          } catch (err) {
+                            console.error(`❌ Error uploading documents for lesson "${ls.title}":`, err)
+                            throw err
+                          }
+                        }
+                        
+                        uploadPromises.push(uploadDocFiles())
                       }
                     })
 
+                    // ✅ Đợi tất cả upload hoàn thành trước khi update courseData
                     if (uploadPromises.length > 0) {
-                      Promise.all(uploadPromises).catch(err => {
+                      await Promise.all(uploadPromises).catch(err => {
                         console.error("Some file uploads failed:", err)
+                      })
+                      
+                      // ✅ Sau khi upload xong, gọi lại API để lấy lessons mới nhất với filePath đã cập nhật
+                      try {
+                        console.log("🔄 Fetching updated lessons after file uploads...")
+                        const updatedResult = await createOrUpdateCourseStep({
+                          courseId: courseId,
+                          title: courseData.title || "",
+                          description: courseData.description || "",
+                          categoryId: courseData.categoryId || null,
+                          thumbnailUrl: courseData.thumbnailUrl || "",
+                          price: courseData.price || 0,
+                          duration: courseData.duration || "",
+                          level: courseData.level || "",
+                          prerequisites: courseData.prerequisites || "",
+                          learningOutcomes: courseData.learningOutcomes || "",
+                          tagName: courseData.tagName || "",
+                          tagIds: null,
+                          slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course",
+                          lessons: [], // ✅ Gửi empty array để chỉ lấy lessons hiện có (không update)
+                        }, token)
+                        
+                        // ✅ Sử dụng lessons mới nhất từ API với filePath đã cập nhật
+                        const finalLessons = updatedResult.Lessons || updatedResult.lessons || result.Lessons || result.lessons || []
+                        console.log("✅ Updated lessons with filePath:", finalLessons.map(l => ({
+                          lessonId: l.LessonId || l.lessonId,
+                          title: l.Title || l.title,
+                          filePath: l.FilePath || l.filePath,
+                          filePathFromFile: l.File?.FilePath || l.file?.filePath,
+                          hasFile: !!l.File || !!l.file
+                        })))
+                        
+                        // ✅ QUAN TRỌNG: Map lại lessons để đảm bảo filePath được lưu trực tiếp vào lesson object
+                        const mappedLessons = finalLessons.map(lesson => {
+                          const fileObj = lesson.File || lesson.file || null
+                          const filePathFromFile = fileObj?.FilePath || fileObj?.filePath || null
+                          const filePathFromLesson = lesson.FilePath || lesson.filePath || null
+                          
+                          // ✅ Ưu tiên filePath từ File object, sau đó từ lesson trực tiếp
+                          const finalFilePath = filePathFromFile || filePathFromLesson || null
+                          
+                          return {
+                            ...lesson,
+                            // ✅ Đảm bảo filePath được lưu trực tiếp vào lesson object
+                            FilePath: finalFilePath,
+                            filePath: finalFilePath,
+                            // ✅ Giữ nguyên File object để fallback
+                            File: fileObj || lesson.File || lesson.file,
+                            file: fileObj || lesson.File || lesson.file
+                          }
+                        })
+                        
+                        updateCourseData({
+                          lessons: mappedLessons, // ✅ Sử dụng mapped lessons với filePath đã được đảm bảo
+                          courseId: updatedResult.CourseId || updatedResult.courseId || result.CourseId || result.courseId || courseData.courseId,
+                          thumbnailUrl: updatedResult.ThumbnailUrl || updatedResult.thumbnailUrl || result.ThumbnailUrl || result.thumbnailUrl || courseData.thumbnailUrl || "",
+                        })
+                      } catch (fetchErr) {
+                        console.error("❌ Error fetching updated lessons:", fetchErr)
+                        // ✅ Fallback: sử dụng result ban đầu nếu không fetch được
+                        // ✅ Map lại lessons để đảm bảo filePath được lưu trực tiếp
+                        const fallbackLessons = result.Lessons || result.lessons || lessonsToSave || []
+                        const mappedFallbackLessons = fallbackLessons.map(lesson => {
+                          const fileObj = lesson.File || lesson.file || null
+                          const filePathFromFile = fileObj?.FilePath || fileObj?.filePath || null
+                          const filePathFromLesson = lesson.FilePath || lesson.filePath || null
+                          const finalFilePath = filePathFromFile || filePathFromLesson || null
+                          
+                          return {
+                            ...lesson,
+                            FilePath: finalFilePath,
+                            filePath: finalFilePath,
+                            File: fileObj || lesson.File || lesson.file,
+                            file: fileObj || lesson.File || lesson.file
+                          }
+                        })
+                        
+                        updateCourseData({
+                          lessons: mappedFallbackLessons,
+                          courseId: result.CourseId || result.courseId || courseData.courseId,
+                          thumbnailUrl: result.ThumbnailUrl || result.thumbnailUrl || courseData.thumbnailUrl || "",
+                        })
+                      }
+                    } else {
+                      // ✅ Nếu không có file upload, update courseData ngay
+                      // ✅ Map lại lessons để đảm bảo filePath được lưu trực tiếp
+                      const noUploadLessons = result.Lessons || result.lessons || lessonsToSave || []
+                      const mappedNoUploadLessons = noUploadLessons.map(lesson => {
+                        const fileObj = lesson.File || lesson.file || null
+                        const filePathFromFile = fileObj?.FilePath || fileObj?.filePath || null
+                        const filePathFromLesson = lesson.FilePath || lesson.filePath || null
+                        const finalFilePath = filePathFromFile || filePathFromLesson || null
+                        
+                        return {
+                          ...lesson,
+                          FilePath: finalFilePath,
+                          filePath: finalFilePath,
+                          File: fileObj || lesson.File || lesson.file,
+                          file: fileObj || lesson.File || lesson.file
+                        }
+                      })
+                      
+                      updateCourseData({
+                        lessons: mappedNoUploadLessons,
+                        courseId: result.CourseId || result.courseId || courseData.courseId,
+                        thumbnailUrl: result.ThumbnailUrl || result.thumbnailUrl || courseData.thumbnailUrl || "",
                       })
                     }
                   } catch (err) {
                     console.error("Error processing file uploads:", err)
+                    // ✅ Fallback: update courseData ngay cả khi có lỗi
+                    // ✅ Map lại lessons để đảm bảo filePath được lưu trực tiếp
+                    const errorLessons = result.Lessons || result.lessons || lessonsToSave || []
+                    const mappedErrorLessons = errorLessons.map(lesson => {
+                      const fileObj = lesson.File || lesson.file || null
+                      const filePathFromFile = fileObj?.FilePath || fileObj?.filePath || null
+                      const filePathFromLesson = lesson.FilePath || lesson.filePath || null
+                      const finalFilePath = filePathFromFile || filePathFromLesson || null
+                      
+                      return {
+                        ...lesson,
+                        FilePath: finalFilePath,
+                        filePath: finalFilePath,
+                        File: fileObj || lesson.File || lesson.file,
+                        file: fileObj || lesson.File || lesson.file
+                      }
+                    })
+                    
+                    updateCourseData({
+                      lessons: mappedErrorLessons,
+                      courseId: result.CourseId || result.courseId || courseData.courseId,
+                      thumbnailUrl: result.ThumbnailUrl || result.thumbnailUrl || courseData.thumbnailUrl || "",
+                    })
                   }
+                } else {
+                  // ✅ Nếu không có savedLessons, update courseData ngay
+                  // ✅ Map lại lessons để đảm bảo filePath được lưu trực tiếp
+                  const noSavedLessons = result.Lessons || result.lessons || lessonsToSave || []
+                  const mappedNoSavedLessons = noSavedLessons.map(lesson => {
+                    const fileObj = lesson.File || lesson.file || null
+                    const filePathFromFile = fileObj?.FilePath || fileObj?.filePath || null
+                    const filePathFromLesson = lesson.FilePath || lesson.filePath || null
+                    const finalFilePath = filePathFromFile || filePathFromLesson || null
+                    
+                    return {
+                      ...lesson,
+                      FilePath: finalFilePath,
+                      filePath: finalFilePath,
+                      File: fileObj || lesson.File || lesson.file,
+                      file: fileObj || lesson.File || lesson.file
+                    }
+                  })
+                  
+                  updateCourseData({
+                    lessons: mappedNoSavedLessons,
+                    courseId: result.CourseId || result.courseId || courseData.courseId,
+                    thumbnailUrl: result.ThumbnailUrl || result.thumbnailUrl || courseData.thumbnailUrl || "",
+                  })
                 }
-
-                updateCourseData({
-                  lessons: result.Lessons || result.lessons || lessonsToSave,
-                  courseId: result.CourseId || result.courseId || courseData.courseId,
-                  thumbnailUrl: result.ThumbnailUrl || result.thumbnailUrl || courseData.thumbnailUrl || "", // ✅ Giữ thumbnailUrl từ các step trước
-                })
                 
                 console.log("✅ Updated courseData after step 3:", {
                   thumbnailUrl: result.ThumbnailUrl || result.thumbnailUrl || courseData.thumbnailUrl,

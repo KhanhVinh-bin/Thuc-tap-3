@@ -114,8 +114,8 @@ export default function HeroSection() {
               Lộ trình
             </div>
 
-            <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
-              Mỗi khóa học — Một bước tiến xa hơn
+            <h1 className="text-4xl lg:text-4xl font-bold leading-tight">
+             PHÁT TRIỂN & NÂNG CAO KỸ NĂNG CỦA BẠN
             </h1>
 
             <div className="text-lg lg:text-xl text-purple-100">

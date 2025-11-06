@@ -25,6 +25,8 @@ export default function TaoKhoaHocPage() {
   const [attempted, setAttempted] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState("")
+  const [categories, setCategories] = useState([]) // ✅ State để lưu danh mục từ API
+  const [loadingCategories, setLoadingCategories] = useState(true)
 
   
   const generateSlug = (title) => {
@@ -43,6 +45,86 @@ export default function TaoKhoaHocPage() {
     const base = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"
     return `${base}/courses/${slug}`
   }, [slug])
+
+  // ✅ Fetch categories từ API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoadingCategories(true)
+        const API_BASE_URL = "https://localhost:7025/api"
+        const response = await fetch(`${API_BASE_URL}/Categories`, {
+          headers: { "Content-Type": "application/json" },
+        })
+        
+        if (response.ok) {
+          const categoriesData = await response.json()
+          console.log("📦 Raw categories data from API:", categoriesData)
+          
+          if (Array.isArray(categoriesData)) {
+            // ✅ Normalize dữ liệu để đảm bảo format nhất quán
+            const normalizedCategories = categoriesData.map(cat => ({
+              categoryId: cat.categoryId || cat.CategoryId || cat.categoryID || cat.CategoryID,
+              categoryName: cat.categoryName || cat.CategoryName,
+              parentId: cat.parentId === undefined || cat.parentId === null 
+                ? (cat.ParentId === undefined || cat.ParentId === null 
+                  ? (cat.parentID === undefined || cat.parentID === null ? cat.ParentID : cat.parentID)
+                  : cat.ParentId)
+                : cat.parentId
+            }))
+            
+            console.log("✅ Normalized categories:", normalizedCategories)
+            setCategories(normalizedCategories)
+          }
+        } else {
+          console.warn("⚠️ Could not fetch categories from API, status:", response.status)
+          // Fallback: sử dụng danh mục mặc định theo đúng cấu trúc
+          setCategories([
+            { categoryId: 1, categoryName: "Lập trình", parentId: null },
+            { categoryId: 2, categoryName: "Data Science", parentId: null },
+            { categoryId: 3, categoryName: "Thiết kế", parentId: null },
+            { categoryId: 4, categoryName: "Kinh doanh", parentId: null },
+            { categoryId: 5, categoryName: "Công nghệ thông tin", parentId: null },
+            { categoryId: 6, categoryName: "Kinh doanh", parentId: null },
+            { categoryId: 8, categoryName: "Marketing", parentId: null },
+            { categoryId: 9, categoryName: "Ngôn ngữ", parentId: null },
+            { categoryId: 10, categoryName: "Lập trình Web", parentId: 1 },
+            { categoryId: 11, categoryName: "Lập trình Mobile", parentId: 1 },
+            { categoryId: 14, categoryName: "Kế toán", parentId: 2 },
+            { categoryId: 15, categoryName: "Photoshop", parentId: 3 },
+            { categoryId: 16, categoryName: "UI/UX Design", parentId: 3 },
+            { categoryId: 17, categoryName: "Digital Marketing", parentId: 4 },
+            { categoryId: 18, categoryName: "SEO", parentId: 4 },
+            { categoryId: 19, categoryName: "Tiếng Anh", parentId: 5 },
+          ])
+        }
+      } catch (err) {
+        console.error("Error fetching categories:", err)
+        // Fallback: sử dụng danh mục mặc định theo đúng cấu trúc
+        setCategories([
+          { categoryId: 1, categoryName: "Lập trình", parentId: null },
+          { categoryId: 2, categoryName: "Data Science", parentId: null },
+          { categoryId: 3, categoryName: "Thiết kế", parentId: null },
+          { categoryId: 4, categoryName: "Kinh doanh", parentId: null },
+          { categoryId: 5, categoryName: "Công nghệ thông tin", parentId: null },
+          { categoryId: 6, categoryName: "Kinh doanh", parentId: null },
+          { categoryId: 8, categoryName: "Marketing", parentId: null },
+          { categoryId: 9, categoryName: "Ngôn ngữ", parentId: null },
+          { categoryId: 10, categoryName: "Lập trình Web", parentId: 1 },
+          { categoryId: 11, categoryName: "Lập trình Mobile", parentId: 1 },
+          { categoryId: 14, categoryName: "Kế toán", parentId: 2 },
+          { categoryId: 15, categoryName: "Photoshop", parentId: 3 },
+          { categoryId: 16, categoryName: "UI/UX Design", parentId: 3 },
+          { categoryId: 17, categoryName: "Digital Marketing", parentId: 4 },
+          { categoryId: 18, categoryName: "SEO", parentId: 4 },
+          { categoryId: 19, categoryName: "Tiếng Anh", parentId: 5 },
+        ])
+      } finally {
+        setLoadingCategories(false)
+      }
+    }
+    
+    fetchCategories()
+  }, [])
 
   // Load existing data
   useEffect(() => {
@@ -281,12 +363,48 @@ export default function TaoKhoaHocPage() {
             <label className="gvc-field">
               <div className="gvc-label">Danh mục <span className="req">*</span></div>
               <div className="gvc-select-wrap">
-                <select className={`gvc-select ${category === "" ? "placeholder" : ""} ${attempted && category === "" ? "is-invalid" : ""}`} value={category} onChange={(e)=>{setCategory(e.target.value); updateCourseData({categoryId: e.target.value ? parseInt(e.target.value) : null})}}>
-                  <option value="">Chọn danh mục</option>
-                  <option value="1">Lập trình</option>
-                  <option value="2">Thiết kế</option>
-                  <option value="3">Marketing</option>
-                </select>
+                {loadingCategories ? (
+                  <div className="gvc-select" style={{ padding: "12px", color: "#666" }}>
+                    Đang tải danh mục...
+                  </div>
+                ) : (
+                  <select 
+                    className={`gvc-select ${category === "" ? "placeholder" : ""} ${attempted && category === "" ? "is-invalid" : ""}`} 
+                    value={category} 
+                    onChange={(e)=>{
+                      setCategory(e.target.value)
+                      updateCourseData({categoryId: e.target.value ? parseInt(e.target.value) : null})
+                    }}
+                  >
+                    <option value="">Chọn danh mục</option>
+                    {(() => {
+                      if (!categories || categories.length === 0) {
+                        return null
+                      }
+                      
+                      // ✅ Hiển thị tất cả danh mục từ trên xuống, không phân cấp
+                      // Sắp xếp theo CategoryId để giữ thứ tự từ database
+                      const sortedCategories = [...categories]
+                        .sort((a, b) => {
+                          const idA = a.categoryId || a.CategoryId || 0
+                          const idB = b.categoryId || b.CategoryId || 0
+                          return idA - idB
+                        })
+                        .map(cat => {
+                          const categoryId = cat.categoryId || cat.CategoryId
+                          const categoryName = cat.categoryName || cat.CategoryName
+                          return { categoryId, categoryName }
+                        })
+                      
+                      // ✅ Render tất cả danh mục đơn giản, không phân cấp
+                      return sortedCategories.map(cat => (
+                        <option key={cat.categoryId} value={cat.categoryId}>
+                          {cat.categoryName}
+                        </option>
+                      ))
+                    })()}
+                  </select>
+                )}
               </div>
               {attempted && category === "" && (<div className="gvc-error">Vui lòng chọn danh mục</div>)}
             </label>

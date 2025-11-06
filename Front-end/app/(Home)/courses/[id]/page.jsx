@@ -36,6 +36,8 @@ export default function CourseDetailPage() {
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
   const [activeTab, setActiveTab] = useState("overview")
+  const [showImageModal, setShowImageModal] = useState(false)
+  const [imageZoom, setImageZoom] = useState(100)
 
   // course state
   const [course, setCourse] = useState(null)
@@ -594,14 +596,18 @@ export default function CourseDetailPage() {
 
             {/* Right Card - Price */}
             <div className="lg:col-span-1 fade-in-element">
-              <div className="bg-white text-white-900 rounded-xl  p-6 sticky top-24">
+              <div className="bg-white text-white-900 rounded-xl p-6 sticky top-24">
                 <div
-                  className="relative mb-6 rounded-lg overflow-hidden course-preview-image"
+                  className="relative mb-6 rounded-lg overflow-hidden course-preview-image cursor-pointer group"
+                  onClick={() => {
+                    setShowImageModal(true)
+                    setImageZoom(100)
+                  }}
                 >
                   <img
                     src={course.image || course.thumbnailUrl || "/placeholder-course.jpg"}
                     alt="Course preview"
-                    className="w-full h-90 object-cover transition-transform duration-500"
+                    className="w-full h-[400px] object-cover transition-transform duration-500 group-hover:scale-105"
                     onLoad={() => setImageLoaded(true)}
                     onError={(e) => {
                       if (!e.target.src.includes("/placeholder")) {
@@ -609,7 +615,14 @@ export default function CourseDetailPage() {
                       }
                     }}
                   />
-                  
+                  {/* Overlay icon */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 rounded-full p-3">
+                      <svg className="w-8 h-8 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
 
                
@@ -804,6 +817,76 @@ export default function CourseDetailPage() {
       <Footer />
 
       {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+
+      {/* Image Fullscreen Modal */}
+      {showImageModal && (
+        <div 
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowImageModal(false)}
+        >
+          <div className="relative max-w-7xl w-full h-full flex items-center justify-center">
+            {/* Close button */}
+            <button
+              onClick={() => setShowImageModal(false)}
+              className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10 bg-black/50 rounded-full p-2"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Zoom controls */}
+            <div className="absolute top-4 left-4 flex items-center gap-4 bg-black/50 rounded-lg p-2 z-10">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setImageZoom(prev => Math.max(50, prev - 25))
+                }}
+                className="text-white hover:text-gray-300 transition-colors p-2"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
+              </button>
+              <span className="text-white text-sm font-medium min-w-[60px] text-center">{imageZoom}%</span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setImageZoom(prev => Math.min(300, prev + 25))
+                }}
+                className="text-white hover:text-gray-300 transition-colors p-2"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setImageZoom(100)
+                }}
+                className="text-white hover:text-gray-300 transition-colors p-2 text-sm"
+              >
+                Reset
+              </button>
+            </div>
+
+            {/* Image */}
+            <img
+              src={course.image || course.thumbnailUrl || "/placeholder-course.jpg"}
+              alt="Course preview fullscreen"
+              className="max-w-full max-h-full object-contain transition-transform duration-300"
+              style={{ transform: `scale(${imageZoom / 100})` }}
+              onClick={(e) => e.stopPropagation()}
+              onError={(e) => {
+                if (!e.target.src.includes("/placeholder")) {
+                  e.target.src = "/placeholder-course.jpg"
+                }
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

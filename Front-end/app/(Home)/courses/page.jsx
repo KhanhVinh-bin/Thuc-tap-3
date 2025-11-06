@@ -19,7 +19,7 @@ export default function CoursesPage() {
   // API Configuration
   const API_BASE_URL = "https://localhost:7025/api"
 
-  // ✅ Fetch categories từ API (nếu có endpoint Categories)
+  // ✅ Fetch categories từ API
   const fetchCategories = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/Categories`, {
@@ -27,15 +27,94 @@ export default function CoursesPage() {
       })
       if (response.ok) {
         const categoriesData = await response.json()
+        console.log("📦 Raw categories data from API:", categoriesData)
+        
         if (Array.isArray(categoriesData) && categoriesData.length > 0) {
-          setCategories(categoriesData)
-          console.log("✅ Categories loaded from API:", categoriesData)
+          // ✅ Normalize dữ liệu để đảm bảo format nhất quán
+          const normalizedCategories = categoriesData.map(cat => ({
+            categoryId: cat.categoryId || cat.CategoryId || cat.categoryID || cat.CategoryID,
+            categoryName: cat.categoryName || cat.CategoryName,
+            parentId: cat.parentId === undefined || cat.parentId === null 
+              ? (cat.ParentId === undefined || cat.ParentId === null 
+                ? (cat.parentID === undefined || cat.parentID === null ? cat.ParentID : cat.parentID)
+                : cat.ParentId)
+              : cat.parentId
+          }))
+          
+          // ✅ Loại bỏ duplicate và filter các category hợp lệ
+          const uniqueCategories = normalizedCategories
+            .filter(cat => cat.categoryId && cat.categoryName)
+            .filter((cat, index, self) => 
+              index === self.findIndex(c => c.categoryId === cat.categoryId)
+            )
+          
+          console.log("✅ Normalized categories:", uniqueCategories)
+          setCategories(uniqueCategories)
+        } else {
+          console.warn("⚠️ Categories API returned empty array or invalid data")
+          // ✅ Fallback: sử dụng danh mục mặc định
+          setCategories([
+            { categoryId: 1, categoryName: "Lập trình", parentId: null },
+            { categoryId: 2, categoryName: "Data Science", parentId: null },
+            { categoryId: 3, categoryName: "Thiết kế", parentId: null },
+            { categoryId: 4, categoryName: "Kinh doanh", parentId: null },
+            { categoryId: 5, categoryName: "Công nghệ thông tin", parentId: null },
+            { categoryId: 6, categoryName: "Kinh doanh", parentId: null },
+            { categoryId: 8, categoryName: "Marketing", parentId: null },
+            { categoryId: 9, categoryName: "Ngôn ngữ", parentId: null },
+            { categoryId: 10, categoryName: "Lập trình Web", parentId: 1 },
+            { categoryId: 11, categoryName: "Lập trình Mobile", parentId: 1 },
+            { categoryId: 14, categoryName: "Kế toán", parentId: 2 },
+            { categoryId: 15, categoryName: "Photoshop", parentId: 3 },
+            { categoryId: 16, categoryName: "UI/UX Design", parentId: 3 },
+            { categoryId: 17, categoryName: "Digital Marketing", parentId: 4 },
+            { categoryId: 18, categoryName: "SEO", parentId: 4 },
+            { categoryId: 19, categoryName: "Tiếng Anh", parentId: 5 },
+          ])
         }
       } else {
-        console.log("⚠️ Categories API not available, will extract from courses")
+        console.warn(`⚠️ Categories API not available, status: ${response.status}`)
+        // ✅ Fallback: sử dụng danh mục mặc định
+        setCategories([
+          { categoryId: 1, categoryName: "Lập trình", parentId: null },
+          { categoryId: 2, categoryName: "Data Science", parentId: null },
+          { categoryId: 3, categoryName: "Thiết kế", parentId: null },
+          { categoryId: 4, categoryName: "Kinh doanh", parentId: null },
+          { categoryId: 5, categoryName: "Công nghệ thông tin", parentId: null },
+          { categoryId: 6, categoryName: "Kinh doanh", parentId: null },
+          { categoryId: 8, categoryName: "Marketing", parentId: null },
+          { categoryId: 9, categoryName: "Ngôn ngữ", parentId: null },
+          { categoryId: 10, categoryName: "Lập trình Web", parentId: 1 },
+          { categoryId: 11, categoryName: "Lập trình Mobile", parentId: 1 },
+          { categoryId: 14, categoryName: "Kế toán", parentId: 2 },
+          { categoryId: 15, categoryName: "Photoshop", parentId: 3 },
+          { categoryId: 16, categoryName: "UI/UX Design", parentId: 3 },
+          { categoryId: 17, categoryName: "Digital Marketing", parentId: 4 },
+          { categoryId: 18, categoryName: "SEO", parentId: 4 },
+          { categoryId: 19, categoryName: "Tiếng Anh", parentId: 5 },
+        ])
       }
     } catch (err) {
-      console.log("⚠️ Could not fetch categories, will extract from courses:", err.message)
+      console.error("⚠️ Could not fetch categories:", err.message)
+      // ✅ Fallback: sử dụng danh mục mặc định
+      setCategories([
+        { categoryId: 1, categoryName: "Lập trình", parentId: null },
+        { categoryId: 2, categoryName: "Data Science", parentId: null },
+        { categoryId: 3, categoryName: "Thiết kế", parentId: null },
+        { categoryId: 4, categoryName: "Kinh doanh", parentId: null },
+        { categoryId: 5, categoryName: "Công nghệ thông tin", parentId: null },
+        { categoryId: 6, categoryName: "Kinh doanh", parentId: null },
+        { categoryId: 8, categoryName: "Marketing", parentId: null },
+        { categoryId: 9, categoryName: "Ngôn ngữ", parentId: null },
+        { categoryId: 10, categoryName: "Lập trình Web", parentId: 1 },
+        { categoryId: 11, categoryName: "Lập trình Mobile", parentId: 1 },
+        { categoryId: 14, categoryName: "Kế toán", parentId: 2 },
+        { categoryId: 15, categoryName: "Photoshop", parentId: 3 },
+        { categoryId: 16, categoryName: "UI/UX Design", parentId: 3 },
+        { categoryId: 17, categoryName: "Digital Marketing", parentId: 4 },
+        { categoryId: 18, categoryName: "SEO", parentId: 4 },
+        { categoryId: 19, categoryName: "Tiếng Anh", parentId: 5 },
+      ])
     }
   }
 
@@ -98,13 +177,37 @@ export default function CoursesPage() {
       console.log(`📊 Total courses loaded: ${formattedCourses.length}`)
       setAllCourses(formattedCourses)
       
-      // ✅ Extract unique categories từ courses nếu API Categories không có
-      if (categories.length === 0 && formattedCourses.length > 0) {
-        const uniqueCategories = [...new Set(formattedCourses.map(c => c.category).filter(Boolean))]
-        setCategories(uniqueCategories.map(name => ({ CategoryName: name })))
-      }
+      // ✅ Extract unique categories từ courses nếu API Categories không có hoặc rỗng
+      // ✅ Chỉ extract nếu categories vẫn còn rỗng sau khi fetch từ API
+      // ✅ Sử dụng callback để đảm bảo lấy giá trị mới nhất của categories state
+      setCategories(prevCategories => {
+        if (prevCategories.length === 0 && formattedCourses.length > 0) {
+          const uniqueCategoryIds = new Set()
+          const extractedCategories = []
+          
+          formattedCourses.forEach(course => {
+            const catId = course.categoryId
+            const catName = course.category
+            if (catId && catName && !uniqueCategoryIds.has(catId)) {
+              uniqueCategoryIds.add(catId)
+              extractedCategories.push({
+                categoryId: catId,
+                categoryName: catName,
+                parentId: null
+              })
+            }
+          })
+          
+          if (extractedCategories.length > 0) {
+            console.log("✅ Extracted categories from courses:", extractedCategories)
+            return extractedCategories
+          }
+        }
+        return prevCategories // ✅ Giữ nguyên categories hiện tại nếu đã có
+      })
       
       // Set courses cho trang đầu tiên
+      setFilteredAllCourses(formattedCourses) // ✅ Set filtered courses ban đầu = tất cả courses
       updateDisplayedCourses(formattedCourses, currentPage)
     } catch (err) {
       console.error("Error fetching courses:", err)
@@ -113,6 +216,9 @@ export default function CoursesPage() {
       setLoading(false)
     }
   }
+
+  // ✅ State để lưu filtered courses (sau khi filter theo category, level, price, search)
+  const [filteredAllCourses, setFilteredAllCourses] = useState([])
 
   // ✅ Cập nhật courses hiển thị theo trang
   const updateDisplayedCourses = (allCoursesData, page) => {
@@ -125,7 +231,7 @@ export default function CoursesPage() {
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage)
-      updateDisplayedCourses(allCourses, newPage)
+      updateDisplayedCourses(filteredAllCourses.length > 0 ? filteredAllCourses : allCourses, newPage)
       // Scroll to top khi chuyển trang
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
@@ -185,6 +291,27 @@ export default function CoursesPage() {
     else if (levelRaw === "advanced") levelDisplay = "Nâng cao"
     else if (levelRaw) levelDisplay = levelRaw.charAt(0).toUpperCase() + levelRaw.slice(1)
 
+    // ✅ QUAN TRỌNG: Lấy categoryId từ nhiều nguồn để đảm bảo không bỏ sót
+    // Backend trả về CategoryId trực tiếp trong CourseDTO
+    const categoryId = course.CategoryId || course.categoryId || 
+                       course.Category?.CategoryId || course.Category?.categoryId || 
+                       course.category?.CategoryId || course.category?.categoryId || 
+                       null
+    
+    // ✅ Lấy categoryName từ Category object hoặc fallback
+    const categoryName = course.Category?.CategoryName || course.Category?.categoryName || 
+                        course.category?.CategoryName || course.category?.categoryName || 
+                        "Lập trình"
+    
+    // ✅ Log để debug
+    console.log(`📝 Formatting course "${title}":`, {
+      courseId,
+      categoryId,
+      categoryName,
+      rawCategoryId: course.CategoryId || course.categoryId,
+      rawCategory: course.Category || course.category
+    })
+    
     return {
       id: courseId,
       courseId: courseId,
@@ -198,8 +325,8 @@ export default function CoursesPage() {
       image: imageUrl,
       thumbnailUrl: imageUrl,
       previewVideoUrl: videoUrl,
-      category: course.Category?.CategoryName || course.Category?.categoryName || course.category?.CategoryName || course.category?.categoryName || "Lập trình",
-      categoryId: course.CategoryId || course.categoryId || course.Category?.CategoryId || course.Category?.categoryId || course.category?.CategoryId || course.category?.categoryId || null,
+      category: categoryName,
+      categoryId: categoryId, // ✅ Đảm bảo categoryId được lưu đúng
       level: levelDisplay, // ✅ Dùng level đã map
       language: course.Language || course.language || "Tiếng Việt",
       duration: course.Duration || course.duration || "20 giờ",
@@ -227,12 +354,22 @@ export default function CoursesPage() {
   }
 
   useEffect(() => {
-    fetchCategories() // ✅ Load categories trước
-    fetchCourses()
+    // ✅ Fetch categories và courses song song
+    Promise.all([
+      fetchCategories(),
+      fetchCourses()
+    ]).catch(err => {
+      console.error("Error in useEffect:", err)
+    })
   }, [])
 
-  // Tính tổng số trang (phải tính sau khi allCourses đã có dữ liệu)
-  const totalPages = Math.ceil(allCourses.length / coursesPerPage) || 1
+  // ✅ Debug: Log categories khi thay đổi
+  useEffect(() => {
+    console.log("📋 Categories state updated:", {
+      count: categories.length,
+      categories: categories
+    })
+  }, [categories])
 
   if (loading) {
     return (
@@ -276,6 +413,19 @@ export default function CoursesPage() {
     )
   }
 
+  // ✅ Handle filter change từ CoursesGrid
+  const handleFilterChange = (filterFn) => {
+    if (filterFn && typeof filterFn === 'function') {
+      const filtered = filterFn(allCourses)
+      setFilteredAllCourses(filtered)
+      setCurrentPage(1) // Reset về trang đầu khi filter
+      updateDisplayedCourses(filtered, 1)
+    }
+  }
+
+  // ✅ Tính totalPages dựa trên filteredAllCourses
+  const totalPages = Math.ceil((filteredAllCourses.length > 0 ? filteredAllCourses : allCourses).length / coursesPerPage) || 1
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -285,6 +435,7 @@ export default function CoursesPage() {
         totalPages={totalPages}
         onPageChange={handlePageChange}
         categories={categories}
+        onFilterChange={handleFilterChange}
       />
       <Footer />
     </div>

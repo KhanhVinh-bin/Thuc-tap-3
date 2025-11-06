@@ -17,8 +17,6 @@ export default function ChiTietKhoaHocPage() {
   const [level, setLevel] = useState(courseData.level || "")
   const [prerequisites, setPrerequisites] = useState(courseData.prerequisites || "")
   const [learningOutcomes, setLearningOutcomes] = useState(courseData.learningOutcomes || "")
-  const [tagName, setTagName] = useState(courseData.tagName || "")
-  const [tags, setTags] = useState(courseData.tagIds || [])
   const [attempted, setAttempted] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState("")
@@ -29,7 +27,6 @@ export default function ChiTietKhoaHocPage() {
     if (courseData.level) setLevel(courseData.level)
     if (courseData.prerequisites) setPrerequisites(courseData.prerequisites)
     if (courseData.learningOutcomes) setLearningOutcomes(courseData.learningOutcomes)
-    if (courseData.tagName) setTagName(courseData.tagName)
   }, [])
 
   // Validation logic
@@ -37,20 +34,6 @@ export default function ChiTietKhoaHocPage() {
     return price > 0 && level !== ""
   }, [price, level])
 
-  const addTag = () => {
-    if (tagName.trim()) {
-      const newTags = [...tags, tagName.trim()]
-      setTags(newTags)
-      updateCourseData({ tagName: tagName.trim(), tagIds: newTags })
-      setTagName("")
-    }
-  }
-
-  const removeTag = (index) => {
-    const newTags = tags.filter((_, i) => i !== index)
-    setTags(newTags)
-    updateCourseData({ tagIds: newTags })
-  }
 
   const handleContinue = async () => {
     setAttempted(true)
@@ -82,7 +65,7 @@ export default function ChiTietKhoaHocPage() {
         level: level,
         prerequisites: prerequisites.trim(),
         learningOutcomes: learningOutcomes.trim(),
-        tagName: tags.length > 0 ? tags[0] : "",
+        tagName: courseData.tagName || "",
         tagIds: null, // ✅ Backend chỉ dùng TagName, không dùng TagIds. Gửi null để tránh lỗi validation
         slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course", // ✅ Thêm slug
         lessons: courseData.lessons || [],
@@ -98,7 +81,7 @@ export default function ChiTietKhoaHocPage() {
         prerequisites: result.Prerequisites || result.prerequisites || prerequisites,
         learningOutcomes: result.LearningOutcomes || result.learningOutcomes || learningOutcomes,
         thumbnailUrl: result.ThumbnailUrl || result.thumbnailUrl || courseData.thumbnailUrl || "", // ✅ Giữ thumbnailUrl từ step trước
-        tagName: tags.length > 0 ? tags[0] : "",
+        tagName: courseData.tagName || "",
         tagIds: null, // ✅ Backend chỉ dùng TagName, không dùng TagIds. Gửi null để tránh lỗi validation
         courseId: result.courseId || courseData.courseId,
       })
@@ -195,31 +178,6 @@ export default function ChiTietKhoaHocPage() {
           </label>
         </section>
 
-        {/* Thẻ từ khóa */}
-        <section className="gvc-card">
-          <div className="gvc-card-header">
-            <h1 className="gvc-card-title">Thẻ từ khóa</h1>
-          </div>
-
-          <label className="gvc-field">
-            <input className="gvc-input placeholder" placeholder="Chưa có thẻ nào. Thêm thẻ để học viên dễ tìm thấy khóa học" disabled />
-          </label>
-
-          <div className="gvc-row two">
-            <input className="gvc-input" value={tagName} onChange={(e) => setTagName(e.target.value)} onKeyPress={(e) => e.key === "Enter" && addTag()} placeholder="VD: React, JavaScript, Frontend..." />
-            <button type="button" className="gvc-btn add" onClick={addTag}>+</button>
-          </div>
-          {tags.length > 0 && (
-            <div style={{display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "8px"}}>
-              {tags.map((tag, idx) => (
-                <span key={idx} style={{background: "#e0e7ff", color: "#4338ca", padding: "4px 12px", borderRadius: "16px", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px"}}>
-                  {tag}
-                  <button type="button" onClick={() => removeTag(idx)} style={{background: "none", border: "none", color: "#4338ca", cursor: "pointer", fontSize: "16px", padding: 0}}>×</button>
-                </span>
-              ))}
-            </div>
-          )}
-        </section>
 
         {/* Yêu cầu tiên quyết & Kết quả học tập */}
         <div className="gvc-row">

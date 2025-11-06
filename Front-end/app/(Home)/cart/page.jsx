@@ -27,15 +27,29 @@ export default function CartPage() {
 
   // Ensure image URL is properly formatted for next/image
   const getImageSrc = (imageUrl) => {
-    if (!imageUrl) return "/react-course.png"
+    if (!imageUrl || imageUrl.trim() === "") return "/react-course.png"
     
     // If it's already an absolute URL, return as is
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl
     }
     
+    // If it's a relative path from backend uploads, add base URL
+    if (imageUrl.includes('/uploads/')) {
+      // Backend API upload file trên port 3001 (instructor API)
+      const cleanPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
+      return `https://localhost:3001${cleanPath}`
+    }
+    
     // If it's a relative path, ensure it starts with /
-    return imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
+    const cleanPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
+    
+    // Nếu là file trong public folder, giữ nguyên
+    if (cleanPath.startsWith('/public/') || cleanPath.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+      return cleanPath
+    }
+    
+    return cleanPath
   }
 
   const handleClearCart = () => {
@@ -81,17 +95,31 @@ export default function CartPage() {
   const getCourseFromItem = (item) => {
     // API format: item.course contains course data
     if (item.course) {
+      // Hỗ trợ cả PascalCase và camelCase cho thumbnailUrl
+      const thumbnailUrl = item.course.ThumbnailUrl || item.course.thumbnailUrl || item.course.image || item.course.Image
+      const courseId = item.course.CourseId || item.course.courseId || item.course.id
+      const title = item.course.Title || item.course.title
+      const price = item.course.Price || item.course.price
+      const instructor = item.course.InstructorName || item.course.instructorName || item.course.instructor?.name || "Giảng viên"
+      
       return {
-        id: item.course.courseId,
-        title: item.course.title,
-        image: item.course.thumbnailUrl,
-        price: item.course.price,
-        instructor: item.course.instructorName,
-        quantity: item.quantity
+        id: courseId,
+        title: title || "Khóa học",
+        image: thumbnailUrl,
+        price: price || 0,
+        instructor: instructor,
+        quantity: item.quantity || 1
       }
     }
-    // Fallback for localStorage format
-    return item
+    // Fallback for localStorage format - hỗ trợ nhiều tên field
+    return {
+      id: item.id || item.courseId,
+      title: item.title || "Khóa học",
+      image: item.image || item.thumbnailUrl || item.ThumbnailUrl,
+      price: item.price || 0,
+      instructor: item.instructor || item.instructorName || "Giảng viên",
+      quantity: item.quantity || 1
+    }
   }
 
   return (
@@ -142,13 +170,16 @@ export default function CartPage() {
                       key={course.id}
                       className="bg-white rounded-lg p-6 flex gap-4 fade-in hover:shadow-md transition-shadow"
                     >
-                      <Image
-                        src={getImageSrc(course.image)}
-                        alt={course.title}
-                        width={160}
-                        height={90}
-                        className="rounded-lg object-cover"
-                      />
+                      <div className="relative w-40 h-24 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
+                        <Image
+                          src={getImageSrc(course.image)}
+                          alt={course.title || "Khóa học"}
+                          fill
+                          className="rounded-lg object-cover"
+                          sizes="160px"
+                          unoptimized={course.image?.includes('/uploads/')}
+                        />
+                      </div>
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900 mb-2">{course.title}</h3>
                         <p className="text-sm text-gray-600 mb-4">Giảng viên: {course.instructor}</p>
@@ -237,14 +268,8 @@ export default function CartPage() {
                       <span>Chứng chỉ hoàn thành</span>
                     </div>
                     <div className="flex items-start gap-2 text-green-600">
-                      <svg className="w-5 h-5 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <span>Hoàn tiền trong 30 ngày</span>
+                      
+                    
                     </div>
                   </div>
                 </div>
@@ -310,3 +335,4 @@ export default function CartPage() {
     </>
   )
 }
+

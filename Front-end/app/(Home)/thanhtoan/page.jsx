@@ -45,10 +45,29 @@ export default function CheckoutPage() {
     new Intl.NumberFormat("vi-VN").format(price || 0) + " đ"
 
   const getImageSrc = (imageUrl) => {
-    if (!imageUrl) return "/react-course.png"
-    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://"))
+    if (!imageUrl || imageUrl.trim() === "") return "/react-course.png"
+    
+    // If it's already an absolute URL, return as is
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl
-    return imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`
+    }
+    
+    // If it's a relative path from backend uploads, add base URL
+    if (imageUrl.includes('/uploads/')) {
+      // Backend API upload file trên port 3001 (instructor API)
+      const cleanPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
+      return `https://localhost:3001${cleanPath}`
+    }
+    
+    // If it's a relative path, ensure it starts with /
+    const cleanPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
+    
+    // Nếu là file trong public folder, giữ nguyên
+    if (cleanPath.startsWith('/public/') || cleanPath.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+      return cleanPath
+    }
+    
+    return cleanPath
   }
 
   // 🔥 Mua ngay: lấy khóa học từ API
@@ -82,7 +101,15 @@ export default function CheckoutPage() {
     const newErrors = {}
     if (!formData.email) newErrors.email = "Email không được bỏ trống"
     if (!formData.fullName) newErrors.fullName = "Họ và tên không được bỏ trống"
-    if (!formData.phone) newErrors.phone = "Số điện thoại không được bỏ trống"
+    if (!formData.phone) {
+      newErrors.phone = "Số điện thoại không được bỏ trống"
+    } else {
+      // Kiểm tra số điện thoại phải đủ 10 số
+      const phoneDigits = formData.phone.replace(/\D/g, "") // Loại bỏ tất cả ký tự không phải số
+      if (phoneDigits.length !== 10) {
+        newErrors.phone = "Số điện thoại phải đủ 10 số"
+      }
+    }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -130,30 +157,48 @@ export default function CheckoutPage() {
           throw new Error("Không thể lấy Order ID sau khi tạo đơn hàng")
         }
         
+        // Nếu là VNPay, hiển thị thông tin và vẫn xử lý như bình thường
+        if (paymentMethod === "vnpay") {
+          setPaymentStatus("Đang xử lý thanh toán VNPay Sandbox...")
+        }
+        
         const paymentResult = await processPayment({
           orderId: orderId,
           totalAmount: singleCourse ? singleCourse.price : getCartTotal(),
-          paymentMethod: paymentMethod,
+          paymentMethod: paymentMethod === "vnpay" ? "vnpay_sandbox" : paymentMethod,
           customerName: formData.fullName,
           customerEmail: formData.email,
           customerPhone: formData.phone
-        }, paymentMethod)
+        }, paymentMethod === "vnpay" ? "vnpay_sandbox" : paymentMethod)
 
         console.log("Payment processed:", paymentResult)
 
         if (paymentResult.success) {
-          setPaymentStatus("Thanh toán thành công!")
+          setPaymentStatus(
+            paymentMethod === "vnpay"
+              ? "Thanh toán VNPay Sandbox thành công! (Demo)"
+              : "Thanh toán thành công!"
+          )
           setTransactionId(paymentResult.transactionId)
           
           // ✅ Backend tự động tạo enrollment khi payment status = "success"
           // (PaymentsController.cs dòng 337-373)
           // Không cần gọi createBatchEnrollments() nữa để tránh duplicate
           
-          alert(`Thanh toán thành công! 
+          const successMessage =
+            paymentMethod === "vnpay"
+              ? `Thanh toán VNPay Sandbox thành công! (Demo - Không trừ tiền thật)
 Mã thanh toán: #${paymentResult.paymentId}
 Mã giao dịch: ${paymentResult.transactionId}
 Số tiền: ${new Intl.NumberFormat("vi-VN").format(paymentResult.amount || (singleCourse ? singleCourse.price : getCartTotal()))} đ
-Cảm ơn bạn đã mua khóa học.`)
+Cảm ơn bạn đã test thanh toán.`
+              : `Thanh toán thành công! 
+Mã thanh toán: #${paymentResult.paymentId}
+Mã giao dịch: ${paymentResult.transactionId}
+Số tiền: ${new Intl.NumberFormat("vi-VN").format(paymentResult.amount || (singleCourse ? singleCourse.price : getCartTotal()))} đ
+Cảm ơn bạn đã mua khóa học.`
+          
+          alert(successMessage)
 
           // Xóa giỏ hàng sau thanh toán thành công
           clearCart()
@@ -188,7 +233,7 @@ Cảm ơn bạn đã mua khóa học.`)
           
           const paymentData = {
             orderId: orderId,
-            paymentMethod: paymentMethod,
+            paymentMethod: paymentMethod === "vnpay" ? "vnpay_sandbox" : paymentMethod,
             transactionId: transactionId,
             amount: totalAmount,
             paymentStatus: "success",
@@ -197,7 +242,8 @@ Cảm ơn bạn đã mua khóa học.`)
               customerName: formData.fullName,
               customerEmail: formData.email,
               customerPhone: formData.phone,
-              paymentMethod: paymentMethod,
+              paymentMethod: paymentMethod === "vnpay" ? "vnpay_sandbox" : paymentMethod,
+              isVnPaySandbox: paymentMethod === "vnpay",
               orderItems: orderItems.map(item => ({
                 courseId: item.id || item.courseId,
                 quantity: item.quantity || 1,
@@ -212,11 +258,20 @@ Cảm ơn bạn đã mua khóa học.`)
           // ✅ Backend tự động tạo enrollment khi payment status = "success"
           // Không cần gọi createBatchEnrollments() nữa để tránh duplicate
 
-          alert(`Thanh toán thành công! 
+          const fallbackMessage =
+            paymentMethod === "vnpay"
+              ? `Thanh toán VNPay Sandbox thành công! (Demo - Không trừ tiền thật)
 Mã thanh toán: #${payment.paymentId}
 Mã giao dịch: ${transactionId}
 Số tiền: ${new Intl.NumberFormat("vi-VN").format(totalAmount)} đ
-Cảm ơn bạn đã mua khóa học.`)
+Cảm ơn bạn đã test thanh toán.`
+              : `Thanh toán thành công! 
+Mã thanh toán: #${payment.paymentId}
+Mã giao dịch: ${transactionId}
+Số tiền: ${new Intl.NumberFormat("vi-VN").format(totalAmount)} đ
+Cảm ơn bạn đã mua khóa học.`
+
+          alert(fallbackMessage)
 
           // Xóa giỏ hàng sau thanh toán thành công
           clearCart()
@@ -266,6 +321,34 @@ Cảm ơn bạn đã mua khóa học.`)
     )
   }
 
+  // Helper function to get course data from cart item
+  const getCourseFromItem = (item) => {
+    // API format: item.course contains course data
+    if (item.course) {
+      // Hỗ trợ cả PascalCase và camelCase cho thumbnailUrl
+      const thumbnailUrl = item.course.ThumbnailUrl || item.course.thumbnailUrl || item.course.image || item.course.Image
+      const courseId = item.course.CourseId || item.course.courseId || item.course.id
+      const title = item.course.Title || item.course.title
+      const price = item.course.Price || item.course.price
+      
+      return {
+        id: courseId,
+        title: title || "Khóa học",
+        image: thumbnailUrl,
+        price: price || 0,
+        quantity: item.quantity || 1
+      }
+    }
+    // Fallback for localStorage format - hỗ trợ nhiều tên field
+    return {
+      id: item.id || item.courseId,
+      title: item.title || "Khóa học",
+      image: item.image || item.thumbnailUrl || item.ThumbnailUrl,
+      price: item.price || 0,
+      quantity: item.quantity || 1
+    }
+  }
+
   const orderList = singleCourse ? [singleCourse] : cart
 
   return (
@@ -309,17 +392,44 @@ Cảm ơn bạn đã mua khóa học.`)
                         : field === "phone"
                         ? "Số điện thoại"
                         : "Email"}
+                      {field === "phone" && (
+                        <span className="text-gray-500 text-sm ml-1">(10 số)</span>
+                      )}
                     </label>
                     <input
                       type={field === "email" ? "email" : "text"}
                       value={formData[field]}
-                      onChange={(e) =>
-                        setFormData({ ...formData, [field]: e.target.value })
+                      onChange={(e) => {
+                        let value = e.target.value
+                        // Nếu là số điện thoại, chỉ cho phép nhập số
+                        if (field === "phone") {
+                          value = value.replace(/\D/g, "") // Chỉ giữ lại số
+                          // Giới hạn tối đa 10 số
+                          if (value.length > 10) {
+                            value = value.slice(0, 10)
+                          }
+                        }
+                        setFormData({ ...formData, [field]: value })
+                        // Xóa lỗi khi user bắt đầu nhập lại
+                        if (errors[field]) {
+                          setErrors({ ...errors, [field]: "" })
+                        }
+                      }}
+                      className={`w-full border rounded-md px-3 py-2 ${
+                        errors[field] ? "border-red-500" : ""
+                      }`}
+                      placeholder={
+                        field === "phone" ? "0123456789" : undefined
                       }
-                      className="w-full border rounded-md px-3 py-2"
+                      maxLength={field === "phone" ? 10 : undefined}
                     />
                     {errors[field] && (
-                      <p className="text-red-500 text-sm">{errors[field]}</p>
+                      <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
+                    )}
+                    {field === "phone" && formData.phone && !errors.phone && (
+                      <p className="text-gray-500 text-xs mt-1">
+                        Đã nhập: {formData.phone.replace(/\D/g, "").length}/10 số
+                      </p>
                     )}
                   </div>
                 ))}
@@ -330,30 +440,114 @@ Cảm ơn bạn đã mua khóa học.`)
             <div>
               <h2 className="text-lg font-semibold mb-4">Phương thức thanh toán</h2>
               <div className="space-y-3">
-                <label className="flex items-center space-x-2">
+                <label className="flex items-center space-x-2 cursor-pointer p-3 border rounded-md hover:bg-gray-50 transition-colors">
                   <input
                     type="radio"
                     name="payment"
                     value="ewallet"
                     checked={paymentMethod === "ewallet"}
                     onChange={() => setPaymentMethod("ewallet")}
+                    className="cursor-pointer"
                   />
                   <CreditCard className="w-4 h-4 text-blue-600" />
-                  <span>Ví điện tử (MoMo, ZaloPay, VNPay)</span>
+                  <span>Ví điện tử (MoMo, ZaloPay)</span>
                 </label>
 
-                <label className="flex items-center space-x-2">
+                <label className="flex items-center space-x-2 cursor-pointer p-3 border rounded-md hover:bg-gray-50 transition-colors">
                   <input
                     type="radio"
                     name="payment"
                     value="bank"
                     checked={paymentMethod === "bank"}
                     onChange={() => setPaymentMethod("bank")}
+                    className="cursor-pointer"
                   />
                   <Building2 className="w-4 h-4 text-blue-600" />
                   <span>Chuyển khoản ngân hàng</span>
                 </label>
               </div>
+
+              {/* QR Code cho Ví điện tử khi được chọn */}
+              {paymentMethod === "ewallet" && (
+                <div className="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <CreditCard className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-purple-900 mb-2">
+                        Thanh toán bằng ví điện tử
+                      </h3>
+                      <div className="space-y-2 text-sm text-purple-800">
+                        {/* QR Code Section */}
+                        <div className="mt-4 pt-4 border-t border-purple-200">
+                          <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
+                            {/* QR Code */}
+                            <div className="flex-shrink-0">
+                              <div className="bg-white p-3 rounded-lg border-2 border-purple-300 shadow-sm">
+                                <img
+                                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+                                    JSON.stringify({
+                                      type: "EWALLET_PAYMENT",
+                                      amount: singleCourse ? singleCourse.price : getCartTotal(),
+                                      currency: "VND",
+                                      orderInfo: `Thanh toan khoa hoc - ${formData.fullName || "Khách hàng"}`,
+                                      merchant: "EduLearn Platform",
+                                      paymentMethod: "MoMo/ZaloPay",
+                                      timestamp: new Date().toISOString(),
+                                      customerPhone: formData.phone || "",
+                                      customerEmail: formData.email || ""
+                                    })
+                                  )}`}
+                                  alt="QR Code Ví điện tử"
+                                  className="w-48 h-48 mx-auto"
+                                />
+                              </div>
+                              <p className="text-xs text-center text-purple-600 mt-2 font-medium">
+                                Quét QR để thanh toán
+                              </p>
+                            </div>
+                            
+                            {/* Payment Info */}
+                            <div className="flex-1 space-y-2">
+                              <div className="bg-white p-3 rounded-lg border border-purple-200">
+                                <h4 className="font-semibold text-purple-900 mb-2">
+                                  💳 Thông tin thanh toán
+                                </h4>
+                                <div className="space-y-1 text-xs">
+                                  <p>
+                                    <strong>Số tiền:</strong>{" "}
+                                    {formatPrice(singleCourse ? singleCourse.price : getCartTotal())}
+                                  </p>
+                                  <p>
+                                    <strong>Người nhận:</strong> EduLearn Platform
+                                  </p>
+                                  <p>
+                                    <strong>Nội dung:</strong> Thanh toán khóa học
+                                  </p>
+                                  <p>
+                                    <strong>Phương thức:</strong>{" "}
+                                    <span className="text-purple-600 font-semibold">MoMo / ZaloPay</span>
+                                  </p>
+                                  {formData.phone && (
+                                    <p>
+                                      <strong>SĐT:</strong> {formData.phone}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              <div className="bg-yellow-50 border border-yellow-200 p-2 rounded text-xs text-yellow-800">
+                                <p>
+                                  <strong>💡 Lưu ý:</strong> Quét QR code bằng ứng dụng MoMo hoặc ZaloPay để thanh toán nhanh chóng.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <button
@@ -373,22 +567,28 @@ Cảm ơn bạn đã mua khóa học.`)
           <div className="border p-4 rounded-md bg-gray-50">
             <h2 className="text-lg font-semibold mb-4">Tóm tắt đơn hàng</h2>
             <div className="space-y-4">
-              {orderList.map((item) => (
-                <div key={item.id || item.courseId} className="flex items-center space-x-4">
-                  <Image
-                    src={getImageSrc(item.image)}
-                    alt={item.title}
-                    width={60}
-                    height={60}
-                    className="rounded-md object-cover"
-                  />
-                  <div className="flex-1">
-                    <p className="font-medium">{item.title}</p>
-                    <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
+              {orderList.map((item) => {
+                const course = singleCourse ? item : getCourseFromItem(item)
+                return (
+                  <div key={course.id || course.courseId} className="flex items-center space-x-4">
+                    <div className="relative w-16 h-16 flex-shrink-0 bg-gray-200 rounded-md overflow-hidden">
+                      <Image
+                        src={getImageSrc(course.image)}
+                        alt={course.title || "Khóa học"}
+                        fill
+                        className="rounded-md object-cover"
+                        sizes="64px"
+                        unoptimized={course.image?.includes('/uploads/')}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">{course.title || "Khóa học"}</p>
+                      <p className="text-sm text-gray-500">Số lượng: {course.quantity || 1}</p>
+                    </div>
+                    <p className="font-semibold">{formatPrice(course.price)}</p>
                   </div>
-                  <p className="font-semibold">{formatPrice(item.price)}</p>
-                </div>
-              ))}
+                )
+              })}
             </div>
 
             <hr className="my-4" />

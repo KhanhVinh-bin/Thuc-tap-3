@@ -43,13 +43,13 @@ export default function GiangVienKhoaHocChinhSuaPage() {
       case 'Video':
         return 'video/*'
       case 'Tài liệu':
-        return '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt'
+        return '.pdf,.txt' // ✅ Chỉ chấp nhận PDF và TXT
       case 'Bài kiểm tra':
-        return '.pdf,.doc,.docx,.txt'
+        return '.pdf,.txt'
       case 'Bài tập':
-        return '.pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.zip'
+        return '.pdf,.txt'
       default:
-        return 'video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.zip'
+        return 'video/*,.pdf,.txt'
     }
   }
 
@@ -183,6 +183,10 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                 return null
               })(),
               fileName: lesson.File?.Name || lesson.file?.name || null,
+              // ✅ Thêm thông tin tài liệu từ File object
+              docFile: null, // File object để upload
+              docFileName: lesson.File?.Name || lesson.file?.name || null,
+              docFilePath: lesson.File?.FilePath || lesson.file?.filePath || null,
               // ✅ Không set status vì backend không có field này, nhưng khóa học đã published nên hiển thị "Đã xuất bản"
               docs: []
             }))
@@ -242,10 +246,21 @@ export default function GiangVienKhoaHocChinhSuaPage() {
       lessons.forEach((lesson) => {
         if (lesson.lessonId) {
           // Update existing lesson
+          // ✅ Xác định contentType dựa trên type và file có sẵn
+          let contentType = "video"
+          if (lesson.type === "Tài liệu") {
+            contentType = lesson.docFileName?.toLowerCase().endsWith('.pdf') ? "pdf" : "text"
+          } else if (lesson.type !== "Video") {
+            contentType = "text"
+          }
+
           const lessonData = {
             title: lesson.title || "",
-            contentType: lesson.type === "Video" ? "video" : lesson.type === "Tài liệu" ? "pdf" : "text",
+            contentType: contentType,
             videoUrl: lesson.videoUrl || null,
+            filePath: lesson.type === "Tài liệu" && lesson.docFilePath && !lesson.docFilePath.startsWith('blob:') 
+              ? lesson.docFilePath 
+              : null,
             durationSec: lesson.durationSec || (lesson.duration ? 
               lesson.duration.split(':').reduce((acc, val) => acc * 60 + parseInt(val), 0) : 0),
             sortOrder: lesson.sortOrder || 0,
@@ -266,12 +281,25 @@ export default function GiangVienKhoaHocChinhSuaPage() {
           const isVideoType = lesson.type === "Video"
           const hasVideoUrl = lesson.videoUrl && !lesson.videoUrl.startsWith('blob:')
           
+          // ✅ Xác định contentType dựa trên type và file có sẵn
+          let contentType = "video"
+          if (lesson.type === "Tài liệu") {
+            contentType = lesson.docFileName?.toLowerCase().endsWith('.pdf') ? "pdf" : "text"
+          } else if (!isVideoType) {
+            contentType = "text"
+          } else if (isVideoType && !hasVideoUrl) {
+            contentType = "text" // Tạm thời set text nếu chưa có videoUrl
+          }
+
           const lessonData = {
             title: lesson.title || "Bài học mới",
-            // ✅ Nếu là video nhưng chưa có videoUrl, tạm thời set contentType là "text" để tránh lỗi validation
-            contentType: isVideoType && hasVideoUrl ? "video" : (isVideoType && !hasVideoUrl ? "text" : (lesson.type === "Tài liệu" ? "pdf" : "text")),
+            contentType: contentType,
             // ✅ Chỉ gửi videoUrl nếu có và không phải blob URL
             ...(hasVideoUrl ? { videoUrl: lesson.videoUrl } : {}),
+            // ✅ Gửi filePath nếu là tài liệu và có filePath hợp lệ
+            ...(lesson.type === "Tài liệu" && lesson.docFilePath && !lesson.docFilePath.startsWith('blob:') 
+              ? { filePath: lesson.docFilePath } 
+              : {}),
             durationSec: lesson.durationSec || (lesson.duration ? 
               lesson.duration.split(':').reduce((acc, val) => acc * 60 + parseInt(val), 0) : 600),
             sortOrder: lesson.sortOrder || 0,
@@ -316,6 +344,41 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                       }
                     } catch (uploadErr) {
                       console.error("Error uploading video for new lesson:", uploadErr)
+                      // Không throw để không làm fail việc tạo lesson
+                    }
+                  }
+
+                  // ✅ Upload tài liệu nếu có docFile
+                  if (lesson.docFile && lesson.docFile instanceof File && (lesson.type === "Tài liệu" || lesson.type === "Bài kiểm tra")) {
+                    try {
+                      const uploadResult = await uploadLessonFile(courseId, newLessonId, lesson.docFile, token)
+                      const filePath = uploadResult.file?.FilePath || uploadResult.file?.filePath || uploadResult.filePath
+                      if (filePath) {
+                        // Update lesson với filePath từ server
+                        setLessons(prev => prev.map(l => {
+                          if (l.id === lesson.id) {
+                            // Cleanup blob URL
+                            if (l.docFilePath && l.docFilePath.startsWith('blob:')) {
+                              URL.revokeObjectURL(l.docFilePath)
+                            }
+                            return { 
+                              ...l, 
+                              docFilePath: filePath, 
+                              docFileName: lesson.docFile.name,
+                              docFile: null 
+                            }
+                          }
+                          return l
+                        }))
+                        
+                        // Update lesson qua API với filePath
+                        await patchLesson(courseId, newLessonId, { 
+                          filePath: filePath,
+                          contentType: lesson.docFile.name.toLowerCase().endsWith('.pdf') ? "pdf" : "text"
+                        }, token)
+                      }
+                    } catch (uploadErr) {
+                      console.error("Error uploading document for new lesson:", uploadErr)
                       // Không throw để không làm fail việc tạo lesson
                     }
                   }
@@ -376,33 +439,129 @@ export default function GiangVienKhoaHocChinhSuaPage() {
     ))
   }
 
-  // Upload/Xóa tài liệu cho bài học
+  // Upload/Xóa tài liệu PDF/TXT cho bài học
   const uploadDynamicDoc = (lessonId) => {
     document.getElementById(`lesson-${lessonId}-doc`)?.click()
   }
-  const onDynamicDocChange = (lessonId, e) => {
-    const files = Array.from(e.target.files || [])
-    if (!files.length) return
-    setLessons(prev => prev.map(lesson =>
-      lesson.id === lessonId
-        ? {
-            ...lesson,
-            docs: [
-              ...(lesson.docs || []),
-              ...files.map(f => ({ name: f.name, size: f.size, url: URL.createObjectURL(f) }))
-            ]
-          }
-        : lesson
-    ))
+  const onDynamicDocChange = async (lessonId, e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // ✅ Kiểm tra file type: chỉ chấp nhận PDF và TXT
+    const fileName = file.name.toLowerCase()
+    const isValidFile = fileName.endsWith('.pdf') || fileName.endsWith('.txt')
+    
+    if (!isValidFile) {
+      toast({
+        title: "Lỗi",
+        description: "Chỉ chấp nhận file PDF (.pdf) hoặc TXT (.txt)",
+        variant: "destructive",
+      })
+      e.target.value = ''
+      return
+    }
+
+    const lesson = lessons.find(l => l.id === lessonId)
+    const previewUrl = URL.createObjectURL(file)
+
+    // ✅ Update UI immediately với preview
+    setLessons(prev => prev.map(l => {
+      if (l.id !== lessonId) return l
+      // Cleanup old blob URL nếu có
+      if (l.docFilePath && l.docFilePath.startsWith('blob:')) {
+        URL.revokeObjectURL(l.docFilePath)
+      }
+      return {
+        ...l,
+        docFileName: file.name,
+        docFilePath: previewUrl,
+        docFile: file,
+        uploading: l.lessonId ? true : false // Chỉ upload nếu có lessonId
+      }
+    }))
+
+    // Upload tài liệu nếu có lessonId (đã lưu vào DB)
+    if (lesson?.lessonId && courseId && token) {
+      try {
+        setUploadingLessons(prev => ({ ...prev, [lesson.lessonId]: { uploading: true, file: file } }))
+        
+        const uploadResult = await uploadLessonFile(courseId, lesson.lessonId, file, token)
+        console.log("✅ Document uploaded:", uploadResult)
+        
+        // Update lesson với filePath từ server
+        const filePath = uploadResult.file?.FilePath || uploadResult.file?.filePath || uploadResult.filePath
+        if (filePath) {
+          const fullDocUrl = filePath.startsWith('/') 
+            ? `https://localhost:3001${filePath}`
+            : `https://localhost:3001/${filePath}`
+          
+          setLessons(prev => prev.map(l => {
+            if (l.id !== lessonId) return l
+            // Cleanup blob URL
+            if (l.docFilePath && l.docFilePath.startsWith('blob:')) {
+              URL.revokeObjectURL(l.docFilePath)
+            }
+            return { 
+              ...l, 
+              docFilePath: filePath, 
+              docFileName: file.name,
+              uploading: false, 
+              docFile: null 
+            }
+          }))
+          
+          // Update lesson qua API
+          await patchLesson(courseId, lesson.lessonId, { 
+            filePath: filePath,
+            contentType: fileName.endsWith('.pdf') ? "pdf" : "text"
+          }, token)
+        }
+        
+        toast({
+          title: "Upload thành công",
+          description: "Tài liệu đã được tải lên.",
+        })
+      } catch (err) {
+        console.error("Error uploading document:", err)
+        toast({
+          title: "Lỗi upload",
+          description: err.message || "Không thể tải tài liệu lên. Tài liệu sẽ được lưu khi bạn lưu bài học.",
+          variant: "destructive",
+        })
+        // Giữ preview nhưng đánh dấu chưa upload
+        setLessons(prev => prev.map(l =>
+          l.id === lessonId ? { ...l, uploading: false } : l
+        ))
+      } finally {
+        setUploadingLessons(prev => {
+          const updated = { ...prev }
+          delete updated[lesson.lessonId]
+          return updated
+        })
+      }
+    } else {
+      // Nếu chưa có lessonId, hiển thị toast thông báo sẽ upload khi lưu
+      toast({
+        title: "Đã chọn tài liệu",
+        description: "Tài liệu sẽ được tải lên khi bạn lưu bài học.",
+      })
+    }
+
     e.target.value = ''
   }
-  const deleteDynamicDoc = (lessonId, index) => {
+  const deleteDynamicDoc = (lessonId) => {
     setLessons(prev => prev.map(lesson => {
       if (lesson.id !== lessonId) return lesson
-      const docs = [...(lesson.docs || [])]
-      const removed = docs.splice(index, 1)[0]
-      if (removed?.url) URL.revokeObjectURL(removed.url)
-      return { ...lesson, docs }
+      // Cleanup blob URL
+      if (lesson.docFilePath && lesson.docFilePath.startsWith('blob:')) {
+        URL.revokeObjectURL(lesson.docFilePath)
+      }
+      return { 
+        ...lesson, 
+        docFileName: null, 
+        docFilePath: null, 
+        docFile: null 
+      }
     }))
   }
 
@@ -763,7 +922,7 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                       </div>
                       
                       {/* ✅ Hiển thị video preview ở dưới phần mô tả */}
-                      {lesson.fileUrl && (
+                      {lesson.fileUrl && lesson.type === "Video" && (
                         <div className="gvc-lesson-preview" style={{ 
                           marginTop: '16px', 
                           width: '100%', 
@@ -785,6 +944,126 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                           {lesson.uploading && (
                             <div style={{ marginTop: '8px', color: '#6366f1', fontSize: '12px' }}>Đang tải lên...</div>
                           )}
+                        </div>
+                      )}
+                      
+                      {/* ✅ Hiển thị tài liệu đã upload */}
+                      {lesson.docFileName && (lesson.type === "Tài liệu" || lesson.type === "Bài kiểm tra") && (
+                        <div className="gvc-lesson-doc" style={{ 
+                          marginTop: '16px', 
+                          padding: '12px',
+                          backgroundColor: '#f9fafb',
+                          borderRadius: '8px',
+                          border: '1px solid #e5e7eb',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '12px'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                            <div style={{ 
+                              width: '48px', 
+                              height: '48px', 
+                              backgroundColor: '#3b82f6', 
+                              borderRadius: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0
+                            }}>
+                              <svg style={{ width: '24px', height: '24px', color: 'white' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontWeight: '600', color: '#111827', fontSize: '14px', marginBottom: '4px' }}>
+                                {lesson.docFileName}
+                              </div>
+                              <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                                {lesson.docFilePath && lesson.docFilePath.startsWith('blob:') 
+                                  ? 'Chưa tải lên' 
+                                  : 'Đã tải lên'}
+                              </div>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            {lesson.docFilePath && !lesson.docFilePath.startsWith('blob:') && (
+                              <a
+                                href={lesson.docFilePath.startsWith('http') 
+                                  ? lesson.docFilePath 
+                                  : `https://localhost:3001${lesson.docFilePath.startsWith('/') ? '' : '/'}${lesson.docFilePath}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  padding: '6px 12px',
+                                  backgroundColor: '#111827',
+                                  color: 'white',
+                                  borderRadius: '6px',
+                                  fontSize: '12px',
+                                  fontWeight: '500',
+                                  textDecoration: 'none',
+                                  display: 'inline-block'
+                                }}
+                              >
+                                Tải xuống
+                              </a>
+                            )}
+                            <button
+                              onClick={() => deleteDynamicDoc(lesson.id)}
+                              style={{
+                                padding: '6px 12px',
+                                backgroundColor: '#ef4444',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                cursor: 'pointer'
+                              }}
+                              title="Xóa tài liệu"
+                            >
+                              Xóa
+                            </button>
+                          </div>
+                          {lesson.uploading && (
+                            <div style={{ fontSize: '12px', color: '#6366f1' }}>Đang tải lên...</div>
+                          )}
+                        </div>
+                      )}
+                      
+                      {/* ✅ Nút upload tài liệu cho bài học loại "Tài liệu" */}
+                      {(lesson.type === "Tài liệu" || lesson.type === "Bài kiểm tra") && !lesson.docFileName && (
+                        <div style={{ marginTop: '16px' }}>
+                          <button
+                            onClick={() => uploadDynamicDoc(lesson.id)}
+                            style={{
+                              padding: '10px 16px',
+                              backgroundColor: '#f9fafb',
+                              border: '2px dashed #d1d5db',
+                              borderRadius: '8px',
+                              color: '#374151',
+                              fontSize: '14px',
+                              fontWeight: '500',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              width: '100%',
+                              maxWidth: '400px'
+                            }}
+                          >
+                            <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            Tải tài liệu (PDF, TXT)
+                          </button>
+                          <input 
+                            id={`lesson-${lesson.id}-doc`} 
+                            type="file" 
+                            accept=".pdf,.txt"
+                            style={{ display: 'none' }} 
+                            onChange={(e) => onDynamicDocChange(lesson.id, e)} 
+                          />
                         </div>
                       )}
                     </div>
@@ -818,90 +1097,102 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                         </svg>
                       </button>
                 
-                      <button className="gvc-icon-btn" title="Upload tệp" onClick={() => uploadDynamicAsset(lesson.id)}>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M18.22 20.75H5.78
-        A2.64 2.64 0 0 1 3.25 18v-3
-        a.75.75 0 0 1 1.5 0v3
-        a1.16 1.16 0 0 0 1 1.25h12.47
-        a1.16 1.16 0 0 0 1-1.25v-3
-        a.75.75 0 0 1 1.5 0v3
-        a2.64 2.64 0 0 1-2.5 2.75Z
-        M16 8.75
-        a.74.74 0 0 1-.53-.22L12 5.06L8.53 8.53
-        a.75.75 0 0 1-1.06-1.06l4-4
-        a.75.75 0 0 1 1.06 0l4 4
-        a.75.75 0 0 1 0 1.06
-        a.74.74 0 0 1-.53.22Z
-      "
-    />
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      d="
-        M12 15.75
-        a.76.76 0 0 1-.75-.75V4
-        a.75.75 0 0 1 1.5 0v11
-        a.76.76 0 0 1-.75.75Z
-      "
-    />
-  </svg>
-</button>
+                      {/* ✅ Nút upload tài liệu riêng cho loại "Tài liệu" */}
+                      {(lesson.type === "Tài liệu" || lesson.type === "Bài kiểm tra") && (
+                        <button className="gvc-icon-btn" title="Upload tài liệu PDF/TXT" onClick={() => uploadDynamicDoc(lesson.id)}>
+                          <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </button>
+                      )}
+                      {/* ✅ Nút upload video/asset cho loại "Video" */}
+                      {lesson.type === "Video" && (
+                        <button className="gvc-icon-btn" title="Upload tệp" onClick={() => uploadDynamicAsset(lesson.id)}>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              fill="none"
+                              stroke="#111827"
+                              strokeWidth="1.5"
+                              d="
+                                M18.22 20.75H5.78
+                                A2.64 2.64 0 0 1 3.25 18v-3
+                                a.75.75 0 0 1 1.5 0v3
+                                a1.16 1.16 0 0 0 1 1.25h12.47
+                                a1.16 1.16 0 0 0 1-1.25v-3
+                                a.75.75 0 0 1 1.5 0v3
+                                a2.64 2.64 0 0 1-2.5 2.75Z
+                                M16 8.75
+                                a.74.74 0 0 1-.53-.22L12 5.06L8.53 8.53
+                                a.75.75 0 0 1-1.06-1.06l4-4
+                                a.75.75 0 0 1 1.06 0l4 4
+                                a.75.75 0 0 1 0 1.06
+                                a.74.74 0 0 1-.53.22Z
+                              "
+                            />
+                            <path
+                              fill="none"
+                              stroke="#111827"
+                              strokeWidth="1.5"
+                              d="
+                                M12 15.75
+                                a.76.76 0 0 1-.75-.75V4
+                                a.75.75 0 0 1 1.5 0v11
+                                a.76.76 0 0 1-.75.75Z
+                              "
+                            />
+                          </svg>
+                        </button>
+                      )}
                       <button 
                         className="gvc-icon-btn danger" 
                         title="Xóa"
                         onClick={() => handleDeleteLesson(lesson.id)}
                       >
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 26 26"
-  >
-    <path
-      fill="none"
-      stroke="#111827"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="
-        M11.5-.031
-        c-1.958 0-3.531 1.627-3.531 3.594V4H4
-        c-.551 0-1 .449-1 1v1H2v2h2v15
-        c0 1.645 1.355 3 3 3h12
-        c1.645 0 3-1.355 3-3V8h2V6h-1V5
-        c0-.551-.449-1-1-1h-3.969v-.438
-        c0-1.966-1.573-3.593-3.531-3.593h-3z
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 26 26"
+                        >
+                          <path
+                            fill="none"
+                            stroke="#111827"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="
+                              M11.5-.031
+                              c-1.958 0-3.531 1.627-3.531 3.594V4H4
+                              c-.551 0-1 .449-1 1v1H2v2h2v15
+                              c0 1.645 1.355 3 3 3h12
+                              c1.645 0 3-1.355 3-3V8h2V6h-1V5
+                              c0-.551-.449-1-1-1h-3.969v-.438
+                              c0-1.966-1.573-3.593-3.531-3.593h-3z
 
-        m0 2.062h3
-        c.804 0 1.469.656 1.469 1.531V4H10.03v-.438
-        c0-.875.665-1.53 1.469-1.53z
+                              m0 2.062h3
+                              c.804 0 1.469.656 1.469 1.531V4H10.03v-.438
+                              c0-.875.665-1.53 1.469-1.53z
 
-        M6 8h5.125
-        c.124.013.247.031.375.031h3
-        c.128 0 .25-.018.375-.031H20v15
-        c0 .563-.437 1-1 1H7
-        c-.563 0-1-.437-1-1V8z
+                              M6 8h5.125
+                              c.124.013.247.031.375.031h3
+                              c.128 0 .25-.018.375-.031H20v15
+                              c0 .563-.437 1-1 1H7
+                              c-.563 0-1-.437-1-1V8z
 
-        m2 2v12h2V10H8z
-        m4 0v12h2V10h-2z
-        m4 0v12h2V10h-2z
-      "
-    />
-  </svg>
+                              m2 2v12h2V10H8z
+                              m4 0v12h2V10h-2z
+                              m4 0v12h2V10h-2z
+                            "
+                          />
+                        </svg>
                       </button>
                       <input id={`lesson-${lesson.id}-asset`} type="file" multiple accept="video/*" style={{ display: 'none' }} onChange={(e) => onDynamicAssetChange(lesson.id, e)} />
+                      <input id={`lesson-${lesson.id}-doc`} type="file" accept=".pdf,.txt" style={{ display: 'none' }} onChange={(e) => onDynamicDocChange(lesson.id, e)} />
                     </div>
                   </div>
                 </div>

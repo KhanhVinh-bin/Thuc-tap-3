@@ -1,37 +1,59 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search } from "lucide-react"
 import CourseCard from "./course-card"
 
-export default function CoursesGrid({ courses = [], currentPage = 1, totalPages = 1, onPageChange, categories = [] }) {
+export default function CoursesGrid({ courses = [], currentPage = 1, totalPages = 1, onPageChange, categories = [], onFilterChange }) {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategories, setSelectedCategories] = useState(["Tất cả"])
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState(["all"]) // ✅ Mặc định chọn "Tất cả"
   const [selectedLevels, setSelectedLevels] = useState(["Tất cả"])
   const [maxPrice, setMaxPrice] = useState(20000000)
 
-  // ✅ Lấy danh mục từ props hoặc dùng default
+  // ✅ Lấy danh mục từ props và sắp xếp theo CategoryId, không phân cấp
   const categoriesToDisplay = categories.length > 0 
-    ? ["Tất cả", ...categories.map(c => c.CategoryName || c.categoryName || c).filter(Boolean)]
-    : ["Tất cả", "Lập trình wed", "Lập trình Mobile", "AI & Data", "Cloud & DevOps", "Database", "Bảo mật an ninh", "Kiểm thử", "Lập trình game", "Backend", "UI/UX Design", "Blockchain & Web3"]
+    ? [...categories]
+        .sort((a, b) => {
+          const idA = a.categoryId || a.CategoryId || 0
+          const idB = b.categoryId || b.CategoryId || 0
+          return idA - idB
+        })
+        .map(cat => ({
+          categoryId: cat.categoryId || cat.CategoryId,
+          categoryName: cat.categoryName || cat.CategoryName
+        }))
+        .filter(cat => cat.categoryId && cat.categoryName)
+    : []
 
-  // Handle category selection with checkboxes
-  const handleCategoryToggle = (categoryName) => {
-    setSelectedCategories(prev => {
-      if (categoryName === "Tất cả") {
-        // If "Tất cả" is selected, unselect all others and select only "Tất cả"
-        return prev.includes("Tất cả") ? [] : ["Tất cả"]
+  // Handle category selection with checkboxes - sử dụng categoryId
+  const handleCategoryToggle = (categoryId) => {
+    setSelectedCategoryIds(prev => {
+      if (categoryId === "all") {
+        // If "Tất cả" is selected, unselect all others
+        // Nếu đã chọn "all" thì bỏ chọn, nếu chưa chọn thì chỉ chọn "all"
+        return prev.includes("all") ? [] : ["all"]
       } else {
-        // If any other category is selected, remove "Tất cả" and toggle this category
-        const newSelection = prev.includes("Tất cả") 
-          ? prev.filter(cat => cat !== "Tất cả")
-          : [...prev]
+        // If any other category is selected, remove "all" and toggle this categoryId
+        const categoryIdNum = Number(categoryId)
         
-        if (newSelection.includes(categoryName)) {
-          return newSelection.filter(cat => cat !== categoryName)
+        // ✅ Loại bỏ "all" nếu có
+        let newSelection = prev.filter(id => id !== "all")
+        
+        // ✅ Toggle categoryId này
+        if (newSelection.includes(categoryIdNum)) {
+          // Nếu đã chọn thì bỏ chọn
+          newSelection = newSelection.filter(id => id !== categoryIdNum)
         } else {
-          return [...newSelection, categoryName]
+          // Nếu chưa chọn thì thêm vào
+          newSelection = [...newSelection, categoryIdNum]
         }
+        
+        // ✅ Nếu không còn category nào được chọn, tự động chọn "all"
+        if (newSelection.length === 0) {
+          return ["all"]
+        }
+        
+        return newSelection
       }
     })
   }
@@ -68,13 +90,36 @@ export default function CoursesGrid({ courses = [], currentPage = 1, totalPages 
       course.instructorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.instructor?.name?.toLowerCase().includes(searchTerm.toLowerCase())
 
-    // Match category: check if selectedCategories includes "Tất cả" or matches course category
-    const matchCategory = selectedCategories.length === 0 ||
-      selectedCategories.includes("Tất cả") ||
-      selectedCategories.some(cat => 
-        course.category?.toLowerCase().includes(cat.toLowerCase()) ||
-        course.categoryName?.toLowerCase().includes(cat.toLowerCase())
+    // ✅ Match category: filter theo categoryId thay vì categoryName
+    // ✅ Lấy categoryId từ nhiều nguồn để đảm bảo không bỏ sót
+    const courseCategoryId = course.categoryId || course.CategoryId || null
+    const courseCategoryIdNum = courseCategoryId !== null && courseCategoryId !== undefined 
+      ? Number(courseCategoryId) 
+      : null
+    
+    // ✅ Match category logic:
+    // - Nếu không chọn category nào (length === 0) → hiển thị tất cả
+    // - Nếu có "all" trong selectedCategoryIds → hiển thị tất cả
+    // - Nếu courseCategoryIdNum khác null và có trong selectedCategoryIds → match
+    let matchCategory = false
+    if (selectedCategoryIds.length === 0) {
+      matchCategory = true // Không có filter nào được chọn → hiển thị tất cả
+    } else if (selectedCategoryIds.includes("all")) {
+      matchCategory = true // "Tất cả" được chọn → hiển thị tất cả
+    } else if (courseCategoryIdNum !== null && courseCategoryIdNum !== undefined) {
+      // ✅ So sánh với cả number và string để đảm bảo match
+      matchCategory = selectedCategoryIds.some(id => 
+        Number(id) === courseCategoryIdNum || id === courseCategoryIdNum
       )
+    } else {
+      // Nếu course không có categoryId → không hiển thị khi filter theo category
+      matchCategory = false
+    }
+    
+    // ✅ Log chi tiết để debug (chỉ log khi không match và có categoryId)
+    if (typeof window !== 'undefined' && !matchCategory && courseCategoryIdNum !== null) {
+      console.log(`🔍 Course "${course.title || course.name}" categoryId: ${courseCategoryIdNum} (type: ${typeof courseCategoryIdNum}), selectedCategoryIds:`, selectedCategoryIds, `match: ${matchCategory}`)
+    }
 
     // Match level: check if selectedLevels includes "Tất cả" or matches course level
     const matchLevel = selectedLevels.length === 0 ||
@@ -95,10 +140,70 @@ export default function CoursesGrid({ courses = [], currentPage = 1, totalPages 
     return matchSearch && matchCategory && matchLevel && matchPrice
   })
   
+  // ✅ Gọi callback để thông báo cho parent component về filter changes
+  useEffect(() => {
+    if (onFilterChange && typeof onFilterChange === 'function') {
+      // Tạo filter function để parent có thể apply trên allCourses
+      const filterFn = (allCourses) => {
+        return allCourses.filter((course) => {
+          if (!course || !course.id) return false
+          
+          const matchSearch =
+            !searchTerm ||
+            course.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            course.instructorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            course.instructor?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+
+          const courseCategoryId = course.categoryId || course.CategoryId || null
+          const courseCategoryIdNum = courseCategoryId !== null && courseCategoryId !== undefined 
+            ? Number(courseCategoryId) 
+            : null
+          
+          let matchCategory = false
+          if (selectedCategoryIds.length === 0) {
+            matchCategory = true
+          } else if (selectedCategoryIds.includes("all")) {
+            matchCategory = true
+          } else if (courseCategoryIdNum !== null && courseCategoryIdNum !== undefined) {
+            matchCategory = selectedCategoryIds.some(id => 
+              Number(id) === courseCategoryIdNum || id === courseCategoryIdNum
+            )
+          } else {
+            matchCategory = false
+          }
+
+          const matchLevel = selectedLevels.length === 0 ||
+            selectedLevels.includes("Tất cả") ||
+            selectedLevels.some(lvl => 
+              course.level?.toLowerCase() === lvl.toLowerCase()
+            )
+
+          const coursePrice = typeof course.price === 'number' 
+            ? course.price 
+            : typeof course.price === 'string' 
+              ? parseFloat(course.price.replace(/[^\d.]/g, '')) || 0 
+              : 0
+          const matchPrice = coursePrice <= maxPrice
+
+          return matchSearch && matchCategory && matchLevel && matchPrice
+        })
+      }
+      
+      onFilterChange(filterFn)
+    }
+  }, [searchTerm, selectedCategoryIds, selectedLevels, maxPrice, onFilterChange])
+
   // Debug log
   if (typeof window !== 'undefined') {
     console.log(`🔍 Filtered courses: ${filteredCourses.length} from ${courses.length} total`)
-    console.log(`🔍 Search term: "${searchTerm}", Categories: [${selectedCategories.join(', ')}], Levels: [${selectedLevels.join(', ')}], Max price: ${maxPrice}`)
+    console.log(`🔍 Search term: "${searchTerm}", Selected Category IDs: [${selectedCategoryIds.join(', ')}], Levels: [${selectedLevels.join(', ')}], Max price: ${maxPrice}`)
+    console.log(`🔍 Available categories:`, categoriesToDisplay)
+    console.log(`🔍 Sample course categoryIds:`, courses.slice(0, 5).map(c => ({
+      title: c.title || c.name,
+      categoryId: c.categoryId || c.CategoryId,
+      category: c.category
+    })))
   }
 
   // Hàm xử lý đổi giá (single slider for max price)
@@ -135,19 +240,34 @@ export default function CoursesGrid({ courses = [], currentPage = 1, totalPages 
             <div className="mb-6">
               <h3 className="font-medium mb-3 text-gray-700">Danh mục</h3>
               <div className="space-y-2">
-                {categoriesToDisplay.map((category) => (
+                {/* Option "Tất cả" */}
+                <label
+                  key="all"
+                  className="flex items-center text-sm text-gray-700 cursor-pointer hover:bg-gray-50 px-2 py-1.5 rounded"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedCategoryIds.includes("all")}
+                    onChange={() => handleCategoryToggle("all")}
+                    className="w-4 h-4 mr-2 text-black bg-white border-gray-300 rounded focus:ring-black focus:ring-2 focus:ring-offset-0"
+                    style={{ accentColor: "black" }}
+                  />
+                  <span>Tất cả</span>
+                </label>
+                {/* Các danh mục từ API */}
+                {categoriesToDisplay.map((cat) => (
                   <label
-                    key={category}
+                    key={cat.categoryId}
                     className="flex items-center text-sm text-gray-700 cursor-pointer hover:bg-gray-50 px-2 py-1.5 rounded"
                   >
                     <input
                       type="checkbox"
-                      checked={selectedCategories.includes(category)}
-                      onChange={() => handleCategoryToggle(category)}
+                      checked={selectedCategoryIds.includes(Number(cat.categoryId))}
+                      onChange={() => handleCategoryToggle(cat.categoryId)}
                       className="w-4 h-4 mr-2 text-black bg-white border-gray-300 rounded focus:ring-black focus:ring-2 focus:ring-offset-0"
                       style={{ accentColor: "black" }}
                     />
-                    <span>{category}</span>
+                    <span>{cat.categoryName}</span>
                   </label>
                 ))}
               </div>

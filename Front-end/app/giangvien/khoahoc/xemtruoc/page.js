@@ -309,6 +309,89 @@ export default function XemTruocKhoaHocPage(){
               setError("")
 
               try {
+                // ✅ Xử lý lessons để đảm bảo validation
+                const skippedLessons = []
+                const processedLessons = (courseData.lessons || []).map((lesson, idx) => {
+                  // ✅ Hỗ trợ cả PascalCase và camelCase
+                  const contentType = (lesson.ContentType || lesson.contentType || "").toLowerCase().trim()
+                  const lessonId = lesson.LessonId || lesson.lessonId || 0
+                  const title = lesson.Title || lesson.title || `Bài học ${idx + 1}`
+                  const videoUrl = lesson.VideoUrl || lesson.videoUrl || null
+                  
+                  // ✅ QUAN TRỌNG: Lấy filePath từ TẤT CẢ các nguồn có thể
+                  // 1. FilePath trực tiếp từ lesson (backend CreateOrUpdateCourseStep đã thêm)
+                  // 2. FilePath từ File object (backend Lessons/ByCourse trả về)
+                  // 3. FilePath từ các thuộc tính khác
+                  const fileObj = lesson.File || lesson.file || null
+                  const filePathFromLesson = lesson.FilePath || lesson.filePath || null
+                  const filePathFromFile = fileObj?.FilePath || fileObj?.filePath || null
+                  const filePathFromFileUrl = fileObj?.FileUrl || fileObj?.fileUrl || null
+                  const fileUrlFromLesson = lesson.FileUrl || lesson.fileUrl || null
+                  
+                  // ✅ Ưu tiên FilePath: từ File object > từ lesson trực tiếp > từ các nguồn khác
+                  const filePath = filePathFromFile || filePathFromLesson || filePathFromFileUrl || fileUrlFromLesson || null
+                  
+                  console.log(`📝 Processing lesson ${idx + 1} "${title}":`, {
+                    contentType,
+                    lessonId,
+                    filePath,
+                    filePathFromFile,
+                    filePathFromLesson,
+                    hasFile: !!fileObj,
+                    fullLesson: lesson
+                  })
+                  
+                  // ✅ Kiểm tra nếu là document type (pdf hoặc text)
+                  const isDocumentType = contentType === "pdf" || contentType === "text"
+                  
+                  // ✅ Nếu là document type nhưng chưa có filePath hợp lệ, bỏ qua lesson này
+                  if (isDocumentType) {
+                    const hasValidFilePath = filePath && 
+                                           (filePath.startsWith('/uploads/') || 
+                                            filePath.startsWith('http://') || 
+                                            filePath.startsWith('https://'))
+                    
+                    if (!hasValidFilePath) {
+                      skippedLessons.push({ title, contentType })
+                      console.warn(`⚠️ Skipping lesson "${title}" - ContentType is "${contentType}" but no valid filePath.`, {
+                        filePath,
+                        filePathFromFile,
+                        filePathFromLesson,
+                        hasFile: !!fileObj
+                      })
+                      return null // Bỏ qua lesson này
+                    }
+                  }
+                  
+                  // ✅ Tạo lesson object với format đúng
+                  return {
+                    lessonId: lessonId,
+                    title: title,
+                    contentType: contentType || "video",
+                    videoUrl: contentType === "video" ? videoUrl : null,
+                    filePath: isDocumentType ? filePath : null, // ✅ Sử dụng filePath đã lấy từ nhiều nguồn
+                    durationSec: lesson.DurationSec || lesson.durationSec || 0,
+                    sortOrder: lesson.SortOrder || lesson.sortOrder || idx + 1,
+                  }
+                }).filter(lesson => lesson !== null) // ✅ Lọc bỏ các lesson null
+                
+                // ✅ Cảnh báo nếu có lesson bị bỏ qua
+                if (skippedLessons.length > 0) {
+                  const skippedList = skippedLessons.map(s => `- "${s.title}" (${s.contentType})`).join('\n')
+                  const shouldContinue = window.confirm(
+                    `⚠️ Cảnh báo:\n\n` +
+                    `Có ${skippedLessons.length} bài học bị bỏ qua vì chưa có file tài liệu hợp lệ:\n\n` +
+                    `${skippedList}\n\n` +
+                    `Các bài học này sẽ không được lưu vào khóa học.\n\n` +
+                    `Bạn có muốn tiếp tục tạo khóa học không?`
+                  )
+                  
+                  if (!shouldContinue) {
+                    setIsSaving(false)
+                    return
+                  }
+                }
+                
                 // Final save with all data
                 const coursePayload = {
                   courseId: courseData.courseId || 0,
@@ -324,7 +407,7 @@ export default function XemTruocKhoaHocPage(){
                   tagName: courseData.tagName || "",
                   tagIds: null, // ✅ Backend chỉ dùng TagName, không dùng TagIds. Gửi null để tránh lỗi validation
                   slug: courseData.slug || generateSlug(courseData.title || "") || "untitled-course", // ✅ Thêm slug
-                  lessons: courseData.lessons || [],
+                  lessons: processedLessons, // ✅ Sử dụng processedLessons thay vì courseData.lessons
                   status: "published", // ✅ Mặc định là published
                 }
 
@@ -332,7 +415,8 @@ export default function XemTruocKhoaHocPage(){
                   courseId: coursePayload.courseId,
                   title: coursePayload.title,
                   status: coursePayload.status,
-                  lessonsCount: coursePayload.lessons?.length || 0
+                  lessonsCount: coursePayload.lessons?.length || 0,
+                  lessons: coursePayload.lessons
                 })
 
                 const result = await createOrUpdateCourseStep(coursePayload, token)
