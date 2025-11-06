@@ -228,7 +228,7 @@ try {
   // Chọn endpoint đúng theo role
   const endpoint =
     role === "instructor"
-      ? "https://localhost:3001/api/Auth/register/instructor"
+      ? "https://localhost:5000/api/Auth/register/instructor"
       : "https://localhost:7025/api/Users/Register";
 
   const body =

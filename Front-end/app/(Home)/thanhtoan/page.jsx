@@ -54,9 +54,9 @@ export default function CheckoutPage() {
     
     // If it's a relative path from backend uploads, add base URL
     if (imageUrl.includes('/uploads/')) {
-      // Backend API upload file trên port 3001 (instructor API)
+      // Backend API upload file trên port 5000 (instructor API)
       const cleanPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
-      return `https://localhost:3001${cleanPath}`
+      return `https://localhost:5000${cleanPath}`
     }
     
     // If it's a relative path, ensure it starts with /

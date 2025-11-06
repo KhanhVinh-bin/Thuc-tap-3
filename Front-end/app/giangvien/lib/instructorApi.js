@@ -1,5 +1,5 @@
 // API service for instructor-related endpoints
-const API_URL = "https://localhost:3001/api";
+const API_URL = "https://localhost:5000/api";
 
 // Get instructor's courses with statistics
 export const getInstructorCourses = async (token) => {
@@ -348,8 +348,8 @@ export const formatCourseData = (apiCourse) => {
     }
     // Nếu là đường dẫn file từ backend upload (/uploads/...), thêm base URL
     else if (thumbUrl.includes('/uploads/')) {
-      // ✅ Backend API upload file trên port 3001 (instructor API)
-    thumbUrl = `https://localhost:3001${thumbUrl.startsWith('/') ? '' : '/'}${thumbUrl}`
+      // ✅ Backend API upload file trên port 5000 (instructor API)
+    thumbUrl = `https://localhost:5000${thumbUrl.startsWith('/') ? '' : '/'}${thumbUrl}`
     }
     // Nếu là đường dẫn tương đối khác, đảm bảo bắt đầu bằng /
     else if (!thumbUrl.startsWith('/')) {
@@ -484,7 +484,7 @@ export const getLessonsByCourse = async (courseId, token) => {
       console.log("🔄 Thử endpoint alternative: /Lessons/ByCourse");
       
       try {
-        // Thử với port 3001 (instructor API)
+        // Thử với port 5000 (instructor API)
         const altResponse = await fetch(`${API_URL}/Lessons/ByCourse/${courseId}`, {
           method: 'GET',
           headers: {
@@ -511,7 +511,7 @@ export const getLessonsByCourse = async (courseId, token) => {
           }
         }
         
-        // Nếu port 3001 không được, thử port 7025 (public API)
+        // Nếu port 5000 không được, thử port 7025 (public API)
         console.log("🔄 Thử endpoint alternative với port 7025...")
         const altResponse2 = await fetch(`https://localhost:7025/api/Lessons/ByCourse/${courseId}`, {
           method: 'GET',

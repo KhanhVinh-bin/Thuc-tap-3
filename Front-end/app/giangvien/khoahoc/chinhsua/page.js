@@ -173,12 +173,12 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                 if (filePath) {
                   return filePath.startsWith('http') 
                     ? filePath
-                    : `https://localhost:3001${filePath.startsWith('/') ? '' : '/'}${filePath}`
+                    : `https://localhost:5000${filePath.startsWith('/') ? '' : '/'}${filePath}`
                 }
                 if (vidUrl) {
                   return vidUrl.startsWith('http') 
                     ? vidUrl
-                    : `https://localhost:3001${vidUrl.startsWith('/') ? '' : '/'}${vidUrl}`
+                    : `https://localhost:5000${vidUrl.startsWith('/') ? '' : '/'}${vidUrl}`
                 }
                 return null
               })(),
@@ -321,8 +321,8 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                       const filePath = uploadResult.file?.FilePath || uploadResult.file?.filePath || uploadResult.filePath
                       if (filePath) {
                         const fullVideoUrl = filePath.startsWith('/') 
-                          ? `https://localhost:3001${filePath}`
-                          : `https://localhost:3001/${filePath}`
+                          ? `https://localhost:5000${filePath}`
+                          : `https://localhost:5000/${filePath}`
                         
                         // Update lesson với videoUrl từ server
                         setLessons(prev => prev.map(l => {
@@ -492,8 +492,8 @@ export default function GiangVienKhoaHocChinhSuaPage() {
         const filePath = uploadResult.file?.FilePath || uploadResult.file?.filePath || uploadResult.filePath
         if (filePath) {
           const fullDocUrl = filePath.startsWith('/') 
-            ? `https://localhost:3001${filePath}`
-            : `https://localhost:3001/${filePath}`
+            ? `https://localhost:5000${filePath}`
+            : `https://localhost:5000/${filePath}`
           
           setLessons(prev => prev.map(l => {
             if (l.id !== lessonId) return l
@@ -608,8 +608,8 @@ export default function GiangVienKhoaHocChinhSuaPage() {
           const filePath = uploadResult.file?.FilePath || uploadResult.file?.filePath || uploadResult.filePath
           if (filePath) {
             const fullVideoUrl = filePath.startsWith('/') 
-              ? `https://localhost:3001${filePath}`
-              : `https://localhost:3001/${filePath}`
+              ? `https://localhost:5000${filePath}`
+              : `https://localhost:5000/${filePath}`
             
             setLessons(prev => prev.map(l => {
               if (l.id !== lessonId) return l
@@ -991,7 +991,7 @@ export default function GiangVienKhoaHocChinhSuaPage() {
                               <a
                                 href={lesson.docFilePath.startsWith('http') 
                                   ? lesson.docFilePath 
-                                  : `https://localhost:3001${lesson.docFilePath.startsWith('/') ? '' : '/'}${lesson.docFilePath}`}
+                                  : `https://localhost:5000${lesson.docFilePath.startsWith('/') ? '' : '/'}${lesson.docFilePath}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{

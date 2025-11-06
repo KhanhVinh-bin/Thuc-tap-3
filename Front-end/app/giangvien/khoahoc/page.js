@@ -121,7 +121,7 @@ export default function GiangVienKhoaHocPage() {
       
       // Hiển thị thông báo lỗi chi tiết
       if (errorMessage.includes('kết nối') || errorMessage.includes('ERR_CONNECTION_REFUSED') || errorMessage.includes('Failed to fetch')) {
-        alert('❌ Lỗi: Không thể kết nối tới server backend.\n\nVui lòng:\n1. Kiểm tra backend đã chạy chưa (port 3001)\n2. Kiểm tra kết nối mạng\n3. Thử lại sau')
+        alert('❌ Lỗi: Không thể kết nối tới server backend.\n\nVui lòng:\n1. Kiểm tra backend đã chạy chưa (port 5000)\n2. Kiểm tra kết nối mạng\n3. Thử lại sau')
       } else if (errorMessage.includes('401') || errorMessage.includes('không hợp lệ') || errorMessage.includes('hết hạn')) {
         alert('❌ Lỗi: Token không hợp lệ.\n\nVui lòng đăng nhập lại.')
         router.push('/login')

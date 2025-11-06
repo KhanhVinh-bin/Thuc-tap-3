@@ -534,7 +534,7 @@ export default function LearningPage() {
       }
       
       // ✅ Build URL với base URL của backend
-      const baseUrl = `https://localhost:3001`
+      const baseUrl = `https://localhost:5000`
       let normalizedPath = urlStr
       
       // Nếu bắt đầu bằng uploads hoặc lessons, giữ nguyên
@@ -814,7 +814,7 @@ export default function LearningPage() {
       downloadUrl = pathStr
     } else {
       // Nếu là relative path từ uploads, thêm base URL
-      const baseUrl = `https://localhost:3001`
+      const baseUrl = `https://localhost:5000`
       let normalizedPath = pathStr
       
       if (pathStr.startsWith('/uploads/') || pathStr.startsWith('uploads/')) {
@@ -1108,11 +1108,11 @@ export default function LearningPage() {
                             
                             if (pathStr.startsWith('/uploads/') || pathStr.startsWith('uploads/')) {
                               const normalizedPath = pathStr.startsWith('/') ? pathStr : `/${pathStr}`
-                              return `https://localhost:3001${normalizedPath}`
+                              return `https://localhost:5000${normalizedPath}`
                             }
                             
                             const normalizedPath = pathStr.startsWith('/') ? pathStr : `/uploads/${pathStr}`
-                            return `https://localhost:3001${normalizedPath}`
+                            return `https://localhost:5000${normalizedPath}`
                           }
                           
                           const downloadUrl = getDownloadUrl(resource.filePath)
@@ -1333,12 +1333,12 @@ export default function LearningPage() {
                           // Nếu là relative path từ uploads, thêm base URL
                           if (pathStr.startsWith('/uploads/') || pathStr.startsWith('uploads/')) {
                             const normalizedPath = pathStr.startsWith('/') ? pathStr : `/${pathStr}`
-                            return `https://localhost:3001${normalizedPath}`
+                            return `https://localhost:5000${normalizedPath}`
                           }
                           
                           // Nếu không có prefix, thêm /uploads/
                           const normalizedPath = pathStr.startsWith('/') ? pathStr : `/uploads/${pathStr}`
-                          return `https://localhost:3001${normalizedPath}`
+                          return `https://localhost:5000${normalizedPath}`
                         }
                         
                         const downloadUrl = getDownloadUrl(resource.filePath)

@@ -42,9 +42,9 @@ export default function ApiTestInstructor() {
 
       <div style={{ marginTop: "2rem" }}>
         <h3>API Endpoint Being Tested:</h3>
-        <code>GET https://localhost:3001/api/Courses/Get/my-courses/coursesAll/Thong_Tin_Nhieu_Khoa_Hoc</code>
+        <code>GET https://localhost:5000/api/Courses/Get/my-courses/coursesAll/Thong_Tin_Nhieu_Khoa_Hoc</code>
         <p style={{ marginTop: "1rem", fontSize: "14px", color: "#666" }}>
-          Base URL: https://localhost:3001 (Instructor API)
+          Base URL: https://localhost:5000 (Instructor API)
         </p>
       </div>
 

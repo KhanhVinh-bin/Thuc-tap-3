@@ -21,8 +21,8 @@ export function formatImageUrl(imageUrl: string | null | undefined, fallback: st
   
   // Nếu là đường dẫn file từ backend upload (/uploads/...), thêm base URL của backend
   if (imageUrl.includes('/uploads/')) {
-    // Backend API đang chạy trên port 3001 (instructor API - nơi upload file)
-    return `https://localhost:3001${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
+    // Backend API đang chạy trên port 5000 (instructor API - nơi upload file)
+    return `https://localhost:5000${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
   }
   
   // If it's a relative path, ensure it starts with /

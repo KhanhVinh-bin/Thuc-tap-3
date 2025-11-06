@@ -111,10 +111,10 @@ export default function XemTruocKhoaHocPage(){
                 
                 // Nếu là relative path, thêm base URL
                 if (imageUrl.startsWith('/uploads/')) {
-                  imageUrl = `https://localhost:3001${imageUrl}`
+                  imageUrl = `https://localhost:5000${imageUrl}`
                 } else if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://') && !imageUrl.startsWith('blob:')) {
                   // Nếu không phải absolute URL và không phải blob, thêm base URL
-                  imageUrl = `https://localhost:3001${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
+                  imageUrl = `https://localhost:5000${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
                 }
                 
                 return (

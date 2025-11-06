@@ -103,7 +103,7 @@ export default function LoginPage() {
     const apiUrl =
       userType === "student"
         ? "https://localhost:7025/api/Users/Login"
-        : "https://localhost:3001/api/Auth/Post/login/Dang_Nhap";
+        : "https://localhost:5000/api/Auth/Post/login/Dang_Nhap";
 
     try {
       const res = await fetch(apiUrl, {

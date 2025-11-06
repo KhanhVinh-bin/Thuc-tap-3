@@ -47,7 +47,7 @@ export default function FeaturedCourses() {
             if (thumbnailUrl.startsWith('http://') || thumbnailUrl.startsWith('https://')) {
               imageUrl = thumbnailUrl
             } else if (thumbnailUrl.includes('/uploads/')) {
-              imageUrl = `https://localhost:3001${thumbnailUrl.startsWith('/') ? '' : '/'}${thumbnailUrl}`
+              imageUrl = `https://localhost:5000${thumbnailUrl.startsWith('/') ? '' : '/'}${thumbnailUrl}`
             } else {
               imageUrl = thumbnailUrl.startsWith('/') ? thumbnailUrl : `/${thumbnailUrl}`
             }

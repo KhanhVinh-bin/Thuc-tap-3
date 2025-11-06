@@ -395,8 +395,8 @@ export const formatCourseData = (courseData) => {
     } 
     // Nếu là đường dẫn file tương đối từ backend (uploads/...), thêm base URL của backend
     else if (thumbnailUrlRaw.includes('/uploads/')) {
-      // Backend API đang chạy trên port 3001 (instructor API - nơi upload file)
-      thumbnailUrl = `https://localhost:3001${thumbnailUrlRaw.startsWith('/') ? '' : '/'}${thumbnailUrlRaw}`
+      // Backend API đang chạy trên port 5000 (instructor API - nơi upload file)
+      thumbnailUrl = `https://localhost:5000${thumbnailUrlRaw.startsWith('/') ? '' : '/'}${thumbnailUrlRaw}`
     }
     // Nếu là đường dẫn file tương đối khác, đảm bảo có / ở đầu
     else {
