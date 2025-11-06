@@ -1,0 +1,1128 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\controllers\\instructorsalerevenuecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\controllers\\instructorsalerevenuecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\controllers\\settingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\controllers\\settingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\controllers\\coursescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\controllers\\coursescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\controllers\\lessoncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\controllers\\lessoncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\helpers\\generateslug.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\helpers\\generateslug.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\create_course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\create_course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\tag.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\tag.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\lessonstepdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\lessonstepdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\controllers\\reviewcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\controllers\\reviewcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\file.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\file.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\lessondto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\lessondto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\lesson.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\lesson.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\publishcourserequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\publishcourserequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\instructor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\instructor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\controllers\\supportcentercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\controllers\\supportcentercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\supportmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\supportmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\report.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\report.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\controllers\\studentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\controllers\\studentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\changepassword.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\changepassword.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\bin\\Debug\\net8.0\\Du_An_Web_Ban_Khoa_Hoc.runtimeconfig.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Du_An_Web_Ban_Khoa_Hoc\\bin\\Debug\\net8.0\\Du_An_Web_Ban_Khoa_Hoc.runtimeconfig.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\bo_loc_history_rut_tien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\bo_loc_history_rut_tien.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\addbankaccountrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\addbankaccountrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\createpayoutrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\createpayoutrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\controllers\\instructortongquatcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\controllers\\instructortongquatcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\controllers\\instructorscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\controllers\\instructorscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\progress.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\progress.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\enrollment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\enrollment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\enrollmentlog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\enrollmentlog.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\instructorbalancedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\instructorbalancedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\instructorrevenuedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\instructorrevenuedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\instructorreviewdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\instructorreviewdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\instructorreviewsummarydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\instructorreviewsummarydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\filedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\filedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\submission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\submission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\assignment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\assignment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\admin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\patch_lesson_dto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\patch_lesson_dto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\migrations\\appdbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\migrations\\appdbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Th\u1EF1c t\u1EADp\\D\u1EF1 \u00E1n 2\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251021031657_RenameColumns.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\migrations\\20251014165152_changedateonlytodatetime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\migrations\\20251014165152_changedateonlytodatetime.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\migrations\\20251020174427_removechapterstable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\migrations\\20251020174427_removechapterstable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\ke_thua_student_requestpage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\ke_thua_student_requestpage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\banner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\banner.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\responsepageresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\responsepageresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\requestquerypage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\requestquerypage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\updatei_profile_instructor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\updatei_profile_instructor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\dto\\patchinstructor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\dto\\patchinstructor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\helpers\\dateonlyjsonconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\helpers\\dateonlyjsonconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\models\\schedule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\models\\schedule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\views\\instructors\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\views\\instructors\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\views\\instructors\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\views\\instructors\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\views\\instructors\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\views\\instructors\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\views\\instructors\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\views\\instructors\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|d:\\thuc-tap-3-master (2)\\thuc-tap-3-master\\back-end\\pr\\du_an_web_ban_khoa_hoc\\du_an_web_ban_khoa_hoc\\views\\instructors\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{28A986B6-F403-46F3-85C0-4303F0C1AF9D}|Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.csproj|solutionrelative:du_an_web_ban_khoa_hoc\\views\\instructors\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Program.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Program.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Program.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Program.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAswCUAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.176Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\appsettings.json",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\appsettings.json",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\appsettings.json",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-01T03:52:58.173Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Data\\AppDbContext.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAuwFYAAABrAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.16Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "InstructorSaleRevenueController.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorSaleRevenueController.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorSaleRevenueController.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorSaleRevenueController.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorSaleRevenueController.cs",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAmwJMAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.154Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Properties\\launchSettings.json",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-01T03:52:58.257Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SettingController.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\SettingController.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\SettingController.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\SettingController.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\SettingController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEsAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.17Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CoursesController.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\CoursesController.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\CoursesController.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\CoursesController.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\CoursesController.cs",
+              "ViewState": "AgIAAMABAAAAAAAAAAAgwNsBAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.149Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Create_Course.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Create_Course.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Create_Course.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Create_Course.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Create_Course.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.158Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\AuthController.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAADAAAAAAAAAAAAAYwEoAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.166Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "LessonController.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\LessonController.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\LessonController.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\LessonController.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\LessonController.cs",
+              "ViewState": "AgIAAGUDAAAAAAAAAAAgwHsDAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.155Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "LessonstepDTO.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LessonstepDTO.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LessonstepDTO.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LessonstepDTO.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LessonstepDTO.cs",
+              "ViewState": "AQIAABAAAAAAAAAAAAAqwDkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.153Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ReviewController.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\ReviewController.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\ReviewController.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\ReviewController.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\ReviewController.cs",
+              "ViewState": "AQIAAPoAAAAAAAAAAAAcwAoBAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.157Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Tag.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Tag.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Tag.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Tag.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Tag.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.151Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "GenerateSlug.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Helpers\\GenerateSlug.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Helpers\\GenerateSlug.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Helpers\\GenerateSlug.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Helpers\\GenerateSlug.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.064Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "File.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\File.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\File.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\File.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\File.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.161Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "LessonDTO.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LessonDTO.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LessonDTO.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LessonDTO.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LessonDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.162Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Lesson.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Lesson.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Lesson.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Lesson.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Lesson.cs",
+              "ViewState": "AQIAABEAAAAAAAAAAAA9wBYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.163Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Course.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Course.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Course.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Course.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Course.cs",
+              "ViewState": "AQIAAA8AAAAAAAAAAADwvzEAAABMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.165Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "LoginDTO.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LoginDTO.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LoginDTO.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LoginDTO.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\LoginDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.167Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "PublishCourseRequest.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\PublishCourseRequest.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\PublishCourseRequest.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\PublishCourseRequest.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\PublishCourseRequest.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.168Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "Instructor.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Instructor.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Instructor.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Instructor.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Instructor.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAiwBcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.172Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "RegisterDTO.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\RegisterDTO.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\RegisterDTO.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\RegisterDTO.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\RegisterDTO.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAA5wBAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.175Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "SupportCenterController.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\SupportCenterController.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\SupportCenterController.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\SupportCenterController.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\SupportCenterController.cs",
+              "ViewState": "AQIAADAAAAAAAAAAAAAAwFIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.178Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "ChangePassword.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\ChangePassword.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\ChangePassword.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\ChangePassword.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\ChangePassword.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAzAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.179Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "Report.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Report.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Report.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Report.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Report.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.181Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "SupportMessage.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\SupportMessage.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\SupportMessage.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\SupportMessage.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\SupportMessage.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.182Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "User.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\User.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\User.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\User.cs",
+              "ViewState": "AQIAACYAAAAAAAAAAAAIwEMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.184Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "StudentsController.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\StudentsController.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\StudentsController.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\StudentsController.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\StudentsController.cs",
+              "ViewState": "AQIAABQAAAAAAAAAAAAAwMIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.185Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "Du_An_Web_Ban_Khoa_Hoc.runtimeconfig.json",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\bin\\Debug\\net8.0\\Du_An_Web_Ban_Khoa_Hoc.runtimeconfig.json",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\bin\\Debug\\net8.0\\Du_An_Web_Ban_Khoa_Hoc.runtimeconfig.json",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\bin\\Debug\\net8.0\\Du_An_Web_Ban_Khoa_Hoc.runtimeconfig.json",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\bin\\Debug\\net8.0\\Du_An_Web_Ban_Khoa_Hoc.runtimeconfig.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-01T03:52:58.197Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "CreatePayoutRequest.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\CreatePayoutRequest.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\CreatePayoutRequest.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\CreatePayoutRequest.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\CreatePayoutRequest.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAABJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.2Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "AddBankAccountRequest.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\AddBankAccountRequest.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\AddBankAccountRequest.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\AddBankAccountRequest.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\AddBankAccountRequest.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAxAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.202Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "Bo_loc_History_Rut_tien.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Bo_loc_History_Rut_tien.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Bo_loc_History_Rut_tien.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Bo_loc_History_Rut_tien.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Bo_loc_History_Rut_tien.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.204Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "InstructorTongQuatController.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorTongQuatController.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorTongQuatController.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorTongQuatController.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorTongQuatController.cs",
+              "ViewState": "AQIAALEAAAAAAAAAAAAIwFAAAACIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.205Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "InstructorsController.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorsController.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorsController.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorsController.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Controllers\\InstructorsController.cs",
+              "ViewState": "AQIAAHUAAAAAAAAAAAAYwPAAAABRAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.207Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "Progress.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Progress.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Progress.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Progress.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Progress.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.208Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "Student.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Student.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Student.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Student.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Student.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.209Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "Enrollment.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Enrollment.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Enrollment.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Enrollment.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Enrollment.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.211Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "EnrollmentLog.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\EnrollmentLog.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\EnrollmentLog.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\EnrollmentLog.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\EnrollmentLog.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.212Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "InstructorBalanceDTO.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorBalanceDTO.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorBalanceDTO.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorBalanceDTO.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorBalanceDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAABHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.214Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "InstructorRevenueDTO.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorRevenueDTO.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorRevenueDTO.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorRevenueDTO.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorRevenueDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAABNAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.216Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "InstructorReviewDTO.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorReviewDTO.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorReviewDTO.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorReviewDTO.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorReviewDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.217Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "Review.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Review.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Review.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Review.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Review.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAmwBcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.218Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "FileDTO.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\FileDTO.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\FileDTO.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\FileDTO.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\FileDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAA1AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.22Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "Submission.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Submission.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Submission.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Submission.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Submission.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAA1wAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.222Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "InstructorReviewSummaryDTO.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorReviewSummaryDTO.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorReviewSummaryDTO.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorReviewSummaryDTO.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\InstructorReviewSummaryDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAABJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.223Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "Assignment.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Assignment.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Assignment.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Assignment.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Assignment.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAxwBsAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.225Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "Admin.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Admin.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Admin.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Admin.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Admin.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.226Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "Patch_lesson_DTO.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Patch_lesson_DTO.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Patch_lesson_DTO.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Patch_lesson_DTO.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Patch_lesson_DTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.228Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "AppDbContextModelSnapshot.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\AppDbContextModelSnapshot.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Migrations\\AppDbContextModelSnapshot.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\AppDbContextModelSnapshot.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Migrations\\AppDbContextModelSnapshot.cs",
+              "ViewState": "AQIAAJQAAAAAAAAAAAAQwKgAAABAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.23Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "20251021031657_RenameColumns.cs",
+              "DocumentMoniker": "D:\\Th\u1EF1c t\u1EADp\\D\u1EF1 \u00E1n 2\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251021031657_RenameColumns.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Th\u1EF1c t\u1EADp\\D\u1EF1 \u00E1n 2\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251021031657_RenameColumns.cs",
+              "ToolTip": "D:\\Th\u1EF1c t\u1EADp\\D\u1EF1 \u00E1n 2\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251021031657_RenameColumns.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Th\u1EF1c t\u1EADp\\D\u1EF1 \u00E1n 2\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251021031657_RenameColumns.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-21T03:16:58.12Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 50,
+              "Title": "Category.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Category.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Category.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Category.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Category.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.238Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 52,
+              "Title": "20251020174427_RemoveChaptersTable.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251020174427_RemoveChaptersTable.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251020174427_RemoveChaptersTable.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251020174427_RemoveChaptersTable.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251020174427_RemoveChaptersTable.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.24Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 51,
+              "Title": "20251014165152_ChangeDateOnlyToDateTime.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251014165152_ChangeDateOnlyToDateTime.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251014165152_ChangeDateOnlyToDateTime.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251014165152_ChangeDateOnlyToDateTime.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Migrations\\20251014165152_ChangeDateOnlyToDateTime.cs",
+              "ViewState": "AQIAAB8AAAAAAAAAAAAQwHAEAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.242Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 53,
+              "Title": "Ke_Thua_Student_RequestPage.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Ke_Thua_Student_RequestPage.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Ke_Thua_Student_RequestPage.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Ke_Thua_Student_RequestPage.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\Ke_Thua_Student_RequestPage.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAA8AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.245Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 54,
+              "Title": "ApplicationUser.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\ApplicationUser.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\ApplicationUser.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\ApplicationUser.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\ApplicationUser.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.247Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 55,
+              "Title": "Banner.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Banner.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Banner.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Banner.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Banner.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.249Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 56,
+              "Title": "ResponsePageResult.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\ResponsePageResult.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\ResponsePageResult.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\ResponsePageResult.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\ResponsePageResult.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.251Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 57,
+              "Title": "RequestQueryPage.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\RequestQueryPage.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\RequestQueryPage.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\RequestQueryPage.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\RequestQueryPage.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.253Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 58,
+              "Title": "UpdateI_Profile_Instructor.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\UpdateI_Profile_Instructor.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\UpdateI_Profile_Instructor.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\UpdateI_Profile_Instructor.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\UpdateI_Profile_Instructor.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.255Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 59,
+              "Title": "Du_An_Web_Ban_Khoa_Hoc.http",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.http",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.http",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.http",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc.http",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2025-11-01T03:52:58.259Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 60,
+              "Title": "UserRole.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\UserRole.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\UserRole.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\UserRole.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\UserRole.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.26Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 62,
+              "Title": "DateOnlyJsonConverter.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Helpers\\DateOnlyJsonConverter.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Helpers\\DateOnlyJsonConverter.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Helpers\\DateOnlyJsonConverter.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Helpers\\DateOnlyJsonConverter.cs",
+              "ViewState": "AQIAADEAAAAAAAAAAAAvwEwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.262Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 61,
+              "Title": "PatchInstructor.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\PatchInstructor.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\PatchInstructor.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\PatchInstructor.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\DTO\\PatchInstructor.cs",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAxwA8AAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.264Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 63,
+              "Title": "Schedule.cs",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Schedule.cs",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Schedule.cs",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Models\\Schedule.cs",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Models\\Schedule.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-01T03:52:58.266Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 64,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Index.cshtml",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Index.cshtml",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Index.cshtml",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Index.cshtml",
+              "ViewState": "AQIAAEUAAAAAAAAAACBjwIkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-01T03:52:58.268Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 65,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Edit.cshtml",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Edit.cshtml",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Edit.cshtml",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Edit.cshtml",
+              "ViewState": "AQIAACsAAAAAAAAAACBjwG8AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-01T03:52:58.269Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 66,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Details.cshtml",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Details.cshtml",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Details.cshtml",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Details.cshtml",
+              "ViewState": "AQIAADoAAAAAAAAAACBjwH4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-01T03:52:58.271Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 67,
+              "Title": "Delete.cshtml",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Delete.cshtml",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Delete.cshtml",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Delete.cshtml",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Delete.cshtml",
+              "ViewState": "AQIAAD0AAAAAAAAAACBjwIEAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-01T03:52:58.273Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 68,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Create.cshtml",
+              "RelativeDocumentMoniker": "Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Create.cshtml",
+              "ToolTip": "D:\\Thuc-tap-3-master (2)\\Thuc-tap-3-master\\Back-end\\PR\\Du_An_Web_Ban_Khoa_Hoc\\Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Create.cshtml",
+              "RelativeToolTip": "Du_An_Web_Ban_Khoa_Hoc\\Views\\Instructors\\Create.cshtml",
+              "ViewState": "AQIAACkAAAAAAAAAACBjwG0AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-01T03:52:58.275Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

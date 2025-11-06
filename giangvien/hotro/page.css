@@ -1,0 +1,42 @@
+/* Trang Hỗ trợ giảng viên */
+.hs-title { font-size: 20px; font-weight: 700; color: #0f172a; margin: 6px 0 12px; }
+
+/* Card chung */
+.hs-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+.hs-section-title { font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 10px; }
+
+/* FAQ accordion */
+.hs-accordion { display: grid; gap: 8px; }
+.hs-item { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #fff; }
+.hs-item > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; font-size: 14px; color: #111827; }
+.hs-item > summary::-webkit-details-marker { display: none; }
+.hs-question { line-height: 1.4; }
+.hs-caret { display: inline-flex; align-items: center; }
+.hs-item[open] .hs-caret svg { transform: rotate(180deg); transition: transform .2s ease; }
+.hs-answer { padding: 10px 12px; font-size: 13px; color: #374151; border-top: 1px solid #e5e7eb; background: #fafafa; }
+
+/* Form liên hệ */
+.hs-form { display: grid; gap: 12px; }
+.hs-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hs-field { display: grid; gap: 6px; }
+.hs-field > label { font-size: 13px; color: #111827; font-weight: 600; }
+.hs-field input, .hs-field textarea { width: 100%; border: 0; outline: 0; border-radius: 8px; padding: 10px 12px; background: #f3f4f6; font-size: 14px; color: #0f172a; }
+.hs-field input::placeholder, .hs-field textarea::placeholder { color: #9ca3af; }
+
+/* Submit */
+.hs-submit { display: inline-flex; align-items: center; gap: 8px; background: #3b82f6; color: #fff; border: 1px solid #3276e8; height: 38px; padding: 0 18px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; }
+.hs-submit:hover { background: #2f6adf; }
+.hs-plane { display: inline-flex; }
+
+/* Responsive */
+@media (max-width: 768px) { .hs-grid-2 { grid-template-columns: 1fr; } }
+
+/* Toggle sidebar button next to breadcrumb label */
+.gv-dashboard-root .gv-collapse-btn { width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; color:#9ca3af; background:transparent; border:0; margin-left:8px; cursor:pointer; padding:0; }
+.gv-dashboard-root .gv-collapse-btn:hover { color:#6b7280; }
+.gv-dashboard-root .gv-collapse-btn svg { width:18px; height:18px; stroke:currentColor; stroke-width:2; }
+.gv-dashboard-root .gv-collapse-btn:hover { background: #e5e7eb; }
+
+/* Collapsed state: hide sidebar, expand main */
+.gv-dashboard-root.collapsed .gv-sidebar { display: none; }
+.gv-dashboard-root.collapsed .gv-main { padding-left: 24px; }

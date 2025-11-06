@@ -1,0 +1,132 @@
+/* Root background and layout */
+.gv-login-root {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: #eaf2ff;
+  padding: 40px 24px 24px;
+}
+
+/* Decorative circle */
+.gv-deco-circle {
+  position: absolute;
+  top: 22px;
+  left: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #b9d6ff;
+  opacity: 0.8;
+}
+
+/* Brand stack at top */
+.gv-brand-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.gv-brand-icon { width: 56px; height: 56px; display: inline-flex; }
+.gv-brand-icon svg { width: 100%; height: 100%; }
+.gv-brand-title { font-weight: 700; font-size: 22px; color: #111827; }
+.gv-brand-subtitle { font-size: 12px; color: #6b7280; }
+
+/* Card */
+.gv-login-card {
+  width: 100%;
+  max-width: 460px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  padding: 18px 20px;
+}
+
+.gv-card-header { margin-bottom: 10px; }
+.gv-card-title { font-size: 14px; font-weight: 600; color: #111827; }
+.gv-card-desc { font-size: 12px; color: #6b7280; }
+
+/* Segmented toggle */
+.gv-segment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  background: #f1f5f9;
+  border-radius: 9999px;
+  padding: 2px;
+  margin: 12px 0 14px;
+}
+.gv-segment-btn {
+  text-align: center;
+  font-size: 12px;
+  color: #374151;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+.gv-segment-btn.active { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+/* Form */
+.gv-login-form { display: flex; flex-direction: column; gap: 10px; }
+.gv-field { display: flex; flex-direction: column; gap: 6px; }
+.gv-label { font-size: 12px; color: #6b7280; }
+.gv-input {
+  height: 36px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0 12px;
+  outline: none;
+  background: #f9fafb;
+}
+.gv-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); background: #fff; }
+.gv-error { font-size: 12px; color: #dc2626; }
+
+/* Primary button */
+.gv-btn-primary {
+  width: 100%;
+  background: #111827;
+  color: #fff;
+  border: none;
+  height: 36px;
+  border-radius: 8px;
+  padding: 0 14px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.gv-btn-primary:hover { filter: brightness(0.96); }
+
+/* Divider with label */
+.gv-divider-labeled {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #6b7280;
+  font-size: 12px;
+  margin: 12px 0;
+}
+.gv-divider-labeled::before, .gv-divider-labeled::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+/* Social buttons */
+.gv-social { display: flex; gap: 12px; }
+.gv-social-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  background: #fff;
+  font-size: 12px;
+  color: #111827;
+}
+.gv-social-btn svg { width: 20px; height: 20px; }
+.gv-social-btn.google:hover { box-shadow: 0 1px 2px rgba(66,133,244,0.25); }
+.gv-social-btn.facebook:hover { box-shadow: 0 1px 2px rgba(24,119,242,0.25); }
